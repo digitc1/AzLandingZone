@@ -87,7 +87,7 @@ AliasesToExport = @()
 # ModuleList = @()
 
 # Liste de tous les fichiers empaquetés avec ce module
-# FileList = @()
+FileList = @('./AzLandingZone/setup-resources.psm1')
 
 # Données privées à transmettre au module spécifié dans RootModule/ModuleToProcess. Cela peut également inclure une table de hachage PSData avec des métadonnées de modules supplémentaires utilisées par PowerShell.
 PrivateData = @{
