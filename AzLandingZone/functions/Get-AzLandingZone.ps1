@@ -24,7 +24,7 @@ Function Get-AzLandingZone {
     else {
         Write-Host "Landing Zone not installed" -ForegroundColor Red
         Write-Host "Run 'New-AzLandingZone' cmdlet to configure the Landing Zone" -ForegroundColor Red
-        exit 2
+        return 2
     }
 
     if($lzStorageAccount = Get-AzStorageAccount -ResourceGroupName $lzResourceGroup.ResourceGroupName) {
@@ -39,13 +39,13 @@ Function Get-AzLandingZone {
         else {
             Write-Host "Storage account for Landing Zone Logs is not set" -ForegroundColor Red
             Write-Host "Run 'New-AzLandingZone' cmdlet to configure the Landing Zone" -ForegroundColor Red
-            exit 2
+            return 2
         }
     }
     else {
         Write-Host "Landing Zone not installed" -ForegroundColor Red
         Write-Host "Run 'New-AzLandingZone' cmdlet to configure the Landing Zone" -ForegroundColor Red
-        exit 2
+        return 2
     }
 }
 Export-ModuleMember -Function Get-AzLandingZone
