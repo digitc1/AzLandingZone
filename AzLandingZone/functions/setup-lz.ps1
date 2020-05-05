@@ -1,4 +1,8 @@
 Function Setup-Resources {
+    param(
+	    [Parameter(Mandatory=$true)][string]$name
+    )
+    
     #
     # Azure modules
     #
