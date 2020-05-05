@@ -9,12 +9,20 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
+variables:
+  major: 0
+  minor: 0
+  patch: $(Build.BuildID)
+  buildVer: $(major).$(minor).$(Build.BuildID)
+
 steps:
 - task: NuGetCommand@2
   inputs:
     command: 'pack'
-    packagesToPack: '**/*.nuspec'
-    versioningScheme: 'off'
+    packagesToPack: '$(System.DefaultWorkingDirectory)/AzLandingZone.nuspec'
+    versioningScheme: byEnvVar
+    versionEnvVar: buildVer
+    buildProperties: 'VERSIONHERE=$(buildVer)'
 - task: NuGetCommand@2
   inputs:
     command: 'push'
