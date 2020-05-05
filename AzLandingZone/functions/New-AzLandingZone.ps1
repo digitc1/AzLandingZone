@@ -1,4 +1,4 @@
 Function New-AzLandingZone {
-    setup-lz.ps1
+    setup-Resources
 }
 Export-ModuleMember -Function New-AzLandingZone
