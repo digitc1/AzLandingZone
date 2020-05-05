@@ -1,3 +1,3 @@
 Function New-AzLandingZone {
-	Write-Host "New-AzLandingZone launched"
+	New-AzResourceGroup -Name RG01 -Location "westeurope"
 }
