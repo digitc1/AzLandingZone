@@ -66,7 +66,9 @@ Copyright = '(c) 2020 Augustin Colle. Tous droits réservés.'
 # FormatsToProcess = @()
 
 # Modules à importer en tant que modules imbriqués du module spécifié dans RootModule/ModuleToProcess
-# NestedModules = @()
+NestedModules = @(
+        '.\functions\Get-AzLandingZone.ps1'
+    )
 
 # Fonctions à exporter à partir de ce module. Pour de meilleures performances, n’utilisez pas de caractères génériques et ne supprimez pas l’entrée. Utilisez un tableau vide si vous n’avez aucune fonction à exporter.
 FunctionsToExport = @('New-AzLandingZone',
@@ -89,9 +91,7 @@ AliasesToExport = @()
 # ModuleList = @()
 
 # Liste de tous les fichiers empaquetés avec ce module
-FileList = @('./setup-resources.ps1',
-                './Get-AzLandingZone.psm1'
-            )
+# FileList = @()
 
 # Données privées à transmettre au module spécifié dans RootModule/ModuleToProcess. Cela peut également inclure une table de hachage PSData avec des métadonnées de modules supplémentaires utilisées par PowerShell.
 PrivateData = @{
