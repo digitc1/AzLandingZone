@@ -89,7 +89,7 @@ AliasesToExport = @()
 # ModuleList = @()
 
 # Liste de tous les fichiers empaquetés avec ce module
-FileList = @('./AzLandingZone/setup-resources.psm1',
+FileList = @('./AzLandingZone/setup-resources.ps1',
                 './AzLandingZone/Get-AzLandingZone.psm1'
             )
 
