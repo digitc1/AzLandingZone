@@ -28,8 +28,8 @@ Function Get-AzLandingZone {
     }
 
     if($lzStorageAccount = Get-AzStorageAccount -ResourceGroupName $lzResourceGroup.ResourceGroupName) {
-        if($lzStorageContainer = Get-AzStorageContainer -ResourceGroupName $lzResourceGroup.ResourceGroupName -StorageAccountName $lzStorageAccount.StorageAccountName){
-            if((Get-AzStorageContainerImmutabilityPolicy -ResourceGroupName $lzResourceGroup.ResourceGroupName -StorageAccountName $lzStorageAccount.StorageAccountName -ContainerName $lzStorageContainer.Name).ImmutabilityPeriodSinceCreationInDays -gt 180){
+        if($lzStorageContainer = Get-AzStorageContainer -Context $lzStorageAccount.Context){
+            if($lzStorageContainer.BlobContainerProperties.HasImmutabilityPolicy -Like "True"){
                 Write-Host "Storage Account properly configured" -ForegroundColor Green
             }
             else {
