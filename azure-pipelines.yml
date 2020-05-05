@@ -19,7 +19,7 @@ steps:
 - task: NuGetCommand@2
   inputs:
     command: 'pack'
-    packagesToPack: '$(System.DefaultWorkingDirectory)/AzLandingZone.nuspec'
+    packagesToPack: '$(System.DefaultWorkingDirectory)/AzLandingZone/AzLandingZone.nuspec'
     versioningScheme: byEnvVar
     versionEnvVar: buildVer
     buildProperties: 'VERSIONHERE=$(buildVer)'
