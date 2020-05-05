@@ -1,3 +1,3 @@
 Function New-AzLandingZone {
-	setup-resources
+	.\setup-resources.ps1
 }
