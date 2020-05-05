@@ -9,7 +9,7 @@
 @{
 
 # Module de script ou fichier de module binaire associé à ce manifeste
-RootModule = 'New-AzLandingZone.psm1'
+RootModule = './AzLandingZone/New-AzLandingZone.psm1'
 
 # Numéro de version de ce module.
 ModuleVersion = '1.0'
