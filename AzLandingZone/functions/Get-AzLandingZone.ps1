@@ -1,1 +1,4 @@
-Write-Host "Hello World !"
+Function Get-AzLandingZone {
+    Write-Host "Hello World !"
+}
+Export-ModuleMember -Function Get-AzLandingZone
