@@ -1,5 +1,3 @@
 Function AzLandingZone {
-	setup-lzResources
-	./setup-resources.ps1
-	./AzLandingZone/setup-resources.ps1
+	Write-Host "Hello World !"
 }
