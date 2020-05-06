@@ -14,8 +14,7 @@ Function setup-Automation {
     #
     # External resource required
     #
-    $automationRunAsURI = ""
-    $automationRunbookURI = ""
+    $automationRunbookURI = "https://dev.azure.com/devops0837/6414d3a7-f802-4703-8cd7-9cef7c9a9617/_apis/git/repositories/0707bade-f83f-4a91-bbb6-9a13502def90/items?path=%2FLandingZone%2Fsetup-automation.ps1&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
 
 
     #
@@ -32,9 +31,7 @@ Function setup-Automation {
         return 1;
     }
     $automationAccountName = $name + "Automation"
-    #TODO#
-    # Add Subscription Id #
-    $subscriptionId = ""
+    $subscriptionId = (Get-AzSubscription | {$_.Name -Like "DIGIT_C1*"}).Id
 
     #
     # Checking Azure automation account for Azure Landing Zone
@@ -58,12 +55,10 @@ Function setup-Automation {
         Write-Host "Creating RunAs account"
         # TODO #
         # generate password #
-        $randomPassword = ""
+        $randomPassword = "zaefisfndsqdpnfgsdjlflkdsqnf"
         # TODO #
         # review Invoke-WebRequest cmdlet #
-        Invoke-WebRequest -Uri "$automationRunAsURI" -Authentication OAuth -Token $secureToken -OutFile $HOME/setup-runAs.ps1
-        ./setup-runAs.ps1 -ResourceGroup $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName -ApplicationDisplayName $automationAccountName -subscriptionId $subscriptionId -createClassicRunAsAccount $false -selfSignedCertPlainPassword $randomPassword | Out-Null
-        Remove-Item -Path "$HOME/setup-runAs.ps1"
+        ./setup-runAs -ResourceGroup $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName -ApplicationDisplayName $automationAccountName -subscriptionId $subscriptionId -createClassicRunAsAccount $false -selfSignedCertPlainPassword $randomPassword | Out-Null
         $automationServicePrincipal = Get-AzAdServicePrincipal -DisplayName $automationAccountName
     }
     Write-Host "Using automation account service principal : "$automationServicePrincipal.DisplayName
