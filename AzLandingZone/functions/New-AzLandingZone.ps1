@@ -26,7 +26,7 @@ Function New-AzLandingZone {
     setup-Resources -Name $name
 
     if($autoupdate) {
-        setup-Automation
+        setup-Automation -Name $name
     }
 
     setup-Policy -Name $name
