@@ -5,6 +5,7 @@
 # 2: Landing zone not installed
 
 Function Get-AzLandingZone {
+    Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
     #
     # Azure modules
     #
