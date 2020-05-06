@@ -78,7 +78,7 @@ Function setup-policy {
     Invoke-WebRequest -Uri "$definitionParametersv1URI" -OutFile $HOME/parameters.json
     Invoke-WebRequest -Uri "$definitionListv1URI" -OutFile $HOME/definitionList.txt
 
-    Get-Content -Path $HOME/definitionList.txt | ForEAch-Object {
+    Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
             $policyName = "SLZ-" + $_.Split(',')[0] + "1"
             $policyVersion = $_.Split(',')[1]
             $policyLink = $_.Split(',')[2]
@@ -124,7 +124,7 @@ Function setup-policy {
             Invoke-WebRequest -Uri $definitionParametersv2URI -OutFile $HOME/parameters.json
             Invoke-WebRequest -Uri $definitionListv2URI -OutFile $HOME/definitionList.txt
             
-            Get-Content -Path $HOME/definitionList.txt | ForEAch-Object {
+            Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
             $policyName = "SLZ-" + $_.Split(',')[0] + "2"
             $policyVersion = $_.Split(',')[1]
             $policyLink = $_.Split(',')[2]
@@ -172,7 +172,7 @@ Function setup-policy {
         Invoke-WebRequest -Uri $definitionParametersv3URI -OutFile $HOME/parameters.json
         Invoke-WebRequest -Uri $definitionListv3URI -OutFile $HOME/definitionList.txt
         
-            Get-Content -Path $HOME/definitionList.txt | ForEAch-Object {
+            Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
             $policyName = "SLZ-" + $_.Split(',')[0] + "3"
             $policyVersion = $_.Split(',')[1]
             $policyLink = $_.Split(',')[2]
@@ -220,7 +220,7 @@ Function setup-policy {
     #create role assignment for all policies
     Write-Host "Create role assignment for created and updated policies" -ForegroundColor Yellow
     $GetPolicyAssignment = Get-AzPolicyAssignment | where-object {$_.Name -like "SLZ-*"}
-    ForEach ($policyAssignment in $GetPolicyAssignment) {
+    ForEach -Parallel ($policyAssignment in $GetPolicyAssignment) {
         if(!(Get-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId)){
             New-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
             Write-Host "Created role assignment for: "$policyAssignment.Name
