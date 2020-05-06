@@ -72,7 +72,9 @@ NestedModules = @(
         '.\functions\Remove-AzLandingZone.ps1',
         '.\functions\Update-AzLandingZone.ps1',
         '.\functions\setup-lz.ps1',
-        '.\functions\setup-policy.ps1'
+        '.\functions\setup-policy.ps1',
+        '.\functions\setup-runAs.ps1',
+        '.\functions\setup-lighthouse.ps1'
     )
 
 # Fonctions à exporter à partir de ce module. Pour de meilleures performances, n’utilisez pas de caractères génériques et ne supprimez pas l’entrée. Utilisez un tableau vide si vous n’avez aucune fonction à exporter.
