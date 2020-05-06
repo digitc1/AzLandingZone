@@ -18,14 +18,22 @@ Function setup-policy {
     #
     # Create variables needed for this script
     #
-    if(!(Get-AzLandingzone -eq 2)){
-            Write-Host "Landing Zone is not set"
+
+    if(!($GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*$name*")){
+            Write-Host "No Resource Group for Secure Landing Zone found"
             Write-Host "Please run setup script before running the policy script"
             return 1;
     }
-    $GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*$name*"
-    $GetStorageAccount = Get-AzStorageAccount -ResourceGroupName $GetResourceGroup.ResourceGroupName | Where-Object {$_.StorageAccountName -Like "*$name*"}
-    $GetManagementGroup = Get-AzManagementGroup -GroupName "lz-management-group" -Expand | Where-Object {$_.Name -Like "lz-management-group"}
+    if(!($GetStorageAccount = Get-AzStorageAccount -ResourceGroupName $GetResourceGroup.ResourceGroupName | Where-Object {$_.StorageAccountName -Like "*$name*"})){
+            Write-Host "No Storage Account found for Secure Landing Zone"
+            Write-Host "Please run setup script before running the policy script"
+            return 1;
+    }
+    if(!($GetManagementGroup = Get-AzManagementGroup -GroupName "lz-management-group" -Expand | Where-Object {$_.Name -Like "lz-management-group"})){
+            Write-Host "No Management group found for Secure Landing Zone"
+            Write-Host "Please run setup script before running the policy script"
+            return 1;
+    }
     $location = $GetResourceGroup.Location
     $scope = $GetManagementGroup.Id
 
