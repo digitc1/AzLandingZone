@@ -69,6 +69,8 @@ Copyright = '(c) 2020 Augustin Colle. Tous droits réservés.'
 NestedModules = @(
         '.\functions\Get-AzLandingZone.ps1',
         '.\functions\New-AzLandingZone.ps1',
+        '.\functions\Remove-AzLandingZone.ps1',
+        '.\functions\Update-AzLandingZone.ps1',
         '.\functions\setup-lz.ps1',
         '.\functions\setup-policy.ps1'
     )
