@@ -69,7 +69,8 @@ Copyright = '(c) 2020 Augustin Colle. Tous droits réservés.'
 NestedModules = @(
         '.\functions\Get-AzLandingZone.ps1',
         '.\functions\New-AzLandingZone.ps1',
-        '.\functions\setup-lz.ps1'
+        '.\functions\setup-lz.ps1',
+        '.\functions\setup-policy.ps1'
     )
 
 # Fonctions à exporter à partir de ce module. Pour de meilleures performances, n’utilisez pas de caractères génériques et ne supprimez pas l’entrée. Utilisez un tableau vide si vous n’avez aucune fonction à exporter.
