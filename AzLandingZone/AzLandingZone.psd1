@@ -73,7 +73,7 @@ NestedModules = @(
         '.\functions\Update-AzLandingZone.ps1',
         '.\functions\setup-lz.ps1',
         '.\functions\setup-policy.ps1',
-        '.\functions\setup-runAs.ps1',
+        '.\functions\setup-RunAs.ps1',
         '.\functions\setup-lighthouse.ps1'
     )
 
