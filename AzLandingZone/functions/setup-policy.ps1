@@ -78,7 +78,7 @@ Function setup-Policy {
     Invoke-WebRequest -Uri "$definitionParametersv1URI" -OutFile $HOME/parameters.json
     Invoke-WebRequest -Uri "$definitionListv1URI" -OutFile $HOME/definitionList.txt
 
-    Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
+    Get-Content -Path $HOME/definitionList.txt | ForEAch-Object {
             $policyName = "SLZ-" + $_.Split(',')[0] + "1"
             $policyVersion = $_.Split(',')[1]
             $policyLink = $_.Split(',')[2]
@@ -124,7 +124,7 @@ Function setup-Policy {
             Invoke-WebRequest -Uri $definitionParametersv2URI -OutFile $HOME/parameters.json
             Invoke-WebRequest -Uri $definitionListv2URI -OutFile $HOME/definitionList.txt
             
-            Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
+            Get-Content -Path $HOME/definitionList.txt | ForEAch-Object {
             $policyName = "SLZ-" + $_.Split(',')[0] + "2"
             $policyVersion = $_.Split(',')[1]
             $policyLink = $_.Split(',')[2]
@@ -172,7 +172,7 @@ Function setup-Policy {
         Invoke-WebRequest -Uri $definitionParametersv3URI -OutFile $HOME/parameters.json
         Invoke-WebRequest -Uri $definitionListv3URI -OutFile $HOME/definitionList.txt
         
-            Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
+            Get-Content -Path $HOME/definitionList.txt | ForEAch-Object {
             $policyName = "SLZ-" + $_.Split(',')[0] + "3"
             $policyVersion = $_.Split(',')[1]
             $policyLink = $_.Split(',')[2]
