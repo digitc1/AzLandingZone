@@ -26,10 +26,10 @@ Function New-AzLandingZone {
     setup-Resources -Name $name
 
     if($autoupdate) {
-        setup-automation
+        setup-Automation
     }
 
-    setup-Policies -Name $name
+    setup-Policy -Name $name
 
     setup-Lighthouse
 }
