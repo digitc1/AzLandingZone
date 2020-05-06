@@ -17,7 +17,7 @@ Function New-AzLandingZone {
     #
     # variables
     #
-    $subscription = Get-AzSubscription | where-Object {$_.Name -Like "SecLog*"}
+    $subscription = Get-AzSubscription | where-Object {$_.Name -Like "DIGIT_C1*"}
     $context = Set-AzContext -SubscriptionId $subscription.Id
     $name = "lzslz"
     $locations = (Get-AzLocation).Location
