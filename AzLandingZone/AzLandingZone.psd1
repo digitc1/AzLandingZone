@@ -71,10 +71,12 @@ NestedModules = @(
         '.\functions\New-AzLandingZone.ps1',
         '.\functions\Remove-AzLandingZone.ps1',
         '.\functions\Update-AzLandingZone.ps1',
-        '.\functions\setup-lz.ps1',
-        '.\functions\setup-policy.ps1',
-        '.\functions\setup-RunAs.ps1',
-        '.\functions\setup-lighthouse.ps1'
+        '.\functions\internal\setup-Resources.ps1',
+        '.\functions\internal\setup-Policy.ps1',
+        '.\functions\internal\setup-RunAs.ps1',
+        '.\functions\internal\setup-Lighthouse.ps1',
+        '.\functions\internal\setup-Prerequisites.ps1',
+        '.\functions\internal\setup-Automation.ps1'
     )
 
 # Fonctions à exporter à partir de ce module. Pour de meilleures performances, n’utilisez pas de caractères génériques et ne supprimez pas l’entrée. Utilisez un tableau vide si vous n’avez aucune fonction à exporter.
@@ -82,8 +84,7 @@ FunctionsToExport = @(
                         'New-AzLandingZone',
                         'Get-AzLandingZone',
                         'Remove-AzLandingZone',
-                        'Update-AzLandingZone',
-                        'setup-Policy'
+                        'Update-AzLandingZone'
                     )
 
 # Applets de commande à exporter à partir de ce module. Pour de meilleures performances, n’utilisez pas de caractères génériques et ne supprimez pas l’entrée. Utilisez un tableau vide si vous n’avez aucune applet de commande à exporter.
