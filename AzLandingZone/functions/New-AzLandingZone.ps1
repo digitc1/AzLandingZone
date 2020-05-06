@@ -32,11 +32,5 @@ Function New-AzLandingZone {
     setup-Policies -Name $name
 
     setup-Lighthouse
-
-
-    Write-Host "The parameters are as follow"
-    Write-Host "Name= $name"
-    Write-Host "SOC= $SOC"
-    Write-Host "auto-update= $autoupdate"
 }
 Export-ModuleMember -Function New-AzLandingZone
