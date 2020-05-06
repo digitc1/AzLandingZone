@@ -1,12 +1,38 @@
 Function New-AzLandingZone {
     Param(
-        [Parameter(Mandatory=$true)]
-        [string] $name
         [ValidateSet("DIGIT", "CERTEU", "None")]
-        [string] $SOC
+        [string] $SOC,
         [Parameter(Mandatory=$true)]
         [bool] $autoupdate
     )
+
+    Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
+
+    #
+    # Checking registrations and prerequisites for the Landing Zone
+    # Registration can take few minutes
+    #
+    setup-prerequisites
+
+    #
+    # variables
+    #
+    $subscription = Get-AzSubscription | where-Object {$_.Name -Like "SecLog*"}
+    $context = Set-AzContext -SubscriptionId $subscription.Id
+    $name = "lzslz"
+    $locations = (Get-AzLocation).Location
+    $locations += "global"
+
+    setup-Resources -Name $name
+
+    if($autoupdate) {
+        setup-automation
+    }
+
+    setup-Policies -Name $name
+
+    setup-Lighthouse
+
 
     Write-Host "The parameters are as follow"
     Write-Host "Name= $name"
