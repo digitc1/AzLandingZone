@@ -1,4 +1,4 @@
-Function setup-policy {
+Function setup-Policy {
     param(
             [Parameter(Mandatory=$true)][string]$name
     )
@@ -262,4 +262,4 @@ Function setup-policy {
             }
     }
 }
-Export-ModuleMember -Function setup-policy
+Export-ModuleMember -Function setup-Policy
