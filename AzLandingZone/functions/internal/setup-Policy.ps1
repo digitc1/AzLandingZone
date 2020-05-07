@@ -38,22 +38,6 @@ Function setup-Policy {
     $scope = $GetManagementGroup.Id
 
     #
-    # Checking if the subscription is registered to use Microsoft.PolicyInsights
-    # If not, register
-    #
-    # Registration can take about few minutes (up to 2 or 3 minutes)
-    #
-    Write-Host "Checking registration for Microsoft PolicyInsights" -ForegroundColor Yellow
-    if(!((Get-AzResourceProvider -ProviderNamespace 'Microsoft.PolicyInsights').RegistrationState[0] -Like "Registered")){
-            Write-Host "Your subscription is not registered for Microsoft PolicyInsights"
-            Write-Host "Registering for Microsoft PolicyInsights, this can take couple minutes"
-            Register-AzResourceProvider -ProviderNamespace 'Microsoft.PolicyInsights'
-            while(!((Get-AzResourceProvider -ProviderNamespace 'Microsoft.PolicyInsights').RegistrationState[0] -Like "Registered")){
-                    Start-Sleep -s 10
-            }
-    }
-
-    #
     # Creating policy definition
     #
     if(!(Get-AzPolicyAssignment | Where-Object {$_.Name -Like "ASC_Default"})){
