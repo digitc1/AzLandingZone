@@ -24,6 +24,7 @@ Function New-AzLandingZone {
     $locations += "global"
 
     setup-Resources -Name $name
+    setup-LogPipeline -Name $name -SOC $SOC
 
     if($autoupdate -eq $true) {
         setup-Automation -Name $name
