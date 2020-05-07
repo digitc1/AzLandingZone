@@ -1,6 +1,7 @@
 Function setup-LogPipeline {
     param(
-        [Parameter][string]$SOC,
+        [ValidateSet("DIGIT", "CERTEU", "None", "")]
+        [string] $SOC,
         [Parameter(Mandatory=$true)][string]$name
     )
 
