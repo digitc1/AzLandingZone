@@ -35,7 +35,7 @@ Function setup-Policy {
             return 1;
     }
     $location = $GetResourceGroup.Location
-    $scope = $GetManagementGroup.Id
+    $scope = ($GetManagementGroup).Id
 
     #
     # Creating policy definition
