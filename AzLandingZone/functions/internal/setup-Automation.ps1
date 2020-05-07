@@ -1,15 +1,7 @@
 Function setup-Automation {
-
-    #
-    # script parameters
-    #
     param(
         [Parameter(Mandatory=$true)][string]$name
     )
-
-    #
-    # Additional modules
-    #
 
     #
     # External resource required
