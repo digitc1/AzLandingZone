@@ -104,7 +104,7 @@ Function setup-RunAs {
     Enable-AzureRmAlias
 
 
-    Connect-AzAccount -Environment $EnvironmentName
+    #Connect-AzAccount -Environment $EnvironmentName
     $Subscription = Get-AzSubscription -SubscriptionId $SubscriptionId
 
     # Create a Run As account by using a service principal
