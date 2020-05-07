@@ -7,7 +7,7 @@ Function setup-Automation {
     # External resource required
     #
     $automationRunbookURI = "https://dev.azure.com/devops0837/6414d3a7-f802-4703-8cd7-9cef7c9a9617/_apis/git/repositories/0707bade-f83f-4a91-bbb6-9a13502def90/items?path=%2FLandingZone%2Fsetup-automation.ps1&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
-
+    $runAsURI = "https://dev.azure.com/devops0837/6414d3a7-f802-4703-8cd7-9cef7c9a9617/_apis/git/repositories/0707bade-f83f-4a91-bbb6-9a13502def90/items?path=%2FLandingZone%2Fsetup-runAs.ps1&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
 
     #
     # Checking variables and requirements
@@ -50,8 +50,11 @@ Function setup-Automation {
         $randomPassword = "zaefisfndsqdpnfgsdjlflkdsqnf"
         # TODO #
         # review Invoke-WebRequest cmdlet #
-        setup-runAs -ResourceGroup $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName -ApplicationDisplayName $automationAccountName -subscriptionId $subscriptionId -createClassicRunAsAccount $false -selfSignedCertPlainPassword $randomPassword | Out-Null
+        #setup-runAs -ResourceGroup $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName -ApplicationDisplayName $automationAccountName -subscriptionId $subscriptionId -createClassicRunAsAccount $false -selfSignedCertPlainPassword $randomPassword | Out-Null
+        Invoke-WebRequest -Uri "$runAsURI" -OutFile ./runAs.ps1
+        ./runAs.ps1  -ResourceGroup $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName -ApplicationDisplayName $automationAccountName -subscriptionId $subscriptionId -createClassicRunAsAccount $false -selfSignedCertPlainPassword $randomPassword | Out-Null
         $automationServicePrincipal = Get-AzAdServicePrincipal | Where-Object {$_.DisplayName -Like "*$automationAccountName*"}
+        Remove-Item -Path ./runAs.ps1
         New-AzRoleAssignment -ApplicationId $automationServicePrincipal.Id -Scope $scope -RoleDefinitionName "Contributor"
     }
     Write-Host "Using automation account service principal : "$automationServicePrincipal.DisplayName
