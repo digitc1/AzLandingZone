@@ -210,7 +210,7 @@ Function Setup-Resources {
 
     $children = (Get-AzManagementGroup -GroupName "lz-management-group" -Expand).Children
     Get-AzSubscription | ForEach-Object {
-        if ($_.Name -notin $children.Name){
+        if ($_.Name -notin $children.DisplayName){
             if($_.Name -Like "SecLog*"){
                 New-AzManagementGroupSubscription -GroupName "lz-management-group" -SubscriptionId $_.Id
             }
