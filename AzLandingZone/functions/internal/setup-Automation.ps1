@@ -17,13 +17,13 @@ Function setup-Automation {
         Write-Host "Please run setup script before"
         return 1;
     }
-    if(!($GetManagementGroup = Get-AzManagementGroup -GroupName "lzslz-management-group")){
+    if(!($GetManagementGroup = Get-AzManagementGroup -GroupName "lz-management-group")){
         Write-Host "No Management Group for Secure Landing Zone found"
         Write-Host "Please run setup script before"
         return 1;
     }
     $automationAccountName = $name + "Automation"
-    $subscriptionId = (Get-AzSubscription | {$_.Name -Like "DIGIT_C1*"}).Id
+    $subscriptionId = (Get-AzSubscription | Where-Object {$_.Name -Like "DIGIT_C1*"}).Id
 
     #
     # Checking Azure automation account for Azure Landing Zone
@@ -50,8 +50,9 @@ Function setup-Automation {
         $randomPassword = "zaefisfndsqdpnfgsdjlflkdsqnf"
         # TODO #
         # review Invoke-WebRequest cmdlet #
-        ./setup-runAs -ResourceGroup $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName -ApplicationDisplayName $automationAccountName -subscriptionId $subscriptionId -createClassicRunAsAccount $false -selfSignedCertPlainPassword $randomPassword | Out-Null
-        $automationServicePrincipal = Get-AzAdServicePrincipal -DisplayName $automationAccountName
+        setup-runAs -ResourceGroup $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName -ApplicationDisplayName $automationAccountName -subscriptionId $subscriptionId -createClassicRunAsAccount $false -selfSignedCertPlainPassword $randomPassword | Out-Null
+        $automationServicePrincipal = Get-AzAdServicePrincipal | Where-Object {$_.DisplayName -Like "*$automationAccountName*"}
+        New-AzRoleAssignment -ApplicationId $automationServicePrincipal.Id -Scope $scope -RoleDefinitionName "Contributor"
     }
     Write-Host "Using automation account service principal : "$automationServicePrincipal.DisplayName
 
@@ -108,7 +109,7 @@ Function setup-Automation {
     # if it doesn't exist, create it
     #
     Write-Host "Checking Azure automation runbook for Azure landing zone" -ForegroundColor Yellow
-    if(!(Get-AzAutomationRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $GetAutomationAccount.AutomationAccountName | Where-Object {$_.Name "*$name*"})){
+    if(!(Get-AzAutomationRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $GetAutomationAccount.AutomationAccountName | Where-Object {$_.Name -Like "*$name*"})){
         # TODO #
         # review Invoke-WebRequest cmdlet #
         # review automation runbook code, include key vault #
