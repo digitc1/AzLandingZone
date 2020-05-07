@@ -20,19 +20,13 @@ Function setup-Lighthouse {
             if($SOC -eq "DIGIT"){
                 Write-Host "Checking that security center notification is set to EC-DIGIT-CSIRC@ec.europa.eu" -ForegroundColor Yellow
                 if(!(Get-AzSecurityContact | Where-Object {$_.Email -Like "EC-DIGIT-CSIRC@ec.europa.eu"})){
-                        $param = read-Host "No contact for EC-DIGIT-CSIRC@ec.europa.eu found. Would you like to add it (y/n)"
-                        if($param -Like "y"){
                                 $count = (Get-AzSecurityContact).Count
                                 Set-AzSecurityContact -Name "default$($count+1)" -Email "EC-DIGIT-CSIRC@ec.europa.eu" -AlertAdmin -NotifyOnAlert | Out-Null
-                        }
                 }
                 Write-Host "Checking that security center notification is set to EC-DIGIT-CLOUDSEC@ec.europa.eu" -ForegroundColor Yellow
                 if(!(Get-AzSecurityContact | Where-Object {$_.Email -Like "EC-DIGIT-CLOUDSEC@ec.europa.eu"})){
-                        $param = read-Host "No contact for EC-DIGIT-CLOUDSEC@ec.europa.eu found. Would you like to add it (y/n)"
-                        if($param -Like "y"){
                                 $count = (Get-AzSecurityContact).Count
                                 Set-AzSecurityContact -Name "default$($count+1)" -Email "EC-DIGIT-CLOUDSEC@ec.europa.eu" -AlertAdmin -NotifyOnAlert | Out-Null
-                        }
                 }
             }
             $param = read-Host "Would you like to setup additional contacts for security alerts (y/n)"
