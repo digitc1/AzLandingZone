@@ -52,7 +52,8 @@ Copyright = '(c) 2020 Augustin Colle. Tous droits réservés.'
 
 # Modules qui doivent être importés dans l'environnement global préalablement à l'importation de ce module
 RequiredModules = @('AzSentinel',
-                    'Az.Security')
+                    'Az.Security',
+                    'Az.Automation')
 
 # Assemblys qui doivent être chargés préalablement à l'importation de ce module
 # RequiredAssemblies = @()
