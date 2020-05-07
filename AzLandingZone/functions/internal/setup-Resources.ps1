@@ -98,83 +98,83 @@ Function Setup-Resources {
     # Checking if Log Analytics workspace already exists in the secure Landing Zone resource group
     # If it doesn't exist, create it
     #
-    Write-Host "Checking log analytics workspace in the Secure Landing Zone" -ForegroundColor Yellow
-    if(!($GetLogAnalyticsWorkspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName)){
-        if($SOC -Like "DIGIT") {
-            Write-Host "Creating new log analytics workspace in the Secure Landing Zone"
-            $rand = Get-Random -Minimum 1000000 -Maximum 9999999999
-            $workspaceName = $name +"-workspace"+$rand
-            $GetLogAnalyticsWorkspace = New-AzOperationalInsightsWorkspace -Location $AzDCLocation -Name $workspaceName -Sku Standard -ResourceGroupName $GetResourceGroup.ResourceGroupName
-            Write-Host "Using log analytics workspace : "$GetLogAnalyticsWorkspace.Name
-            Write-Host "Enabling Azure Sentinel for the Landing Zone log analytics workspace"
-            Set-AzSentinel -WorkspaceName $workspaceName
-            Write-Host "Sentinel is now enabled"
-        }
-        else {
-            Write-Host "Do you want to deploy and configure Azure Log Analytics for this subscription (required for integration with DIGIT-S)"
-            $param = read-Host "enter y or n (default No)"
-            if($param -Like "y") {
-                Write-Host "Creating new log analytics workspace in the Secure Landing Zone"
-                $rand = Get-Random -Minimum 1000000 -Maximum 9999999999
-                $workspaceName = $name +"-workspace"+$rand
-                $GetLogAnalyticsWorkspace = New-AzOperationalInsightsWorkspace -Location $AzDCLocation -Name $workspaceName -Sku Standard -ResourceGroupName $GetResourceGroup.ResourceGroupName
-                Write-Host "Using log analytics workspace : "$GetLogAnalyticsWorkspace.Name
-                Write-Host "Enabling Azure Sentinel for the Landing Zone log analytics workspace"
-                Set-AzSentinel -WorkspaceName $workspaceName
-                Write-Host "Sentinel is now enabled"
-            }
-        }
-    }
-    else{
-        Write-Host "Using log analytics workspace : "$GetLogAnalyticsWorkspace.Name
-    }
+    #Write-Host "Checking log analytics workspace in the Secure Landing Zone" -ForegroundColor Yellow
+    #if(!($GetLogAnalyticsWorkspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName)){
+    #    if($SOC -Like "DIGIT") {
+    #        Write-Host "Creating new log analytics workspace in the Secure Landing Zone"
+    #        $rand = Get-Random -Minimum 1000000 -Maximum 9999999999
+    #        $workspaceName = $name +"-workspace"+$rand
+    #        $GetLogAnalyticsWorkspace = New-AzOperationalInsightsWorkspace -Location $AzDCLocation -Name $workspaceName -Sku Standard -ResourceGroupName $GetResourceGroup.ResourceGroupName
+    #        Write-Host "Using log analytics workspace : "$GetLogAnalyticsWorkspace.Name
+    #        Write-Host "Enabling Azure Sentinel for the Landing Zone log analytics workspace"
+    #        Set-AzSentinel -WorkspaceName $workspaceName
+    #        Write-Host "Sentinel is now enabled"
+    #    }
+    #    else {
+    #        Write-Host "Do you want to deploy and configure Azure Log Analytics for this subscription (required for integration with DIGIT-S)"
+    #        $param = read-Host "enter y or n (default No)"
+    #        if($param -Like "y") {
+    #            Write-Host "Creating new log analytics workspace in the Secure Landing Zone"
+    #            $rand = Get-Random -Minimum 1000000 -Maximum 9999999999
+    #            $workspaceName = $name +"-workspace"+$rand
+    #            $GetLogAnalyticsWorkspace = New-AzOperationalInsightsWorkspace -Location $AzDCLocation -Name $workspaceName -Sku Standard -ResourceGroupName $GetResourceGroup.ResourceGroupName
+    #            Write-Host "Using log analytics workspace : "$GetLogAnalyticsWorkspace.Name
+    #            Write-Host "Enabling Azure Sentinel for the Landing Zone log analytics workspace"
+    #            Set-AzSentinel -WorkspaceName $workspaceName
+    #            Write-Host "Sentinel is now enabled"
+    #        }
+    #    }
+    #}
+    #else{
+    #    Write-Host "Using log analytics workspace : "$GetLogAnalyticsWorkspace.Name
+    #}
 
-    Write-Host "Checking event-hub namespace in the Secure Landing Zone" -ForegroundColor Yellow
-    if(!($GetEventHubNamespace = Get-AzEventHubNameSpace -ResourceGroupName $GetResourceGroup.ResourceGroupName | Where-Object {$_.Name -Like "$name*"})){
-        if($SOC -like "CERTEU"){
-            Write-Host "Creating new event-hub namespace in the Secure Landing Zone"
-            $rand = Get-Random -Minimum 1000000 -Maximum 9999999999
-            $eventHubNamespace= $name +"-ehns"+$rand
-            $GetEventHubNamespace = New-AzEventHubNamespace -ResourceGroupName $GetResourceGroup.ResourceGroupName -Name $eventHubNamespace -Location $AzDCLocation
-            Write-Host "Using event-hub namespace : "$GetEventHubNamespace.Name
-        }
-        else {
-            Write-Host "Do you want to deploy and configure Azure eventHubNameSpace for this subscription (required for integration with CERT-EU)"
-            $param = read-Host "enter y or n (default No)"
-            if($param -Like "y"){
-                    Write-Host "Creating new event-hub namespace in the Secure Landing Zone"
-                    $rand = Get-Random -Minimum 1000000 -Maximum 9999999999
-                    $eventHubNamespace= $name +"-ehns"+$rand
-                    $GetEventHubNamespace = New-AzEventHubNamespace -ResourceGroupName $GetResourceGroup.ResourceGroupName -Name $eventHubNamespace -Location $AzDCLocation
-                    Write-Host "Using event-hub namespace : "$GetEventHubNamespace.Name
-            }
-        }
-    }
-    else{
-            Write-Host "Using event-hub namespace : "$GetEventHubNamespace.Name
-    }
+    #Write-Host "Checking event-hub namespace in the Secure Landing Zone" -ForegroundColor Yellow
+    #if(!($GetEventHubNamespace = Get-AzEventHubNameSpace -ResourceGroupName $GetResourceGroup.ResourceGroupName | Where-Object {$_.Name -Like "$name*"})){
+    #    if($SOC -like "CERTEU"){
+    #        Write-Host "Creating new event-hub namespace in the Secure Landing Zone"
+    #        $rand = Get-Random -Minimum 1000000 -Maximum 9999999999
+    #        $eventHubNamespace= $name +"-ehns"+$rand
+    #        $GetEventHubNamespace = New-AzEventHubNamespace -ResourceGroupName $GetResourceGroup.ResourceGroupName -Name $eventHubNamespace -Location $AzDCLocation
+    #        Write-Host "Using event-hub namespace : "$GetEventHubNamespace.Name
+    #    }
+    #    else {
+    #        Write-Host "Do you want to deploy and configure Azure eventHubNameSpace for this subscription (required for integration with CERT-EU)"
+    #        $param = read-Host "enter y or n (default No)"
+    #        if($param -Like "y"){
+    #                Write-Host "Creating new event-hub namespace in the Secure Landing Zone"
+    #                $rand = Get-Random -Minimum 1000000 -Maximum 9999999999
+    #                $eventHubNamespace= $name +"-ehns"+$rand
+    #                $GetEventHubNamespace = New-AzEventHubNamespace -ResourceGroupName $GetResourceGroup.ResourceGroupName -Name $eventHubNamespace -Location $AzDCLocation
+    #                Write-Host "Using event-hub namespace : "$GetEventHubNamespace.Name
+    #        }
+    #    }
+    #}
+    #else{
+    #        Write-Host "Using event-hub namespace : "$GetEventHubNamespace.Name
+    #}
 
     #
     # Checking if Event Hub 'insights-operational-logs' already exists in the event hub namespace
     # If it doesn't exist, create it
     #
-    if($GetEventHubNamespace){
-        Write-Host "Checking Event Hub 'insights-operational-logs' in the Secure Landing Zone" -ForegroundColor Yellow
-        if(!(Get-AzEventHub -ResourceGroupName $GetResourceGroup.ResourceGroupName -Namespace $GetEventHubNamespace.Name | Where-Object {$_.Name -Like "insights-operational-logs"})){
-            Write-Host "No Event Hub for 'insights-operational-logs' found"
-            Write-Host "Creating new Event Hub in the Secure Landing Zone"
-            New-AzEventHub -ResourceGroupName $GetResourceGroup.ResourceGroupName -NamespaceName $GetEventHubNamespace.Name -Name "insights-operational-logs" | Out-Null
-            Write-Host "Created event-hub 'insights-operational-logs'"
-        }
-
-        Write-Host "Checking Access Key 'landingZoneAccessKey' in the Secure Landing Zone" -ForegroundColor Yellow
-        if(!(Get-AzEventHubAuthorizationRule -ResourceGroupName $GetResourceGroup.ResourceGroupName -Namespace $GetEventHubNamespace.Name | Where-Object {$_.Name -like "landingZoneAccessKey"})){
-            Write-Host "No authorization rule called 'landingZoneAccessKey' found"
-            Write-Host "Creating new authorization rule in the Secure Landing Zone"
-            New-AzEventHubAuthorizationRule -ResourceGroupName $GetResourceGroup.ResourceGroupName -Namespace $GetEventHubNamespace.Name -Name "landingZoneAccessKey" -Rights @("Listen","Send","Manage") | Out-Null
-            Write-Host "Created authorization rule 'landingZoneAccessKey'"
-        }
-    }
+    #if($GetEventHubNamespace){
+    #    Write-Host "Checking Event Hub 'insights-operational-logs' in the Secure Landing Zone" -ForegroundColor Yellow
+    #    if(!(Get-AzEventHub -ResourceGroupName $GetResourceGroup.ResourceGroupName -Namespace $GetEventHubNamespace.Name | Where-Object {$_.Name -Like "insights-operational-logs"})){
+    #        Write-Host "No Event Hub for 'insights-operational-logs' found"
+    #        Write-Host "Creating new Event Hub in the Secure Landing Zone"
+    #        New-AzEventHub -ResourceGroupName $GetResourceGroup.ResourceGroupName -NamespaceName $GetEventHubNamespace.Name -Name "insights-operational-logs" | Out-Null
+    #        Write-Host "Created event-hub 'insights-operational-logs'"
+    #    }
+#
+#        Write-Host "Checking Access Key 'landingZoneAccessKey' in the Secure Landing Zone" -ForegroundColor Yellow
+#        if(!(Get-AzEventHubAuthorizationRule -ResourceGroupName $GetResourceGroup.ResourceGroupName -Namespace $GetEventHubNamespace.Name | Where-Object {$_.Name -like "landingZoneAccessKey"})){
+#            Write-Host "No authorization rule called 'landingZoneAccessKey' found"
+#            Write-Host "Creating new authorization rule in the Secure Landing Zone"
+#            New-AzEventHubAuthorizationRule -ResourceGroupName $GetResourceGroup.ResourceGroupName -Namespace $GetEventHubNamespace.Name -Name "landingZoneAccessKey" -Rights @("Listen","Send","Manage") | Out-Null
+#            Write-Host "Created authorization rule 'landingZoneAccessKey'"
+#        }
+#    }
 
     #
     # Checking if an Activity Log Profile exists for the secure Landing Zone
