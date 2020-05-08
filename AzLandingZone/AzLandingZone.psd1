@@ -72,6 +72,7 @@ NestedModules = @(
         '.\functions\Get-AzLandingZone.ps1',
         '.\functions\New-AzLandingZone.ps1',
         '.\functions\Remove-AzLandingZone.ps1',
+        '.\functions\Test-AzLandingZone.ps1',
         '.\functions\Update-AzLandingZone.ps1',
         '.\functions\internal\setup-Resources.ps1',
         '.\functions\internal\setup-Policy.ps1',
