@@ -1,6 +1,7 @@
 Function Setup-Resources {
     param(
-	    [Parameter(Mandatory=$true)][string]$name
+	    [Parameter(Mandatory=$true)][string] $name,
+        [Parameter(Mandatory=$true)][string] $location
     )
     
     #
@@ -17,7 +18,7 @@ Function Setup-Resources {
         Write-Host "No Resource Group for Secure Landing Zone found"
         Write-Host "Creating a new Resource Group for the Secure Landing Zone"
         $resourceGroupName = $name + "_rg"
-        $GetResourceGroup = New-AzResourceGroup -Name $resourceGroupName -Location $AzDCLocation
+        $GetResourceGroup = New-AzResourceGroup -Name $resourceGroupName -Location $location
     }
     Write-Host "Using Resource Group : "$GetResourceGroup.ResourceGroupName
 
