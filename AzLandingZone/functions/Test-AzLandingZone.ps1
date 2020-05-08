@@ -1,6 +1,6 @@
 Function Test-AzLandingZone {
-    $username = [Environment]::Username
-    $user = Get-AzAdUser | Where-Object {$_.DisplayName -Like "$username"}
+    $username = ([Environment]::Username).Replace("_",".")
+    $user = Get-AzAdUser | Where-Object {$_.UserPrincipalName -Like "$username*"}
 
     if($user.Count -ne 1){
         Write-Host "Impossible to identify the current user. Make sure the display name of your user is unique."
