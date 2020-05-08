@@ -3,7 +3,7 @@ Function New-AzLandingZone {
         [ValidateSet("DIGIT", "CERTEU", "None")]
         [string] $SOC,
         [Parameter(Mandatory=$true)]
-        [bool] $autoupdate
+        [bool] $autoupdate,
         [ValidateSet("westeurope", "northeurope", "francecentral", "germanywestcentral")]
         [string] $location
     )
