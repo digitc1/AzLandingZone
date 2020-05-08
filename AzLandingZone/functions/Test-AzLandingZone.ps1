@@ -1,4 +1,7 @@
 Function Test-AzLandingZone {
+     [cmdletbinding()]
+    Param()
+    
     $username = ([Environment]::Username).Replace("_",".")
     $user = Get-AzAdUser | Where-Object {$_.UserPrincipalName -Like "$username*"}
 
