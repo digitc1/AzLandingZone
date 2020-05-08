@@ -80,6 +80,7 @@ NestedModules = @(
         '.\functions\internal\setup-Lighthouse.ps1',
         '.\functions\internal\setup-Prerequisites.ps1',
         '.\functions\internal\setup-Automation.ps1',
+        '.\functions\internal\setup-Storage.ps1',
         '.\functions\internal\setup-LogPipeline.ps1',
         '.\functions\internal\tmp.ps1'
     )
