@@ -62,7 +62,7 @@ Function setup-Policy {
     Invoke-WebRequest -Uri "$definitionParametersv1URI" -OutFile $HOME/parameters.json
     Invoke-WebRequest -Uri "$definitionListv1URI" -OutFile $HOME/definitionList.txt
 
-    Get-Content -Path $HOME/definitionList.txt | ForEAch-Object {
+    Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
             $policyName = "SLZ-" + $_.Split(',')[0] + "1"
             $policyVersion = $_.Split(',')[1]
             $policyLink = $_.Split(',')[2]
@@ -82,21 +82,21 @@ Function setup-Policy {
                             }
                             Remove-AzPolicyAssignment -Name $policyName -Scope $scope | Out-Null
                             Remove-AzPolicyDefinition -Name $policyName -Force | Out-Null
-                            Invoke-WebRequest -Uri $policyLink -OutFile $HOME/rules.json
+                            Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
                             $metadata = '{"version":"'+$policyVersion+'"}'
-                            $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/rules.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
+                            $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
                             New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location -region $location -storageAccountId $GetStorageAccount.Id | Out-Null
-                            Remove-Item -Path $HOME/rules.json
+                            Remove-Item -Path $HOME/$policyName.json
                             Write-Host "Updated : $policyName"
                     }
             }
             else{
                     Write-Host "Create the new policy"
-                    Invoke-WebRequest -Uri $policyLink -OutFile $HOME/rules.json
+                    Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
                     $metadata = '{"version":"'+$policyVersion+'"}'
-                    $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/rules.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
+                    $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
                     New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location -region $location -storageAccountId $GetStorageAccount.Id | Out-Null
-                    Remove-Item -Path $HOME/rules.json
+                    Remove-Item -Path $HOME/$policyName.json
                     Write-Host "Created : $policyName"
             }
     }
