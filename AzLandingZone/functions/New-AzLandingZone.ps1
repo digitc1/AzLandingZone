@@ -33,6 +33,6 @@ Function New-AzLandingZone {
 
     setup-Policy -Name $name
 
-    setup-Lighthouse
+    setup-Lighthouse -SOC $SOC
 }
 Export-ModuleMember -Function New-AzLandingZone
