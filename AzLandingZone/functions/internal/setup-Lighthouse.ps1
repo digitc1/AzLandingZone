@@ -3,6 +3,9 @@ Function setup-Lighthouse {
             [ValidateSet("DIGIT", "CERTEU", "None", "")]
             [string] $SOC
     )
+
+    $delegatedResourceManagementURI = ""
+    $delegatedResourceManagementparametersURI = ""
     #
     # Get the list of children for the management group
     #
@@ -44,15 +47,12 @@ Function setup-Lighthouse {
     #
         if($SOC -eq "DIGIT"){
                 if(!(Get-AzManagedServicesDefinition | Where-Object {$_.Properties.ManagedByTenantId -Like "3a8968a8-fbcf-4414-8b5c-77255f50f37b"})){
-                        Write-Host "No delegated access for DIGIT S found. Setup delegated access for DIGIT S ?"
-                        $param = read-Host "enter y or n (default No)"
-                        if($param -Like "y"){
-                                New-AzDeployment -Name LightHouse -Location westeurope -TemplateFile ./templates/delegatedResourceManagement.json -TemplateParameterFile ./templates/delegatedResourceManagement.parameters.json | Out-Null
-                                Write-Host "Delegation created for DIGIT S"
-                        }
-                }
-                else{
-                        Write-Host "Delegated access is already configured." -ForegroundColor "Yellow"
+                        Invoke-WebRequest -Uri $delegatedResourceManagementURI -OutFile $HOME/delegatedResourceManagement.json
+                        Invoke-WebRequest -Uri $delegatedResourceManagementURI -OutFile $HOME/delegatedResourceManagement.parameters.json
+                        New-AzDeployment -Name LightHouse -Location "westeurope" -TemplateFile $HOME/delegatedResourceManagement.json -TemplateParameterFile $HOME/delegatedResourceManagement.parameters.json | Out-Null
+                        Remove-Item -Path $HOME/delegatedResourceManagement.parameters.json
+                        Remove-Item -Path $HOME/delegatedResourceManagement.json
+                        Write-Host "Delegation created for DIGIT S"
                 }
         }
     }
