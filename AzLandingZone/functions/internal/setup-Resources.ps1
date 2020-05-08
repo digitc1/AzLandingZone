@@ -84,17 +84,6 @@ Function Setup-Resources {
     #}
 
     #
-    # Checking immutability policy for Azure storage account
-    # If storage is not immutable, set immutability to 185 days
-    #
-    Write-Host "Checking immutability policy" -ForegroundColor Yellow
-    if(((Get-AzRmStorageContainerImmutabilityPolicy -StorageAccountName $GetStorageAccount.StorageAccountName -ResourceGroupName $GetResourceGroup.ResourceGroupName -ContainerName "landingzonelogs").ImmutabilityPeriodSinceCreationInDays) -eq 0){
-    Write-Host "No immutability policy found for logs container"
-    Write-Host "Creating immutability policy (default 185 days)"
-    Set-AzRmStorageContainerImmutabilityPolicy -ResourceGroupName $GetResourceGroup.ResourceGroupName -StorageAccountName $GetStorageAccount.StorageAccountName -ContainerName "landingzonelogs" -ImmutabilityPeriod 185 | Out-Null
-    }
-
-    #
     # Checking if Log Analytics workspace already exists in the secure Landing Zone resource group
     # If it doesn't exist, create it
     #
