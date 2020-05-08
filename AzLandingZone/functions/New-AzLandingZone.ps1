@@ -4,6 +4,8 @@ Function New-AzLandingZone {
         [string] $SOC,
         [Parameter(Mandatory=$true)]
         [bool] $autoupdate
+        [ValidateSet("westeurope", "northeurope", "francecentral", "germanywestcentral")]
+        [string] $location
     )
 
     Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
@@ -22,8 +24,11 @@ Function New-AzLandingZone {
     $name = "lzslz"
     $locations = (Get-AzLocation).Location
     $locations += "global"
+    if(!($location) -And !(Get-AzResourceGroup | where-Object {$_.ResourceGroupName -Like "$name*"})){
+        $location = "westeurope"
+    }
 
-    setup-Resources -Name $name
+    setup-Resources -Name $name -Location $location
     setup-Storage -Name $name
     setup-LogPipeline -Name $name -SOC $SOC
 
