@@ -1,4 +1,11 @@
 Function setup-Storage {
+    Param([Parameter(Mandatory=$true)][string]$name)
+    
+    if(!($GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*$name*")){
+            Write-Host "No Resource Group for Secure Landing Zone found"
+            Write-Host "Please run setup script before running the policy script"
+            return 1;
+    }
     #
     # Checking if Storage account for Landing Zone Logs exists in the secure Landing Zone resource group
     # If it doesn't exist, create it
