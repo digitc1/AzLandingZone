@@ -37,12 +37,6 @@ Function Setup-Resources {
     }
     Write-Host "Using Resource Group : "$GetResourceGroup.ResourceGroupName
 
-    workflow RunScripts {
-        parallel {
-            InlineScript { setup-Storage }   
-            InlineScript { setup-LogPipeline }
-        }
-    }
     #
     # Checking if Automation account for secure Landing Zone already exists
     # If it doesn't exist, create it
