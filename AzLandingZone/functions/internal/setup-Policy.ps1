@@ -200,7 +200,7 @@ Function setup-Policy {
     # If not, register
     #
     (Get-AzManagementGroup -GroupName "lz-management-group" -Expand).Children | ForEach-Object {
-            Set-AzContext -SubscriptionId $_.Name
+            Set-AzContext -SubscriptionId $_.Name | Out-Null
             Install-Module -Name Az.Security -Force | Out-Null
             Set-AzSecurityPricing -Name "VirtualMachines" -PricingTier "Standard" | Out-Null
             Set-AzSecurityPricing -Name "SqlServers" -PricingTier "Standard" | Out-Null
