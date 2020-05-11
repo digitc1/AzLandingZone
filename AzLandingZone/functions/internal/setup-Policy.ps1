@@ -215,16 +215,6 @@ Function setup-Policy {
     # Check if the account is registered to use the Azure Security Center
     # If not, register
     #
-    Import-Module Az.Security
-    Write-Host "Checking registration for Microsoft Security" -ForegroundColor Yellow
-    if(!((Get-AzResourceProvider -ProviderNamespace 'Microsoft.Security').RegistrationState[0] -Like "Registered")){
-            Write-Host "Your subscription is not registered for Microsoft Security"
-            Write-Host "Registering for Microsoft Security, this can take couple minutes"
-            Register-AzResourceProvider -ProviderNamespace 'Microsoft.Security'
-            while(!((Get-AzResourceProvider -ProviderNamespace 'Microsoft.Security').RegistrationState[0] -Like "Registered")){
-                    Start-Sleep -s 10
-            }
-    }
     (Get-AzManagementGroup -GroupName "lz-management-group" -Expand).Children | ForEach-Object {
             Set-AzContext -SubscriptionId $_.Name
             Install-Module -Name Az.Security -Force | Out-Null
