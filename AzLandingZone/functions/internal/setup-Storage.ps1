@@ -19,7 +19,6 @@ Function setup-Storage {
         $storName = $name + $rand + "sa"
         $GetStorageAccount = New-AzStorageAccount -ResourceGroupName $GetResourceGroup.ResourceGroupName -Name $storName -Location $GetResourceGroup.Location -SkuName Standard_LRS -Kind StorageV2
     }
-    Write-Host "Using Storage Account : "$GetStorageAccount.StorageAccountName
 
     #
     # Checking if log container for Landing Zone Logs already exists in the secure Landing Zone resource group
