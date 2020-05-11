@@ -1,10 +1,18 @@
 Function Get-AzLandingZone {
     Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
 
+    $definitionListv1URI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2FdefinitionList1.txt&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
+    $definitionListv2URI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2FdefinitionList2.txt&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
+    $definitionListv3URI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2FdefinitionList3.txt&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
+    
     #
     # variables
     #
     $name = "lzslz"
+    $policyCount = 0
+    $policyValid = 0
+    $policyUpdates = 0
+    $policyMissing = 0
 
     #
     # Check resources
@@ -53,6 +61,23 @@ Function Get-AzLandingZone {
 
     if($lzLogAnalyticsWorkspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName $lzResourceGroup.ResourceGroupName) {
         Write-Host "Optional Azure log analytics and Azure Sentinel are properly configured" -ForegroundColor Green
+        
+        Invoke-WebRequest -Uri $definitionListv3URI -OutFile $HOME/definitionList.txt
+        Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
+        $policyName = "SLZ-" + $_.Split(',')[0] + "2"
+        $policyVersion = $_.Split(',')[1]
+        if($policy = Get-AzPolicyAssignment | Where-Object {$_.Name -Like $policyName}){
+            $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
+            if($definition.Properties.metadata.version -eq $policyVersion){
+                $policyValid++
+            }
+            else {
+                $policyUpdates++
+            }
+        }
+        else{
+            $policyMissing++
+        }
     }
     else {
         Write-Host "Optional Azure log analytics and Azure Sentinel are not configured" -ForegroundColor Yellow
@@ -68,6 +93,18 @@ Function Get-AzLandingZone {
     }
     else {
         Write-Host "Optional Azure event-hub is not configured" -ForegroundColor Yellow
+    }
+
+    if($policyMissing -eq 0 -And $policyUpdates -eq 0){
+        Write-Host "$policyCount are up-to-date" -ForegroundColor Green
+    }
+    else{
+        if($policyMissing -ne 0){
+            Write-Host "$policyMissing not implemented" -ForegroundColor Red
+        }
+        if($policyUpdates -ne 0){
+            Write-Host "$policyUpdates policy updates available" -ForegroundColor Yellow
+        }
     }
 }
 Export-ModuleMember -Function Get-AzLandingZone
