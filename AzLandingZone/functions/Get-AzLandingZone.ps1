@@ -54,7 +54,7 @@ Function Get-AzLandingZone {
 
         Invoke-WebRequest -Uri $definitionListv1URI -OutFile $HOME/definitionList.txt
         Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
-            $policyName = "SLZ-" + $_.Split(',')[0] + "2"
+            $policyName = "SLZ-" + $_.Split(',')[0] + "1"
             $policyVersion = $_.Split(',')[1]
             if($policy = Get-AzPolicyAssignment | Where-Object {$_.Name -Like $policyName}){
                 $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
@@ -113,7 +113,7 @@ Function Get-AzLandingZone {
 
         Invoke-WebRequest -Uri $definitionListv3URI -OutFile $HOME/definitionList.txt
         Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
-            $policyName = "SLZ-" + $_.Split(',')[0] + "2"
+            $policyName = "SLZ-" + $_.Split(',')[0] + "3"
             $policyVersion = $_.Split(',')[1]
             if($policy = Get-AzPolicyAssignment | Where-Object {$_.Name -Like $policyName}){
                 $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
