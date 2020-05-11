@@ -71,17 +71,20 @@ RequiredModules = @('AzSentinel',
 NestedModules = @(
         '.\functions\Get-AzLandingZone.ps1',
         '.\functions\New-AzLandingZone.ps1',
+        '.\functions\Onboard-AzLandingZone.ps1',
         '.\functions\Remove-AzLandingZone.ps1',
         '.\functions\Test-AzLandingZone.ps1',
         '.\functions\Update-AzLandingZone.ps1',
-        '.\functions\internal\setup-Resources.ps1',
-        '.\functions\internal\setup-Policy.ps1',
-        '.\functions\internal\setup-RunAs.ps1',
-        '.\functions\internal\setup-Lighthouse.ps1',
-        '.\functions\internal\setup-Prerequisites.ps1',
         '.\functions\internal\setup-Automation.ps1',
-        '.\functions\internal\setup-Storage.ps1',
+        '.\functions\internal\setup-Lighthouse.ps1',
         '.\functions\internal\setup-LogPipeline.ps1',
+        '.\functions\internal\setup-Policy.ps1',
+        '.\functions\internal\setup-Prerequisites.ps1',
+        '.\functions\internal\setup-Resources.ps1',
+        '.\functions\internal\setup-RunAs.ps1',
+        '.\functions\internal\setup-Storage.ps1',
+        '.\functions\internal\setup-Subscription.ps1',
+        '.\functions\internal\setup-SubscriptionContacts.ps1',
         '.\functions\internal\tmp.ps1'
     )
 
@@ -89,6 +92,7 @@ NestedModules = @(
 FunctionsToExport = @(
         'New-AzLandingZone',
         'Get-AzLandingZone',
+        'Onboard-AzLandingZone',
         'Remove-AzLandingZone',
         'Update-AzLandingZone',
         'Test-AzLandingZone'
