@@ -54,24 +54,6 @@ Function Setup-Resources {
         New-AzManagementGroup -GroupName "lz-management-group" -DisplayName "Landing Zone management group" | Out-Null
     }
 
-    $children = (Get-AzManagementGroup -GroupName "lz-management-group" -Expand).Children
-    Get-AzSubscription | ForEach-Object {
-        if ($_.Name -notin $children.DisplayName){
-            if($_.Name -Like "SecLog*"){
-                New-AzManagementGroupSubscription -GroupName "lz-management-group" -SubscriptionId $_.Id
-            }
-            else{
-                Write-Host "Do you want to onboard the following subscription: " $_.Name
-                $param = read-Host "enter y or n (default No)"
-                if($param -Like "y"){
-                    Write-Host "Onboarding the subscription"
-                    New-AzManagementGroupSubscription -GroupName "lz-management-group" -SubscriptionId $_.Id
-                    Write-Host "The following subscription is now part of the Landing Zone: "$_.Name
-                }
-            }
-        }
-    }
-
     #
     # TODO
     # Add owners to the management group in order to avoid loss of control
