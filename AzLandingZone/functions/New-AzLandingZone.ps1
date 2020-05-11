@@ -10,7 +10,7 @@ Function New-AzLandingZone {
 
     Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
 
-    if(!(Test-AzLandingZone)){
+    if(Test-AzLandingZone){
         Write-Host "Pre-requisite for Azure LandingZone are not met."
         Write-Host "Run 'Test-AzLandingZone -verbose' for additional information."
     }
@@ -24,6 +24,7 @@ Function New-AzLandingZone {
     #
     # variables
     #
+    Write-Host "Creating variables and launching creation" -ForegroundColor Yellow
     $subscription = Get-AzSubscription | where-Object {$_.Name -Like "DIGIT_C1*"}
     $context = Set-AzContext -SubscriptionId $subscription.Id
     $name = "lzslz"
