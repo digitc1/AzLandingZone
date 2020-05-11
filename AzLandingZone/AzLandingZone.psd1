@@ -87,12 +87,12 @@ NestedModules = @(
 
 # Fonctions à exporter à partir de ce module. Pour de meilleures performances, n’utilisez pas de caractères génériques et ne supprimez pas l’entrée. Utilisez un tableau vide si vous n’avez aucune fonction à exporter.
 FunctionsToExport = @(
-                        'New-AzLandingZone',
-                        'Get-AzLandingZone',
-                        'Remove-AzLandingZone',
-                        'Update-AzLandingZone',
-                        'Test-AzLandingZone'
-                    )
+        'New-AzLandingZone',
+        'Get-AzLandingZone',
+        'Remove-AzLandingZone',
+        'Update-AzLandingZone',
+        'Test-AzLandingZone'
+    )
 
 # Applets de commande à exporter à partir de ce module. Pour de meilleures performances, n’utilisez pas de caractères génériques et ne supprimez pas l’entrée. Utilisez un tableau vide si vous n’avez aucune applet de commande à exporter.
 CmdletsToExport = @()
