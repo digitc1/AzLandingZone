@@ -20,7 +20,6 @@ Function Update-AzLandingZone {
     if(!(Test-AzLandingZone)){
         Write-Host "Pre-requisite for Azure LandingZone are not met."
         Write-Host "Run 'Test-AzLandingZone -verbose' for additional information."
-        exit
     }
 
     #
