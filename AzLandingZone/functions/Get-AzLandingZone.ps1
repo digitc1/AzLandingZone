@@ -59,7 +59,7 @@ Function Get-AzLandingZone {
             if($policy = Get-AzPolicyAssignment | Where-Object {$_.Name -Like $policyName}){
                 $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
                 if($definition.Properties.metadata.version -eq $policyVersion){
-                    $policyValid++
+                    $policyCount++
                 }
                 else {
                     $policyUpdates++
@@ -87,7 +87,7 @@ Function Get-AzLandingZone {
             if($policy = Get-AzPolicyAssignment | Where-Object {$_.Name -Like $policyName}){
                 $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
                 if($definition.Properties.metadata.version -eq $policyVersion){
-                    $policyValid++
+                    $policyCount++
                 }
                 else {
                     $policyUpdates++
@@ -118,7 +118,7 @@ Function Get-AzLandingZone {
             if($policy = Get-AzPolicyAssignment | Where-Object {$_.Name -Like $policyName}){
                 $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
                 if($definition.Properties.metadata.version -eq $policyVersion){
-                    $policyValid++
+                    $policyCount++
                 }
                 else {
                     $policyUpdates++
