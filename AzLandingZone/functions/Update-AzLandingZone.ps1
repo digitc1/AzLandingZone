@@ -1,10 +1,3 @@
-workflow work {
-    parallel {
-        setup-Storage -Name $name
-        setup-LogPipeline -Name $name -SOC $SOC
-        setup-Lighthouse -SOC $SOC
-    }
-}
 Function Update-AzLandingZone {
     Param(
         [ValidateSet("DIGIT", "CERTEU", "None")]
@@ -41,6 +34,13 @@ Function Update-AzLandingZone {
     }
 
     setup-Resources -Name $name -Location $location
+    workflow work {
+        parallel {
+            setup-Storage -Name $name
+            setup-LogPipeline -Name $name -SOC $SOC
+            setup-Lighthouse -SOC $SOC
+        }
+    }      
     work
 
     if($autoupdate -eq $true) {
