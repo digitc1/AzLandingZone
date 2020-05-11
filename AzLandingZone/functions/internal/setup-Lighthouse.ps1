@@ -10,7 +10,7 @@ Function setup-Lighthouse {
     # Get the list of children for the management group
     #
     (Get-AzManagementGroup -GroupName "lz-management-group" -Expand).Children | ForEach-Object {
-            Set-AzContext -SubscriptionId $_.Name | Out-Null
+            Set-AzContext -SubscriptionId $_.Id | Out-Null
 
             #
             # Set contact email address
