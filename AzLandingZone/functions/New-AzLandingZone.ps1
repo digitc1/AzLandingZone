@@ -28,11 +28,11 @@ Function New-AzLandingZone {
     $subscription = Get-AzSubscription | where-Object {$_.Name -Like "DIGIT_C1*"}
     $context = Set-AzContext -SubscriptionId $subscription.Id
     $name = "lzslz"
-    $locations = (Get-AzLocation).Location
-    $locations += "global"
-    if(!($location) -And !(Get-AzResourceGroup | where-Object {$_.ResourceGroupName -Like "$name*"})){
-        $location = "westeurope"
-    }
+    #$locations = (Get-AzLocation).Location
+    #$locations += "global"
+    #if(!($location) -And !(Get-AzResourceGroup | where-Object {$_.ResourceGroupName -Like "$name*"})){
+    #    $location = "westeurope"
+    #}
 
     setup-Resources -Name $name -Location $location
     setup-Storage -Name $name
