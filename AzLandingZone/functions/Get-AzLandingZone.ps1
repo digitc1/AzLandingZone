@@ -59,14 +59,14 @@ Function Get-AzLandingZone {
             if($policy = Get-AzPolicyAssignment | Where-Object {$_.Name -Like $policyName}){
                 $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
                 if($definition.Properties.metadata.version -eq $policyVersion){
-                    $policyCount++
+                    $policyCount = $policyCount + 1
                 }
                 else {
-                    $policyUpdates++
+                    $policyUpdates = $policyUpdates + 1
                 }
             }
             else{
-                $policyMissing++
+                $policyMissing = $policyMissing + 1
             }
         }
         Remove-Item -Path $HOME/definitionList.txt
@@ -87,14 +87,14 @@ Function Get-AzLandingZone {
             if($policy = Get-AzPolicyAssignment | Where-Object {$_.Name -Like $policyName}){
                 $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
                 if($definition.Properties.metadata.version -eq $policyVersion){
-                    $policyCount++
+                    $policyCount = $policyCount + 1
                 }
                 else {
-                    $policyUpdates++
+                    $policyUpdates = $policyUpdates + 1
                 }
             }
             else{
-                $policyMissing++
+                $policyMissing = $policyMissing + 1
             }
         }
         Remove-Item -Path $HOME/definitionList.txt
@@ -118,14 +118,14 @@ Function Get-AzLandingZone {
             if($policy = Get-AzPolicyAssignment | Where-Object {$_.Name -Like $policyName}){
                 $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
                 if($definition.Properties.metadata.version -eq $policyVersion){
-                    $policyCount++
+                    $policyCount = $policyCount + 1
                 }
                 else {
-                    $policyUpdates++
+                    $policyUpdates = $policyUpdates + 1
                 }
             }
             else{
-                $policyMissing++
+                $policyMissing = $policyMissing + 1
             }
         }
         Remove-Item -Path $HOME/definitionList.txt
