@@ -1,9 +1,3 @@
-#
-# Exit code
-# 0: Landing zone installed and up to date
-# 1: Landing zone installed, updates available
-# 2: Landing zone not installed
-
 Function Get-AzLandingZone {
     Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
     #
