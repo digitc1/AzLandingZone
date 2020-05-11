@@ -10,7 +10,6 @@ Function Get-AzLandingZone {
     #
     $name = "lzslz"
     $policyCount = 0
-    $policyValid = 0
     $policyUpdates = 0
     $policyMissing = 0
 
@@ -52,6 +51,24 @@ Function Get-AzLandingZone {
             Write-Host "Run 'New-AzLandingZone' cmdlet to configure the Landing Zone" -ForegroundColor Red
             return 2
         }
+
+        Invoke-WebRequest -Uri $definitionListv1URI -OutFile $HOME/definitionList.txt
+        Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
+        $policyName = "SLZ-" + $_.Split(',')[0] + "2"
+        $policyVersion = $_.Split(',')[1]
+        if($policy = Get-AzPolicyAssignment | Where-Object {$_.Name -Like $policyName}){
+            $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
+            if($definition.Properties.metadata.version -eq $policyVersion){
+                $policyValid++
+            }
+            else {
+                $policyUpdates++
+            }
+        }
+        else{
+            $policyMissing++
+        }
+        Remove-Item -Path $HOME/definitionList.txt
     }
     else {
         Write-Host "Landing Zone not installed" -ForegroundColor Red
@@ -62,6 +79,36 @@ Function Get-AzLandingZone {
     if($lzLogAnalyticsWorkspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName $lzResourceGroup.ResourceGroupName) {
         Write-Host "Optional Azure log analytics and Azure Sentinel are properly configured" -ForegroundColor Green
         
+        Invoke-WebRequest -Uri $definitionListv2URI -OutFile $HOME/definitionList.txt
+        Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
+        $policyName = "SLZ-" + $_.Split(',')[0] + "2"
+        $policyVersion = $_.Split(',')[1]
+        if($policy = Get-AzPolicyAssignment | Where-Object {$_.Name -Like $policyName}){
+            $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
+            if($definition.Properties.metadata.version -eq $policyVersion){
+                $policyValid++
+            }
+            else {
+                $policyUpdates++
+            }
+        }
+        else{
+            $policyMissing++
+        }
+        Remove-Item -Path $HOME/definitionList.txt
+    }
+    else {
+        Write-Host "Optional Azure log analytics and Azure Sentinel are not configured" -ForegroundColor Yellow
+    }
+
+    if($lzEventHubNamespace = Get-AzEventHubNameSpace -ResourceGroupName $lzResourceGroup.ResourceGroupName | Where-Object {$_.Name -Like "$name*"}) {
+        if((Get-AzEventHub  -ResourceGroupName $lzResourceGroup.ResourceGroupName -Namespace $lzEventHubNamespace.Name | Where-Object {$_.Name -Like "insights-operational-logs"}) -And (Get-AzEventHubAuthorizationRule -ResourceGroupName $lzResourceGroup.ResourceGroupName -Namespace $lzEventHubNamespace.Name | Where-Object {$_.Name -like "landingZoneAccessKey"})){
+            Write-Host "Optional Azure event-hub is properly configured" -ForegroundColor Green
+        }
+        else {
+            Write-Host "Optional Azure event-hub is installed but not properly configured" -ForegroundColor Red
+        }
+
         Invoke-WebRequest -Uri $definitionListv3URI -OutFile $HOME/definitionList.txt
         Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
         $policyName = "SLZ-" + $_.Split(',')[0] + "2"
@@ -78,18 +125,7 @@ Function Get-AzLandingZone {
         else{
             $policyMissing++
         }
-    }
-    else {
-        Write-Host "Optional Azure log analytics and Azure Sentinel are not configured" -ForegroundColor Yellow
-    }
-
-    if($lzEventHubNamespace = Get-AzEventHubNameSpace -ResourceGroupName $lzResourceGroup.ResourceGroupName | Where-Object {$_.Name -Like "$name*"}) {
-        if((Get-AzEventHub  -ResourceGroupName $lzResourceGroup.ResourceGroupName -Namespace $lzEventHubNamespace.Name | Where-Object {$_.Name -Like "insights-operational-logs"}) -And (Get-AzEventHubAuthorizationRule -ResourceGroupName $lzResourceGroup.ResourceGroupName -Namespace $lzEventHubNamespace.Name | Where-Object {$_.Name -like "landingZoneAccessKey"})){
-            Write-Host "Optional Azure event-hub is properly configured" -ForegroundColor Green
-        }
-        else {
-            Write-Host "Optional Azure event-hub is installed but not properly configured" -ForegroundColor Red
-        }
+        Remove-Item -Path $HOME/definitionList.txt
     }
     else {
         Write-Host "Optional Azure event-hub is not configured" -ForegroundColor Yellow
@@ -99,6 +135,7 @@ Function Get-AzLandingZone {
         Write-Host "$policyCount are up-to-date" -ForegroundColor Green
     }
     else{
+        Write-Host "$policyCount are up-to-date" -ForegroundColor Yellow
         if($policyMissing -ne 0){
             Write-Host "$policyMissing not implemented" -ForegroundColor Red
         }
