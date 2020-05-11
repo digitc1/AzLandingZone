@@ -54,19 +54,20 @@ Function Get-AzLandingZone {
 
         Invoke-WebRequest -Uri $definitionListv1URI -OutFile $HOME/definitionList.txt
         Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
-        $policyName = "SLZ-" + $_.Split(',')[0] + "2"
-        $policyVersion = $_.Split(',')[1]
-        if($policy = Get-AzPolicyAssignment | Where-Object {$_.Name -Like $policyName}){
-            $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
-            if($definition.Properties.metadata.version -eq $policyVersion){
-                $policyValid++
+            $policyName = "SLZ-" + $_.Split(',')[0] + "2"
+            $policyVersion = $_.Split(',')[1]
+            if($policy = Get-AzPolicyAssignment | Where-Object {$_.Name -Like $policyName}){
+                $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
+                if($definition.Properties.metadata.version -eq $policyVersion){
+                    $policyValid++
+                }
+                else {
+                    $policyUpdates++
+                }
             }
-            else {
-                $policyUpdates++
+            else{
+                $policyMissing++
             }
-        }
-        else{
-            $policyMissing++
         }
         Remove-Item -Path $HOME/definitionList.txt
     }
@@ -81,19 +82,20 @@ Function Get-AzLandingZone {
         
         Invoke-WebRequest -Uri $definitionListv2URI -OutFile $HOME/definitionList.txt
         Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
-        $policyName = "SLZ-" + $_.Split(',')[0] + "2"
-        $policyVersion = $_.Split(',')[1]
-        if($policy = Get-AzPolicyAssignment | Where-Object {$_.Name -Like $policyName}){
-            $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
-            if($definition.Properties.metadata.version -eq $policyVersion){
-                $policyValid++
+            $policyName = "SLZ-" + $_.Split(',')[0] + "2"
+            $policyVersion = $_.Split(',')[1]
+            if($policy = Get-AzPolicyAssignment | Where-Object {$_.Name -Like $policyName}){
+                $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
+                if($definition.Properties.metadata.version -eq $policyVersion){
+                    $policyValid++
+                }
+                else {
+                    $policyUpdates++
+                }
             }
-            else {
-                $policyUpdates++
+            else{
+                $policyMissing++
             }
-        }
-        else{
-            $policyMissing++
         }
         Remove-Item -Path $HOME/definitionList.txt
     }
@@ -111,19 +113,20 @@ Function Get-AzLandingZone {
 
         Invoke-WebRequest -Uri $definitionListv3URI -OutFile $HOME/definitionList.txt
         Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
-        $policyName = "SLZ-" + $_.Split(',')[0] + "2"
-        $policyVersion = $_.Split(',')[1]
-        if($policy = Get-AzPolicyAssignment | Where-Object {$_.Name -Like $policyName}){
-            $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
-            if($definition.Properties.metadata.version -eq $policyVersion){
-                $policyValid++
+            $policyName = "SLZ-" + $_.Split(',')[0] + "2"
+            $policyVersion = $_.Split(',')[1]
+            if($policy = Get-AzPolicyAssignment | Where-Object {$_.Name -Like $policyName}){
+                $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
+                if($definition.Properties.metadata.version -eq $policyVersion){
+                    $policyValid++
+                }
+                else {
+                    $policyUpdates++
+                }
             }
-            else {
-                $policyUpdates++
+            else{
+                $policyMissing++
             }
-        }
-        else{
-            $policyMissing++
         }
         Remove-Item -Path $HOME/definitionList.txt
     }
