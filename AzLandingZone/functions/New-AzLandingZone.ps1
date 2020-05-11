@@ -10,6 +10,12 @@ Function New-AzLandingZone {
 
     Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
 
+    if(!(Test-AzLandingZone)){
+        Write-Host "Pre-requisite for Azure LandingZone are not met."
+        Write-Host "Run 'Test-AzLandingZone -verbose' for additional information."
+        exit
+    }
+
     #
     # Checking registrations and prerequisites for the Landing Zone
     # Registration can take few minutes
