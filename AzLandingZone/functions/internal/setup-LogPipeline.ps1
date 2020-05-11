@@ -17,7 +17,7 @@ Function setup-LogPipeline {
             if(!($GetLogAnalyticsWorkspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName)){
                 $rand = Get-Random -Minimum 1000000 -Maximum 9999999999
                 $workspaceName = $name +"-workspace"+$rand
-                $GetLogAnalyticsWorkspace = New-AzOperationalInsightsWorkspace -Location $AzDCLocation -Name $workspaceName -Sku Standard -ResourceGroupName $GetResourceGroup.ResourceGroupName
+                $GetLogAnalyticsWorkspace = New-AzOperationalInsightsWorkspace -Location $GetResourceGroup.Location -Name $workspaceName -Sku Standard -ResourceGroupName $GetResourceGroup.ResourceGroupName
                 Set-AzSentinel -WorkspaceName $workspaceName
             }
         }
@@ -37,7 +37,7 @@ Function setup-LogPipeline {
                 if($param -Like "y") {
                     $rand = Get-Random -Minimum 1000000 -Maximum 9999999999
                     $workspaceName = $name +"-workspace"+$rand
-                    $GetLogAnalyticsWorkspace = New-AzOperationalInsightsWorkspace -Location $AzDCLocation -Name $workspaceName -Sku Standard -ResourceGroupName $GetResourceGroup.ResourceGroupName
+                    $GetLogAnalyticsWorkspace = New-AzOperationalInsightsWorkspace -Location $GetResourceGroup.Location -Name $workspaceName -Sku Standard -ResourceGroupName $GetResourceGroup.ResourceGroupName
                     Set-AzSentinel -WorkspaceName $workspaceName
                 }
             }
