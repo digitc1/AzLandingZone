@@ -3,7 +3,7 @@ Function Get-AzLandingZone {
     #
     # Azure modules
     #
-    Install-Module AzSentinel -Force
+    #Install-Module AzSentinel -Force
 
     #
     # variables
