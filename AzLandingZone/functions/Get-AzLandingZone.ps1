@@ -1,8 +1,5 @@
 Function Get-AzLandingZone {
     Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
-    #
-    # Azure modules
-    #
 
     #
     # variables
