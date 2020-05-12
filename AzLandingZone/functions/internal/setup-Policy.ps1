@@ -62,7 +62,7 @@ Function setup-Policy {
     Invoke-WebRequest -Uri "$definitionParametersv1URI" -OutFile $HOME/parameters.json
     Invoke-WebRequest -Uri "$definitionListv1URI" -OutFile $HOME/definitionList.txt
 
-    Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
+    Get-Content -Path $HOME/definitionList.txt | ForEAch-Object {
             $location = (Get-AzResourceGroup -ResourceGroupName "*lzslz*").Location
             $GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*lzslz*"
             $storageAccountId = (Get-AzStorageAccount -ResourceGroupName $GetResourceGroup.ResourceGroupName | Where-Object {$_.StorageAccountName -Like "*lzslz*"}).Id
@@ -104,7 +104,7 @@ Function setup-Policy {
         Invoke-WebRequest -Uri $definitionParametersv2URI -OutFile $HOME/parameters.json
         Invoke-WebRequest -Uri $definitionListv2URI -OutFile $HOME/definitionList.txt
             
-        Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
+        Get-Content -Path $HOME/definitionList.txt | ForEAch-Object {
             $location = (Get-AzResourceGroup -ResourceGroupName "*lzslz*").Location
             $GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*lzslz*"
             $workspaceId = (Get-AzureRmOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName).ResourceId
@@ -155,7 +155,7 @@ Function setup-Policy {
         Invoke-WebRequest -Uri $definitionParametersv3URI -OutFile $HOME/parameters.json
         Invoke-WebRequest -Uri $definitionListv3URI -OutFile $HOME/definitionList.txt
         
-        Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
+        Get-Content -Path $HOME/definitionList.txt | ForEAch-Object {
             $location = (Get-AzResourceGroup -ResourceGroupName "*lzslz*").Location
             $GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*lzslz*"
             $GetEventHubNamespace = Get-AzEventHubNamespace -ResourceGroupName $GetResourceGroup.ResourceGroupName
