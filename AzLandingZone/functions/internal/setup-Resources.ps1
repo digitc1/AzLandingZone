@@ -52,7 +52,6 @@ Function Setup-Resources {
         Write-Host "No management group found"
         Write-Host "Creating the default management group for the Landing Zone"
         New-AzManagementGroup -GroupName "lz-management-group" -DisplayName "Landing Zone management group" | Out-Null
-        New-AzManagementGroupSubscription -GroupName "lz-management-group" -SubscriptionId $subscription.Id | Out-Null
     }
 
     #
