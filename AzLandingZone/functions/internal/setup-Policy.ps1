@@ -33,7 +33,7 @@ Function setup-Policy {
             return 1;
     }
     $location = $GetResourceGroup.Location
-    $scope = ($GetManagementGroup).Id
+    $scope = "/providers/Microsoft.Management/managementGroups/" + ($GetManagementGroup).Id
 
     #
     # Creating policy definition
