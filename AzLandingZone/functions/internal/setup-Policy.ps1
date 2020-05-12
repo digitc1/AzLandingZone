@@ -34,7 +34,6 @@ Function setup-Policy {
     }
     $location = $GetResourceGroup.Location
     $scope = ($GetManagementGroup).Id
-    Write-Host "Scope : $scope"
 
     #
     # Creating policy definition
@@ -42,13 +41,13 @@ Function setup-Policy {
     if(!(Get-AzPolicyAssignment | Where-Object {$_.Name -Like "ASC_Default"})){
             Write-Host "Enabling first monitoring in Azure Security Center" -ForegroundColor Yellow
             $Policy = Get-AzPolicySetDefinition | Where-Object {$_.Properties.displayName -EQ 'Enable Monitoring in Azure Security Center'}
-            New-AzPolicyAssignment -Name "ASC_Default" -DisplayName "Azure Security Center - Default" -PolicySetDefinition $Policy -Scope $scope | Out-Null
+            New-AzPolicyAssignment -Name "ASC_Default" -DisplayName "Azure Security Center - Default" -PolicySetDefinition $Policy -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" | Out-Null
     }
 
     if(!(Get-AzPolicyAssignment | Where-Object {$_.Name -Like "ASC_CIS"})){
             Write-Host "Enabling second monitoring in Azure Security Center" -ForegroundColor Yellow
             $Policy = Get-AzPolicySetDefinition | Where-Object {$_.Properties.displayName -EQ '[Preview]: Audit CIS Microsoft Azure Foundations Benchmark 1.1.0 recommendations and deploy specific supporting VM Extensions'}
-            New-AzPolicyAssignment -Name "ASC_CIS" -DisplayName "Azure Security Center - CIS Compliance" -PolicySetDefinition $Policy -Scope $scope -listOfRegionsWhereNetworkWatcherShouldBeEnabled $location | Out-Null
+            New-AzPolicyAssignment -Name "ASC_CIS" -DisplayName "Azure Security Center - CIS Compliance" -PolicySetDefinition $Policy -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -listOfRegionsWhereNetworkWatcherShouldBeEnabled $location | Out-Null
     }
 
     #if(!(Get-AzPolicyAssignment | Where-Object {$_.Name -Like "Allowed locations"})){
@@ -73,14 +72,14 @@ Function setup-Policy {
             {
                     if(!($GetDefinition.Properties.metadata.version -eq $policyVersion)){
                         if($objectId = (Get-AzRoleAssignment | where-Object {$_.DisplayName -Like $policyName}).ObjectId){
-                                    Remove-AzRoleAssignment -ObjectId $objectId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
+                                    Remove-AzRoleAssignment -ObjectId $objectId -RoleDefinitionName "Contributor" -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" | Out-Null
                             }
-                            Remove-AzPolicyAssignment -Name $policyName -Scope $scope | Out-Null
+                            Remove-AzPolicyAssignment -Name $policyName -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" | Out-Null
                             Remove-AzPolicyDefinition -Name $policyName -Force | Out-Null
                             Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
                             $metadata = '{"version":"'+$policyVersion+'"}'
                             $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
-                            New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location -region $location -storageAccountId $GetStorageAccount.Id | Out-Null
+                            New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location -region $location -storageAccountId $GetStorageAccount.Id | Out-Null
                             Remove-Item -Path $HOME/$policyName.json
                     }
             }
@@ -88,7 +87,7 @@ Function setup-Policy {
                     Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
                     $metadata = '{"version":"'+$policyVersion+'"}'
                     $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
-                    New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location -region $location -storageAccountId $GetStorageAccount.Id | Out-Null
+                    New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location -region $location -storageAccountId $GetStorageAccount.Id | Out-Null
                     Remove-Item -Path $HOME/$policyName.json
             }
     }
@@ -116,14 +115,14 @@ Function setup-Policy {
                     else{
                             Write-Host "$policyName requires update"
                             if($objectId = (Get-AzRoleAssignment | where-Object {$_.DisplayName -Like $policyName}).ObjectId){
-                                Remove-AzRoleAssignment -ObjectId $objectId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
+                                Remove-AzRoleAssignment -ObjectId $objectId -RoleDefinitionName "Contributor" -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" | Out-Null
                             }
-                            Remove-AzPolicyAssignment -Name $policyName -Scope $scope | Out-Null
+                            Remove-AzPolicyAssignment -Name $policyName -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" | Out-Null
                             Remove-AzPolicyDefinition -Name $policyName -Force | Out-Null
                             Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
                             $metadata = '{"version":"'+$policyVersion+'"}'
                             $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
-                            New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location -region $location -workspaceId $GetLogAnalyticsWorkspace.ResourceId | Out-Null
+                            New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location -region $location -workspaceId $GetLogAnalyticsWorkspace.ResourceId | Out-Null
                             Remove-Item -Path $HOME/$policyName.json
                             Write-Host "Updated : $policyName"
                    }
@@ -133,7 +132,7 @@ Function setup-Policy {
                     Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
                     $metadata = '{"version":"'+$policyVersion+'"}'
                     $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
-                    New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location -region $location -workspaceId $GetLogAnalyticsWorkspace.ResourceId | Out-Null
+                    New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location -region $location -workspaceId $GetLogAnalyticsWorkspace.ResourceId | Out-Null
                     Remove-Item -Path $HOME/$policyName.json
                     Write-Host "Created : $policyName"
             }
@@ -160,14 +159,14 @@ Function setup-Policy {
             {
                     if(!($GetDefinition.Properties.metadata.version -eq $policyVersion)){
                         if($objectId = (Get-AzRoleAssignment | where-Object {$_.DisplayName -Like $policyName}).ObjectId){
-                                    Remove-AzRoleAssignment -ObjectId $objectId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
+                                    Remove-AzRoleAssignment -ObjectId $objectId -RoleDefinitionName "Contributor" -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" | Out-Null
                             }
-                            Remove-AzPolicyAssignment -Name $policyName -Scope $scope | Out-Null
+                            Remove-AzPolicyAssignment -Name $policyName -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" | Out-Null
                             Remove-AzPolicyDefinition -Name $policyName -Force | Out-Null
                             Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
                             $metadata = '{"version":"'+$policyVersion+'"}'
                             $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
-                            New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location -region $location -eventHubRuleId $GetEventHubAuthorizationRuleId.Id | Out-Null
+                            New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location -region $location -eventHubRuleId $GetEventHubAuthorizationRuleId.Id | Out-Null
                             Remove-Item -Path $HOME/$policyName.json
                     }
             }
@@ -175,7 +174,7 @@ Function setup-Policy {
                     Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
                     $metadata = '{"version":"'+$policyVersion+'"}'
                     $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
-                    New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location -region $location -eventHubRuleId $GetEventHubAuthorizationRuleId.Id | Out-Null
+                    New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location -region $location -eventHubRuleId $GetEventHubAuthorizationRuleId.Id | Out-Null
                     Remove-Item -Path $HOME/$policyName.json
             }
         }
@@ -191,7 +190,7 @@ Function setup-Policy {
     $GetPolicyAssignment = Get-AzPolicyAssignment | where-object {$_.Name -like "SLZ-*"}
     ForEach ($policyAssignment in $GetPolicyAssignment) {
         if(!(Get-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId)){
-            New-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
+            New-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" | Out-Null
             Write-Host "Created role assignment for: "$policyAssignment.Name
         }
     }
