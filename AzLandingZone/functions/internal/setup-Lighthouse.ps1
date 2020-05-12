@@ -15,7 +15,7 @@ Function setup-Lighthouse {
     if($SOC -eq "DIGIT"){
         if(!(Get-AzManagedServicesDefinition | Where-Object {$_.Properties.ManagedByTenantId -Like "3a8968a8-fbcf-4414-8b5c-77255f50f37b"})){
             Invoke-WebRequest -Uri $delegatedResourceManagementURI -OutFile $HOME/delegatedResourceManagement.json
-            Invoke-WebRequest -Uri $delegatedResourceManagementURI -OutFile $HOME/delegatedResourceManagement.parameters.json
+            Invoke-WebRequest -Uri $delegatedResourceManagementparametersURI -OutFile $HOME/delegatedResourceManagement.parameters.json
             New-AzDeployment -Name LightHouse -Location "westeurope" -TemplateFile $HOME/delegatedResourceManagement.json -TemplateParameterFile $HOME/delegatedResourceManagement.parameters.json | Out-Null
             Remove-Item -Path $HOME/delegatedResourceManagement.parameters.json
             Remove-Item -Path $HOME/delegatedResourceManagement.json
