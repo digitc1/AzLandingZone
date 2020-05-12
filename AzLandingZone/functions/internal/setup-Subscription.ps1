@@ -1,4 +1,5 @@
 Function setup-Subscription {
+    Write-Host "Enabling Azure security center." -ForegroundColor Yellow
     Set-AzSecurityPricing -Name "VirtualMachines" -PricingTier "Standard" | Out-Null
     Set-AzSecurityPricing -Name "SqlServers" -PricingTier "Standard" | Out-Null
     Set-AzSecurityPricing -Name "AppServices" -PricingTier "Standard" | Out-Null
