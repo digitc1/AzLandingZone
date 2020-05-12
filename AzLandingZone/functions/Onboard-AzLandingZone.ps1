@@ -1,7 +1,7 @@
 Function Onboard-AzLandingZone {
     Param(
         [Parameter(Mandatory=$true)][string]$subscription,
-        [ValidateSet("DIGIT", "CERTEU", "None", "")][string] $SOC,
+        [ValidateSet("DIGIT", "CERTEU", "None", "")][string] $SOC
     )
 
     #
