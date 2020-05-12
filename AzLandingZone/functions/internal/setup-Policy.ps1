@@ -63,6 +63,7 @@ Function setup-Policy {
     Invoke-WebRequest -Uri "$definitionListv1URI" -OutFile $HOME/definitionList.txt
 
     Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
+            $location = (Get-AzResourceGroup -ResourceGroupName "*lzslz*").Location
             Write-Host "Location is : $location" -ForegroundColor yellow
             $policyName = "SLZ-" + $_.Split(',')[0] + "1"
             $policyVersion = $_.Split(',')[1]
@@ -99,10 +100,11 @@ Function setup-Policy {
 
     # Loop to create all "SLZ-...........DiagnosticToLogAnalytics" policies if log analytics workspace exists
     if($GetLogAnalyticsWorkspace = Get-AzureRmOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName){
-            Invoke-WebRequest -Uri $definitionParametersv2URI -OutFile $HOME/parameters.json
-            Invoke-WebRequest -Uri $definitionListv2URI -OutFile $HOME/definitionList.txt
+        Invoke-WebRequest -Uri $definitionParametersv2URI -OutFile $HOME/parameters.json
+        Invoke-WebRequest -Uri $definitionListv2URI -OutFile $HOME/definitionList.txt
             
-            Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
+        Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
+            $location = (Get-AzResourceGroup -ResourceGroupName "*lzslz*").Location
             $policyName = "SLZ-" + $_.Split(',')[0] + "2"
             $policyVersion = $_.Split(',')[1]
             $policyLink = $_.Split(',')[2]
@@ -150,7 +152,8 @@ Function setup-Policy {
         Invoke-WebRequest -Uri $definitionParametersv3URI -OutFile $HOME/parameters.json
         Invoke-WebRequest -Uri $definitionListv3URI -OutFile $HOME/definitionList.txt
         
-            Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
+        Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
+            $location = (Get-AzResourceGroup -ResourceGroupName "*lzslz*").Location
             $policyName = "SLZ-" + $_.Split(',')[0] + "3"
             $policyVersion = $_.Split(',')[1]
             $policyLink = $_.Split(',')[2]
@@ -160,25 +163,25 @@ Function setup-Policy {
             $GetDefinition = Get-AzPolicyDefinition | Where-Object {$_.Name -Like $policyName}
             if($GetDefinition)
             {
-                    if(!($GetDefinition.Properties.metadata.version -eq $policyVersion)){
-                        if($objectId = (Get-AzRoleAssignment | where-Object {$_.DisplayName -Like $policyName}).ObjectId){
-                                    Remove-AzRoleAssignment -ObjectId $objectId -RoleDefinitionName "Contributor" -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" | Out-Null
-                            }
-                            Remove-AzPolicyAssignment -Name $policyName -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" | Out-Null
-                            Remove-AzPolicyDefinition -Name $policyName -Force | Out-Null
-                            Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
-                            $metadata = '{"version":"'+$policyVersion+'"}'
-                            $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
-                            New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location -region $location -eventHubRuleId $GetEventHubAuthorizationRuleId.Id | Out-Null
-                            Remove-Item -Path $HOME/$policyName.json
+                if(!($GetDefinition.Properties.metadata.version -eq $policyVersion)){
+                    if($objectId = (Get-AzRoleAssignment | where-Object {$_.DisplayName -Like $policyName}).ObjectId){
+                        Remove-AzRoleAssignment -ObjectId $objectId -RoleDefinitionName "Contributor" -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" | Out-Null
                     }
-            }
-            else{
+                    Remove-AzPolicyAssignment -Name $policyName -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" | Out-Null
+                    Remove-AzPolicyDefinition -Name $policyName -Force | Out-Null
                     Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
                     $metadata = '{"version":"'+$policyVersion+'"}'
                     $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
                     New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location -region $location -eventHubRuleId $GetEventHubAuthorizationRuleId.Id | Out-Null
                     Remove-Item -Path $HOME/$policyName.json
+                }
+            }
+            else{
+                Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
+                $metadata = '{"version":"'+$policyVersion+'"}'
+                $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
+                New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location -region $location -eventHubRuleId $GetEventHubAuthorizationRuleId.Id | Out-Null
+                Remove-Item -Path $HOME/$policyName.json
             }
         }
         Remove-Item -Path $HOME/parameters.json
