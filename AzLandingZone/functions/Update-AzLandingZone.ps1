@@ -34,14 +34,9 @@ Function Update-AzLandingZone {
     }
 
     setup-Resources -Name $name -Location $location
-    workflow work {
-        parallel {
             setup-Storage -Name $name
             setup-LogPipeline -Name $name -SOC $SOC
             setup-Lighthouse -SOC $SOC
-        }
-    }      
-    work
 
     if($autoupdate -eq $true) {
         setup-Automation -Name $name
