@@ -35,6 +35,8 @@ Function setup-Policy {
     $location = $GetResourceGroup.Location
     $scope = ($GetManagementGroup).Id
 
+    Write-Host "Location is : $location" -ForegroundColor Green
+
     #
     # Creating policy definition
     #
@@ -61,6 +63,7 @@ Function setup-Policy {
     Invoke-WebRequest -Uri "$definitionListv1URI" -OutFile $HOME/definitionList.txt
 
     Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
+            Write-Host "Location is : $location" -ForegroundColor yellow
             $policyName = "SLZ-" + $_.Split(',')[0] + "1"
             $policyVersion = $_.Split(',')[1]
             $policyLink = $_.Split(',')[2]
