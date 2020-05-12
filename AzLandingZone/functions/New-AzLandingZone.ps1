@@ -37,13 +37,10 @@ Function New-AzLandingZone {
     setup-Resources -Name $name -Location $location
     setup-Storage -Name $name
     setup-LogPipeline -Name $name -SOC $SOC
-
     if($autoupdate -eq $true) {
         setup-Automation -Name $name
     }
 
     setup-Policy -Name $name
-
-    Onboard-AzLandingZone -SOC $SOC -subscription $subscription.Name
 }
 Export-ModuleMember -Function New-AzLandingZone
