@@ -64,6 +64,7 @@ Function setup-Policy {
 
     Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
             $location = (Get-AzResourceGroup -ResourceGroupName "*lzslz*").Location
+            $GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*lzslz*"
             $storageAccountId = (Get-AzStorageAccount -ResourceGroupName $GetResourceGroup.ResourceGroupName | Where-Object {$_.StorageAccountName -Like "*lzslz*"}).Id
             $policyName = "SLZ-" + $_.Split(',')[0] + "1"
             $policyVersion = $_.Split(',')[1]
@@ -105,6 +106,7 @@ Function setup-Policy {
             
         Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
             $location = (Get-AzResourceGroup -ResourceGroupName "*lzslz*").Location
+            $GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*lzslz*"
             $workspaceId = (Get-AzureRmOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName).ResourceId
             $policyName = "SLZ-" + $_.Split(',')[0] + "2"
             $policyVersion = $_.Split(',')[1]
