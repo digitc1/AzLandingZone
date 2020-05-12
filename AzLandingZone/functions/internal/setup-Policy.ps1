@@ -33,7 +33,8 @@ Function setup-Policy {
             return 1;
     }
     $location = $GetResourceGroup.Location
-    $scope = "/providers/Microsoft.Management/managementGroups/" + ($GetManagementGroup).Id
+    $scope = ($GetManagementGroup).Id
+    Write-Host "Scope : $scope"
 
     #
     # Creating policy definition
@@ -67,7 +68,7 @@ Function setup-Policy {
 
             Write-Host "Checking policy : $policyName" -ForegroundColor Yellow
 
-            $GetDefinition = Get-AzPolicyDefinition | Where-Object {$_.Name -Like $policyName}
+            $GetDefinition = Get-AzPolicyDefinition -ManagementGroupName "lz-management-group" | Where-Object {$_.Name -Like $policyName}
             if($GetDefinition)
             {
                     if(!($GetDefinition.Properties.metadata.version -eq $policyVersion)){
