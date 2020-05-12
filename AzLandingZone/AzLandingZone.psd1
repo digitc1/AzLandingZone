@@ -72,6 +72,7 @@ NestedModules = @(
         '.\functions\Get-AzLandingZone.ps1',
         '.\functions\New-AzLandingZone.ps1',
         '.\functions\Onboard-AzLandingZone.ps1',
+        '.\functions\Remediate-AzLandingZone.ps1',
         '.\functions\Remove-AzLandingZone.ps1',
         '.\functions\Test-AzLandingZone.ps1',
         '.\functions\Update-AzLandingZone.ps1',
@@ -93,6 +94,7 @@ FunctionsToExport = @(
         'New-AzLandingZone',
         'Get-AzLandingZone',
         'Onboard-AzLandingZone',
+        'Remediate-AzLandingZone',
         'Remove-AzLandingZone',
         'Update-AzLandingZone',
         'Test-AzLandingZone'
