@@ -64,7 +64,6 @@ Function setup-Policy {
 
     Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
             $location = (Get-AzResourceGroup -ResourceGroupName "*lzslz*").Location
-            Write-Host "Location is : $location" -ForegroundColor yellow
             $policyName = "SLZ-" + $_.Split(',')[0] + "1"
             $policyVersion = $_.Split(',')[1]
             $policyLink = $_.Split(',')[2]
