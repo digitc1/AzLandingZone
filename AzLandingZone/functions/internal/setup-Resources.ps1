@@ -3,11 +3,11 @@ Function Setup-Resources {
 	    [Parameter(Mandatory=$true)][string] $name,
         [Parameter(Mandatory=$true)][string] $location
     )
-    
+
     #
-    # Azure modules
+    # variables
     #
-    # Install-Module AzSentinel -Force
+    $subscription = Get-AzSubscription | Where-Object {$_.Name -Like "DIGIT_C1*"}
 
     #
     # Checking if Resource Group for secure Landing Zone already exists
@@ -52,6 +52,7 @@ Function Setup-Resources {
         Write-Host "No management group found"
         Write-Host "Creating the default management group for the Landing Zone"
         New-AzManagementGroup -GroupName "lz-management-group" -DisplayName "Landing Zone management group" | Out-Null
+        New-AzManagementGroupSubscription -GroupName "lz-management-group" -SubscriptionId $subscription.Id | Out-Null
     }
 
     #
