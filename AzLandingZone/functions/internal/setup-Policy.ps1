@@ -64,6 +64,7 @@ Function setup-Policy {
 
     Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
             $location = (Get-AzResourceGroup -ResourceGroupName "*lzslz*").Location
+            $storageAccountId = (Get-AzStorageAccount -ResourceGroupName $GetResourceGroup.ResourceGroupName | Where-Object {$_.StorageAccountName -Like "*lzslz*"}).Id
             $policyName = "SLZ-" + $_.Split(',')[0] + "1"
             $policyVersion = $_.Split(',')[1]
             $policyLink = $_.Split(',')[2]
@@ -82,7 +83,7 @@ Function setup-Policy {
                             Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
                             $metadata = '{"version":"'+$policyVersion+'"}'
                             $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
-                            New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location -region $location -storageAccountId $GetStorageAccount.Id | Out-Null
+                            New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location -region $location -storageAccountId $storageAccountId | Out-Null
                             Remove-Item -Path $HOME/$policyName.json
                     }
             }
@@ -90,7 +91,7 @@ Function setup-Policy {
                     Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
                     $metadata = '{"version":"'+$policyVersion+'"}'
                     $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
-                    New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location -region $location -storageAccountId $GetStorageAccount.Id | Out-Null
+                    New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location -region $location -storageAccountId $storageAccountId | Out-Null
                     Remove-Item -Path $HOME/$policyName.json
             }
     }
@@ -104,6 +105,7 @@ Function setup-Policy {
             
         Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
             $location = (Get-AzResourceGroup -ResourceGroupName "*lzslz*").Location
+            $workspaceId = (Get-AzureRmOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName).ResourceId
             $policyName = "SLZ-" + $_.Split(',')[0] + "2"
             $policyVersion = $_.Split(',')[1]
             $policyLink = $_.Split(',')[2]
@@ -126,7 +128,7 @@ Function setup-Policy {
                             Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
                             $metadata = '{"version":"'+$policyVersion+'"}'
                             $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
-                            New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location -region $location -workspaceId $GetLogAnalyticsWorkspace.ResourceId | Out-Null
+                            New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location -region $location -workspaceId $workspaceId | Out-Null
                             Remove-Item -Path $HOME/$policyName.json
                             Write-Host "Updated : $policyName"
                    }
@@ -136,7 +138,7 @@ Function setup-Policy {
                     Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
                     $metadata = '{"version":"'+$policyVersion+'"}'
                     $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
-                    New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location -region $location -workspaceId $GetLogAnalyticsWorkspace.ResourceId | Out-Null
+                    New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location -region $location -workspaceId $workspaceId | Out-Null
                     Remove-Item -Path $HOME/$policyName.json
                     Write-Host "Created : $policyName"
             }
@@ -153,6 +155,9 @@ Function setup-Policy {
         
         Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
             $location = (Get-AzResourceGroup -ResourceGroupName "*lzslz*").Location
+            $GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*lzslz*"
+            $GetEventHubNamespace = Get-AzEventHubNamespace -ResourceGroupName $GetResourceGroup.ResourceGroupName
+            $GetEventHubAuthorizationRuleId = Get-AzEventHubAuthorizationRule -ResourceGroupName $GetResourceGroup.ResourceGroupName -Namespace $GetEventHubNamespace.Name -Name "landingZoneAccessKey"
             $policyName = "SLZ-" + $_.Split(',')[0] + "3"
             $policyVersion = $_.Split(',')[1]
             $policyLink = $_.Split(',')[2]
