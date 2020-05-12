@@ -43,5 +43,7 @@ Function New-AzLandingZone {
     }
 
     setup-Policy -Name $name
+
+    Onboard-AzLandingZone -SOC $SOC -subscription $subscription.Name
 }
 Export-ModuleMember -Function New-AzLandingZone
