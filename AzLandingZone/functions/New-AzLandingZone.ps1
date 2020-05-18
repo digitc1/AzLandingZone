@@ -25,7 +25,7 @@ Function New-AzLandingZone {
     # variables
     #
     Write-Host "Creating variables and launching creation" -ForegroundColor Yellow
-    $subscription = Get-AzSubscription | where-Object {$_.Name -Like "SecLog*"}
+    $subscription = Get-AzSubscription | where-Object {$_.Name -Like "SECLOG*"}
     $context = Set-AzContext -SubscriptionId $subscription.Id
     $name = "lzslz"
     #$locations = (Get-AzLocation).Location
