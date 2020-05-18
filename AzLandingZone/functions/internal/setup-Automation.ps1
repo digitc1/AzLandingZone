@@ -23,7 +23,7 @@ Function setup-Automation {
         return 1;
     }
     $automationAccountName = $name + "Automation"
-    $subscriptionId = (Get-AzSubscription | Where-Object {$_.Name -Like "DIGIT_C1*"}).Id
+    $subscriptionId = (Get-AzSubscription | Where-Object {$_.Name -Like "SECLOG*"}).Id
 
     #
     # Checking Azure automation account for Azure Landing Zone
