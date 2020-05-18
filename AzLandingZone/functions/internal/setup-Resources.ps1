@@ -7,7 +7,7 @@ Function Setup-Resources {
     #
     # variables
     #
-    $subscription = Get-AzSubscription | Where-Object {$_.Name -Like "DIGIT_C1*"}
+    $subscription = Get-AzSubscription | Where-Object {$_.Name -Like "SecLog*"}
 
     #
     # Checking if Resource Group for secure Landing Zone already exists
