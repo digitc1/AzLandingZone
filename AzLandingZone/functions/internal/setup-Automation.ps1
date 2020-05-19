@@ -108,7 +108,7 @@ Function setup-Automation {
     else {
         Write-Host "Checking Azure runbook registration for automation schedule" -ForegroundColor Yellow
         if(!(Get-AzAutomationScheduledRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName | Where-Object {$_.RunbookName -Like "Update-AzLandingZone" -And $_.ScheduleName -Like "lzschedule"})){
-            Register-AzAutomationScheduledRunbook -RunbookName $GetAutomationRunbook. -ScheduleName "lzschedule" -AutomationAccountName $GetAutomationAccount.AutomationAccountName -resourceGroupName $GetResourceGroup.ResourceGroupName | Out-Null
+            Register-AzAutomationScheduledRunbook -RunbookName $GetAutomationRunbook.Name -ScheduleName "lzschedule" -AutomationAccountName $GetAutomationAccount.AutomationAccountName -resourceGroupName $GetResourceGroup.ResourceGroupName | Out-Null
         }
     }
 }
