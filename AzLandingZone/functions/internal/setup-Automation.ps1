@@ -36,7 +36,7 @@ Function setup-Automation {
     # If it doesn't exist, create it
     #
     Write-Host "Checking automation account in the Secure Landing Zone" -ForegroundColor Yellow
-    if(!($GetAutomationAccount = Get-AzAutomationAccount -ResourceGroupName $GetResourceGroup.ResourceGroupName | Where-Object {$_.AutomationAccountName -Like $automationAccountName}})){
+    if(!($GetAutomationAccount = Get-AzAutomationAccount -ResourceGroupName $GetResourceGroup.ResourceGroupName | Where-Object {$_.AutomationAccountName -Like $automationAccountName})){
         Write-Host "No automation account found"
         Write-Host "Creating automation account"
         $GetAutomationAccount = New-AzAutomationAccount -Name $automationAccountName -ResourceGroupName $GetResourceGroup.ResourceGroupName -Location $GetResourceGroup.Location
@@ -104,6 +104,5 @@ Function setup-Automation {
             Register-AzAutomationScheduledRunbook -RunbookName $GetAutomationRunbook. -ScheduleName "lzschedule" -AutomationAccountName $GetAutomationAccount.AutomationAccountName -resourceGroupName $GetResourceGroup.ResourceGroupName | Out-Null
         }
     }
-
 }
 Export-ModuleMember -Function setup-Automation
