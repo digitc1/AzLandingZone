@@ -1,4 +1,4 @@
-Function setup-Automation {
+Function Setup-Automation {
     param(
         [Parameter(Mandatory=$true)][string]$name
     )
@@ -106,4 +106,4 @@ Function setup-Automation {
     }
 
 }
-Export-ModuleMember -Function setup-Automation
+Export-ModuleMember -Function Setup-Automation
