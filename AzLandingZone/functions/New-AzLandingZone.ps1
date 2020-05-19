@@ -34,7 +34,7 @@ Function New-AzLandingZone {
     #    $location = "westeurope"
     #}
 
-    Get-AzContext
+    Get-AzSubscription
     setup-Resources -Name $name -Location $location
     setup-Storage -Name $name
     setup-LogPipeline -Name $name -SOC $SOC
