@@ -58,8 +58,13 @@ Function setup-Automation {
     #
     Write-Host "Checking automation runAs account in the Secure Landing Zone" -ForegroundColor Yellow
     if(!($automationServicePrincipal = Get-AzAdServicePrincipal | Where-Object {$_.DisplayName -Like "*$automationAccountName*"})){
-        Write-Host "No automation RunAs account found"
-        Write-Host "To be created manually"
+        Do
+        {
+            Write-Host "No automation RunAs account found"
+            Write-Host "Create the automation RunAs account manually according to documentation and press any key to continue"
+            $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+        }
+        while (!($automationServicePrincipal = Get-AzAdServicePrincipal | Where-Object {$_.DisplayName -Like "*$automationAccountName*"}))
         #Install-Module -Name "AzureRm.Profile" -Force
         #Install-Module -Name "AzureRm.Resources" -Force
         #$password = ""
