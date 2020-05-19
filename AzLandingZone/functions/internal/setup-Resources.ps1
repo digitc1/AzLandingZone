@@ -7,6 +7,7 @@ Function Setup-Resources {
     #
     # variables
     #
+    Get-AzContext
     $subscription = Get-AzSubscription | Where-Object {$_.Name -Like "SECLOG*"}
 
     #
