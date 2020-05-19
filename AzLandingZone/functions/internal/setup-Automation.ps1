@@ -44,15 +44,6 @@ Function setup-Automation {
     Write-Host "Using Automation Account : "$GetAutomationAccount.AutomationAccountName
 
     #
-    # Checking source control (for read runbooks)
-    #
-    Write-Host "Checking automation account source for additional runbooks" -ForegroundColor Yellow
-    if(!($GetAutomationSourceControl = Get-AzAutomationSourceControl -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName | Where-Object {$_.Name -Like "AzLandingZone"})){
-        $secure = ConvertTo-SecureString -String $token -AsPlainText -Force
-        New-AzAutomationSourceControl -Name "AzLandingZone" -RepoUrl $repoURI -SourceType "VsoGit" -AccessToken $secure -Branch master -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName -FolderPath "/runbooks" -EnableAutoSync | Out-Null
-    }
-
-    #
     # Checking Azure Run As account for Landing Zone automation account
     # If it doesn't exist, create it
     #
@@ -84,6 +75,16 @@ Function setup-Automation {
     }
 
     #
+    # Checking source control (for read runbooks)
+    #
+    Write-Host "Checking automation account source for additional runbooks" -ForegroundColor Yellow
+    if(!($GetAutomationSourceControl = Get-AzAutomationSourceControl -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName | Where-Object {$_.Name -Like "AzLandingZone"})){
+        $secure = ConvertTo-SecureString -String $token -AsPlainText -Force
+        New-AzAutomationSourceControl -Name "AzLandingZone" -RepoUrl $repoURI -SourceType "VsoGit" -AccessToken $secure -Branch master -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName -FolderPath "/runbooks" -EnableAutoSync | Out-Null
+        Start-AzAutomationSourceControlSyncJob -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName -Name "AzLandingZone" | Out-Null
+    }
+
+    #
     # Checking Azure automation schedule
     # If it doesn't exist, create it (default schedule runs once a week)
     #
@@ -102,7 +103,7 @@ Function setup-Automation {
     #
     Write-Host "Checking Azure automation runbook for Azure landing zone" -ForegroundColor Yellow
     if(!($GetAutomationRunbook = Get-AzAutomationRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $GetAutomationAccount.AutomationAccountName | Where-Object {$_.Name -Like "Update-AzLandingZone"})){
-        Write-Host "Error: Runbook not found" -ForegroundColor Red
+        Write-Host "Runbook did not sync yet. Please re-run this script later." -ForegroundColor Red
     }
     else {
         Write-Host "Checking Azure runbook registration for automation schedule" -ForegroundColor Yellow
