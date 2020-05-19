@@ -8,6 +8,10 @@ Function setup-Automation {
     #
     $automationRunbookURI = "https://dev.azure.com/devops0837/6414d3a7-f802-4703-8cd7-9cef7c9a9617/_apis/git/repositories/0707bade-f83f-4a91-bbb6-9a13502def90/items?path=%2FLandingZone%2Fsetup-automation.ps1&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
     $runAsURI = "https://dev.azure.com/devops0837/6414d3a7-f802-4703-8cd7-9cef7c9a9617/_apis/git/repositories/0707bade-f83f-4a91-bbb6-9a13502def90/items?path=%2FLandingZone%2Fsetup-runAs.ps1&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
+    #
+    # TODO:
+    # Provide a token with read access on code repo
+    #
     $token = "kxuyox3celk4uagq2qjsgvldz6us55meya3hgybve22mafquux7a"
     $repoURI = "https://dev.azure.com/devops0837/LandingZonePublic/_git/LandingZonePublic"
     #
@@ -31,7 +35,7 @@ Function setup-Automation {
     # If it doesn't exist, create it
     #
     Write-Host "Checking automation account in the Secure Landing Zone" -ForegroundColor Yellow
-    if(!($GetAutomationAccount = Get-AzAutomationAccount -Name $automationAccountName -ResourceGroupName $GetResourceGroup.ResourceGroupName)){
+    if(!($GetAutomationAccount = Get-AzAutomationAccount -ResourceGroupName $GetResourceGroup.ResourceGroupName | Where-Object {$_.AutomationAccountName -Like $automationAccountName}})){
         Write-Host "No automation account found"
         Write-Host "Creating automation account"
         $GetAutomationAccount = New-AzAutomationAccount -Name $automationAccountName -ResourceGroupName $GetResourceGroup.ResourceGroupName -Location $GetResourceGroup.Location
@@ -43,8 +47,8 @@ Function setup-Automation {
     #
     Write-Host "Checking automation account source for additional runbooks" -ForegroundColor Yellow
     if(!($GetAutomationSourceControl = Get-AzAutomationSourceControl -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName | Where-Object {$_.Name -Like "AzLandingZone"})){
-        $secure = ConvertTo-SecureString -Name $token -AsPlainText -Force
-        New-AzAutomationSourceControl -Name "AzLandingZone" -RepoUrl $repoURI -SourceType "VsoGit" -AccessToken $secure -Branch master -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName -FolderPath "/runbooks" | Out-Null
+        $secure = ConvertTo-SecureString -String $token -AsPlainText -Force
+        New-AzAutomationSourceControl -Name "AzLandingZone" -RepoUrl $repoURI -SourceType "VsoGit" -AccessToken $secure -Branch master -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName -FolderPath "/runbooks" -EnableAutoSync | Out-Null
     }
 
     #
@@ -92,13 +96,12 @@ Function setup-Automation {
     Write-Host "Checking Azure automation runbook for Azure landing zone" -ForegroundColor Yellow
     if(!($GetAutomationRunbook = Get-AzAutomationRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $GetAutomationAccount.AutomationAccountName | Where-Object {$_.Name -Like "Update-AzLandingZone"})){
         Write-Host "Error: Runbook not found" -ForegroundColor Red
-        Register-AzAutomationScheduledRunbook -RunbookName $runbookName -ScheduleName $GetAutomationAccountSchedule.Name -AutomationAccountName $GetAutomationAccount.AutomationAccountName -resourceGroupName $GetResourceGroup.ResourceGroupName | Out-Null
-        Remove-Item -Path "$HOME/automationRunbook.ps1"
     }
-
-    Write-Host "Checking Azure runbook registration for automation schedule" -ForegroundColor Yellow
-    if(!(Get-AzAutomationScheduledRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName | Where-Object {$_.RunbookName -Like "Update-AzLandingZone" -And $_.ScheduleName -Like "lzschedule"})){
-        Register-AzAutomationScheduledRunbook -RunbookName "Update-AzLandingZone" -ScheduleName "lzschedule" -AutomationAccountName $GetAutomationAccount.AutomationAccountName -resourceGroupName $GetResourceGroup.ResourceGroupName | Out-Null
+    else {
+        Write-Host "Checking Azure runbook registration for automation schedule" -ForegroundColor Yellow
+        if(!(Get-AzAutomationScheduledRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName | Where-Object {$_.RunbookName -Like "Update-AzLandingZone" -And $_.ScheduleName -Like "lzschedule"})){
+            Register-AzAutomationScheduledRunbook -RunbookName $GetAutomationRunbook. -ScheduleName "lzschedule" -AutomationAccountName $GetAutomationAccount.AutomationAccountName -resourceGroupName $GetResourceGroup.ResourceGroupName | Out-Null
+        }
     }
 
 }
