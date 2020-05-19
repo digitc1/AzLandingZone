@@ -71,7 +71,7 @@ Function setup-Automation {
     #
     # Assign contributor at management group level #
     #
-    if(!(Get-AzRoleAssignment -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group")){
+    if(!(Get-AzRoleAssignment -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" | Where-Object {$_.ObjectId -Like $automationServicePrincipal.Id})){
         Write-Host "Role for automation is not assigned at management group level"
         New-AzRoleAssignment -ApplicationId $automationServicePrincipal.Id -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -RoleDefinitionName "Contributor" | Out-Null
     }
