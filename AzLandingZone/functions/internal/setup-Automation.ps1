@@ -60,12 +60,12 @@ Function setup-Automation {
     if(!($automationServicePrincipal = Get-AzAdServicePrincipal | Where-Object {$_.DisplayName -Like "*$automationAccountName*"})){
         Write-Host "No automation RunAs account found"
         Write-Host "To be created manually"
-        Install-Module -Name "AzureRm.Profile" -Force
-        Install-Module -Name "AzureRm.Resources" -Force
-        $password = ""
-        0..25 | ForEach-Object {$password = $password + (([char[]]([char]33..[char]95) + ([char[]]([char]97..[char]126)) + 0..9) | Get-Random)}
-        setup-runAs -ResourceGroup $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName -ApplicationDisplayName $automationAccountName -subscriptionId $subscriptionId -createClassicRunAsAccount $false -selfSignedCertPlainPassword $password | Out-Null
-        $automationServicePrincipal = Get-AzAdServicePrincipal | Where-Object {$_.DisplayName -Like "*$automationAccountName*"}
+        #Install-Module -Name "AzureRm.Profile" -Force
+        #Install-Module -Name "AzureRm.Resources" -Force
+        #$password = ""
+        #0..25 | ForEach-Object {$password = $password + (([char[]]([char]33..[char]95) + ([char[]]([char]97..[char]126)) + 0..9) | Get-Random)}
+        #setup-runAs -ResourceGroup $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName -ApplicationDisplayName $automationAccountName -subscriptionId $subscriptionId -createClassicRunAsAccount $false -selfSignedCertPlainPassword $password | Out-Null
+        #$automationServicePrincipal = Get-AzAdServicePrincipal | Where-Object {$_.DisplayName -Like "*$automationAccountName*"}
         #New-AzRoleAssignment -ApplicationId $automationServicePrincipal.Id -Scope $scope -RoleDefinitionName "Contributor"
     }
     Write-Host "Using automation account service principal : "$automationServicePrincipal.DisplayName
