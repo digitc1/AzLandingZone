@@ -176,4 +176,4 @@ Function setup-RunAs {
         Write-Host -ForegroundColor red       $UploadMessage
     }
 }
-Export-ModuleMember -Function setup-RunAs.ps1
+Export-ModuleMember -Function setup-RunAs
