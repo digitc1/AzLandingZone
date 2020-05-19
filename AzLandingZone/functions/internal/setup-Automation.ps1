@@ -12,7 +12,8 @@ Function setup-Automation {
     # TODO:
     # Provide a token with read access on code repo
     #
-    $token = "kxuyox3celk4uagq2qjsgvldz6us55meya3hgybve22mafquux7a"
+    #$token = "kxuyox3celk4uagq2qjsgvldz6us55meya3hgybve22mafquux7a"
+    $token = "hfobtlrxx5cnlcjak5l7bhqwbwfvdwfa7z2u23gjd6wzpllovoxq"
     $repoURI = "https://dev.azure.com/devops0837/LandingZonePublic/_git/LandingZonePublic"
     #
     # Checking variables and requirements
