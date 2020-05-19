@@ -60,22 +60,21 @@ Function setup-Automation {
     if(!($automationServicePrincipal = Get-AzAdServicePrincipal | Where-Object {$_.DisplayName -Like "*$automationAccountName*"})){
         Write-Host "No automation RunAs account found"
         Write-Host "To be created manually"
-        # TODO #
-        # generate password #
-        $randomPassword = "zaefisfndsqdpnfgsdjlflkdsqnf"
-        # TODO #
-        # review Invoke-WebRequest cmdlet #
-        #setup-runAs -ResourceGroup $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName -ApplicationDisplayName $automationAccountName -subscriptionId $subscriptionId -createClassicRunAsAccount $false -selfSignedCertPlainPassword $randomPassword | Out-Null
-        #Invoke-WebRequest -Uri "$runAsURI" -OutFile ./runAs.ps1
-        #./runAs.ps1  -ResourceGroup $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName -ApplicationDisplayName $automationAccountName -subscriptionId $subscriptionId -createClassicRunAsAccount $false -selfSignedCertPlainPassword $randomPassword | Out-Null
-        #$automationServicePrincipal = Get-AzAdServicePrincipal | Where-Object {$_.DisplayName -Like "*$automationAccountName*"}
-        #Remove-Item -Path ./runAs.ps1
+        $randomPassword = ""
+        0..25 | ForEach-Object {$password = $password + (([char[]]([char]33..[char]95) + ([char[]]([char]97..[char]126)) + 0..9) | Get-Random)}
+        setup-runAs -ResourceGroup $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName -ApplicationDisplayName $automationAccountName -subscriptionId $subscriptionId -createClassicRunAsAccount $false -selfSignedCertPlainPassword $randomPassword | Out-Null
+        $automationServicePrincipal = Get-AzAdServicePrincipal | Where-Object {$_.DisplayName -Like "*$automationAccountName*"}
         #New-AzRoleAssignment -ApplicationId $automationServicePrincipal.Id -Scope $scope -RoleDefinitionName "Contributor"
     }
     Write-Host "Using automation account service principal : "$automationServicePrincipal.DisplayName
 
-    # TODO #
+    #
     # Assign contributor at management group level #
+    #
+    if(!(Get-AzRoleAssignment -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group")){
+        Write-Host "Role for automation is not assigned at management group level"
+        New-AzRoleAssignment -ApplicationId $automationServicePrincipal.Id -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -RoleDefinitionName "Contributor" | Out-Null
+    }
 
     #
     # Checking Azure automation schedule
