@@ -25,8 +25,13 @@ Function New-AzLandingZone {
     # variables
     #
     Write-Host "Creating variables and launching creation" -ForegroundColor Yellow
-    $subscription = Get-AzSubscription | where-Object {$_.Name -Like "SECLOG*"}
-    $context = Set-AzContext -SubscriptionId $subscription.Id
+    $context = Get-AzContext
+    if(!($context.Subscription.Name -Like "SECLOG*")){
+        Write-Host "Context is not set to SecLog subscription. Landing Zone resources will be deployed to the current context."
+        Write-Host $context.Subscription.Name
+        Write-Host "Press 'enter' to continue or 'ctrl + C' to cancel the installation."
+        $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    }
     $name = "lzslz"
     #$locations = (Get-AzLocation).Location
     #$locations += "global"
@@ -34,7 +39,6 @@ Function New-AzLandingZone {
     #    $location = "westeurope"
     #}
 
-    Get-AzSubscription
     setup-Resources -Name $name -Location $location
     setup-Storage -Name $name
     setup-LogPipeline -Name $name -SOC $SOC
