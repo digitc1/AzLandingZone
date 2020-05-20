@@ -13,6 +13,10 @@ Function Test-AzLandingZone {
         Write-Verbose -Message "Cannot find SecLog subscription. Make sure you're owner or contributor of SecLog subscription."
         return 1
     }
+    if(!((Get-AzContext).Subscription.Name -Like "SECLOG*")){
+        Write-Verbose -Message "Context is not set to SecLog subscription. Landing Zone resources will be deployed to the current context."
+        Write-Verbose -Message Get-AzContext.Subscription.Name
+    }
     $GetAzRoleAssignment = Get-AzRoleAssignment -scope "/subscriptions/$subscription" | Where-Object {$_.ObjectId -Like $user.Id} | Where-Object {$_.RoleDefinitionName -Like "Contributor" -Or $_.RoleDefinitionName -Like "Owner"}
     if($GetAzRoleAssignment.Count -eq 0) {
         Write-Verbose -Message "Cannot find role assignment for SecLog subscription. Make sure you're owner or contributor of SecLog subscription."
