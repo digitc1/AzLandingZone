@@ -1,20 +1,17 @@
 # Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+This PowerShell modules allows to implement the Landing Zone as define by DIGIT.C1 and DIGIT.S in Azure environments
 
 # Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+1.	Import AzLandingZone module in Azure shell
+- Register-PSRepository -Name "AzLandingZoneRepo" -SourceLocation "https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/publicfeed/nuget/v2" -publishLocation "https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/publicfeed/nuget/v2"
+- Install-Module -Force -Name "AzSentinel"
+- Import-Module AzSentinel
+- Install-Module -Force -Name "Az.Security"
+- Import-Module Az.Security
+- Install-Module -Force -Name "AzLandingZone" -Repository "AzLandingZoneRepo"
+- Import-Module AzLandingZone
+2.	Run the AzLandingZone module
+- New-AzLandingZone -SOC "DIGIT" -autoupdate $true -location "westeurope"
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
-
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
-
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+Additional information available on the wiki page:
+- https://webgate.ec.europa.eu/fpfis/wikis/display/CVTF/Azure+Secure+Landing+Zone
