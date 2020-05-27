@@ -3,7 +3,7 @@ Function Test-AzLandingZone {
     Param()
 
     $username = ([Environment]::Username).Replace("_",".")
-    $user = Get-AzAdUser | Where-Object {$_.UserPrincipalName -Like "$username*"}
+    $user = Get-AzADUser | Where-Object {$_.UserPrincipalName -Like "$username*"}
 
     if($user.Count -ne 1){
         Write-Verbose -Message "Impossible to identify the current user. Make sure the display name of your user is unique."
@@ -17,10 +17,19 @@ Function Test-AzLandingZone {
         Write-Verbose -Message "Context is not set to SecLog subscription. Landing Zone resources will be deployed to the current context."
         Write-Verbose -Message Get-AzContext.Subscription.Name
     }
-    $GetAzRoleAssignment = Get-AzRoleAssignment -scope "/subscriptions/$subscription" | Where-Object {$_.ObjectId -Like $user.Id} | Where-Object {$_.RoleDefinitionName -Like "Contributor" -Or $_.RoleDefinitionName -Like "Owner"}
-    if($GetAzRoleAssignment.Count -eq 0) {
-        Write-Verbose -Message "Cannot find role assignment for SecLog subscription. Make sure you're owner or contributor of SecLog subscription."
-        return 1
+    $GetAzRoleAssignment = Get-AzRoleAssignment -scope "/subscriptions/$subscription" | Where-Object {$_.RoleDefinitionName -Like "Contributor" -Or $_.RoleDefinitionName -Like "Owner"}
+    if(!($GetAzRoleAssignment.DisplayName.Contains($user.DisplayName))) {
+        $groupAssignment = $false
+        $groups = Get-AzADGroup | where-Object {$GetAzRoleAssignment.ObjectId -Contains $_.Id} | ForEach-Object {
+            if((Get-AzADGroupMember -GroupObjectId $_.Id).Id -Contains $user.Id)
+            {
+                $groupAssignment = $true
+            }
+        }
+        if(!($groupAssignment)){
+            Write-Verbose -Message "Cannot find role assignment for SecLog subscription. Make sure you're owner or contributor of SecLog subscription."
+            return 1
+        }
     }
     
     Write-Verbose -Message "Validation successful"
