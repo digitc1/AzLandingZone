@@ -17,12 +17,11 @@ Function Test-AzLandingZone {
         Write-Verbose -Message "Context is not set to SecLog subscription. Landing Zone resources will be deployed to the current context."
         Write-Verbose -Message Get-AzContext.Subscription.Name
     }
-    $GetAzRoleAssignment = Get-AzRoleAssignment -scope "/subscriptions/$subscription" | Where-Object {$_.ObjectId -Like $user.Id} | Where-Object {$_.RoleDefinitionName -Like "Contributor" -Or $_.RoleDefinitionName -Like "Owner"}
     $GetAzRoleAssignment = Get-AzRoleAssignment -scope "/subscriptions/$subscription" | Where-Object {$_.RoleDefinitionName -Like "Contributor" -Or $_.RoleDefinitionName -Like "Owner"}
     if(!($GetAzRoleAssignment.DisplayName.Contains($user.DisplayName))) {
         $groupAssignment = $false
-        $groups = Get-AzADGroup | where-Object {$roles.ObjectId -Contains $_.Id} | ForEach {
-            if((Get-AzADGroupMember -GroupObjectId $_.Id) -Contains $user.Id)
+        $groups = Get-AzADGroup | where-Object {$GetAzRoleAssignment.ObjectId -Contains $_.Id} | ForEach-Object {
+            if((Get-AzADGroupMember -GroupObjectId $_.Id).Id -Contains $user.Id)
             {
                 $groupAssignment = $true
             }
