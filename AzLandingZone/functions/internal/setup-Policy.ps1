@@ -12,7 +12,8 @@ Function setup-Policy {
     $definitionParametersv2URI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2Fparameters2.json&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
     $definitionListv3URI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2FdefinitionList3.txt&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
     $definitionParametersv3URI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2Fparameters3.json&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
-    $definitionSecurityCenter = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2Fdefinition-securityCenter.json&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
+    $definitionSecurityCenterCoverage = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2Fdefinition-securityCenterCompliance.json&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
+    $definitionSecurityCenterAutoProvisioning = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2Fdefinition-securityCenterAutoProvisioning.json&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
 
     #
     # Create variables needed for this script
@@ -39,24 +40,28 @@ Function setup-Policy {
     Write-Host "Location is : $location" -ForegroundColor Green
 
     #
-    # Creating policy definition
+    # Creating policy definition related to Azure Security Center
     #
     if(!(Get-AzPolicyAssignment | Where-Object {$_.Name -Like "ASC_Default"})){
             Write-Host "Enabling first monitoring in Azure Security Center" -ForegroundColor Yellow
             $Policy = Get-AzPolicySetDefinition | Where-Object {$_.Properties.displayName -EQ 'Enable Monitoring in Azure Security Center'}
             New-AzPolicyAssignment -Name "ASC_Default" -DisplayName "Azure Security Center - Default" -PolicySetDefinition $Policy -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" | Out-Null
     }
-
     if(!(Get-AzPolicyAssignment | Where-Object {$_.Name -Like "ASC_CIS"})){
             Write-Host "Enabling second monitoring in Azure Security Center" -ForegroundColor Yellow
             $Policy = Get-AzPolicySetDefinition | Where-Object {$_.Properties.displayName -EQ '[Preview]: Audit CIS Microsoft Azure Foundations Benchmark 1.1.0 recommendations and deploy specific supporting VM Extensions'}
             New-AzPolicyAssignment -Name "ASC_CIS" -DisplayName "Azure Security Center - CIS Compliance" -PolicySetDefinition $Policy -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -listOfRegionsWhereNetworkWatcherShouldBeEnabled $location | Out-Null
     }
-
     if(!(Get-AzPolicyAssignment | where-Object {$_.Name -Like "SLZ-securityCenterCoverage"})){
-        Invoke-WebRequest -Uri $definitionSecurityCenter -OutFile $HOME/rule.json
+        Invoke-WebRequest -Uri $definitionSecurityCenterCoverage -OutFile $HOME/rule.json
         $policyDefinition = New-AzPolicyDefinition -Name "SLZ-securityCenterCoverage" -Policy $HOME/rule.json -ManagementGroupName "lz-management-group"
         New-AzPolicyAssignment -name "SLZ-securityCenterCoverage" -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location | Out-Null
+        Remove-Item -Path $HOME/rule.json
+    }
+    if(!(Get-AzPolicyAssignment | where-Object {$_.Name -Like "SLZ-securityCenterAutoProvisioning"})){
+        Invoke-WebRequest -Uri $definitionSecurityCenterAutoProvisioning -OutFile $HOME/rule.json
+        $policyDefinition = New-AzPolicyDefinition -Name "SLZ-securityCenterAutoProvisioning" -Policy $HOME/rule.json -ManagementGroupName "lz-management-group"
+        New-AzPolicyAssignment -name "SLZ-securityCenterAutoProvisioning" -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location | Out-Null
         Remove-Item -Path $HOME/rule.json
     }
 
