@@ -25,7 +25,8 @@ Function New-AzLandingZone {
     # variables
     #
     Write-Host "Creating variables and launching creation" -ForegroundColor Yellow
-    $context = Get-AzContext
+    $subscription = Get-AzSubscription | where-Object {$_.Name -Like "SECLOG*"}
+    $context = Set-AzContext -subscriptionId $subscription.Id
     if(!($context.Subscription.Name -Like "SECLOG*")){
         Write-Host "Context is not set to SecLog subscription. Landing Zone resources will be deployed to the current context."
         Write-Host $context.Subscription.Name
