@@ -21,7 +21,6 @@ Function Onboard-AzLandingZone {
     }
 
     Set-AzContext -SubscriptionId $GetSubscription.Name | Out-Null
-    setup-Subscription
     setup-SubscriptionContacts -SOC $SOC
     setup-Lighthouse -SOC $SOC
 
