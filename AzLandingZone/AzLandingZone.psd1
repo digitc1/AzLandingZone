@@ -51,9 +51,7 @@ Copyright = '(c) 2020 Augustin Colle. Tous droits réservés.'
 # ProcessorArchitecture = ''
 
 # Modules qui doivent être importés dans l'environnement global préalablement à l'importation de ce module
-RequiredModules = @('AzSentinel',
-                    'Az.Security',
-                    'Az.Automation')
+RequiredModules = @()
 
 # Assemblys qui doivent être chargés préalablement à l'importation de ce module
 # RequiredAssemblies = @()
