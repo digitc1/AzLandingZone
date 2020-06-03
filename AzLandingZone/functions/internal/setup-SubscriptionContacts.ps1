@@ -17,10 +17,10 @@ Function setup-SubscriptionContacts {
     $securityCenterContactParametersURI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2FsecurityCenter%2Fdefinition-securityContact.parameters.json&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
 
     Invoke-WebRequest -Uri $definitionSecurityCenterContactURI -OutFile $HOME/rule.json
-    Invoke-WebRequest -Uri $securityCenterContactURI -OutFile $HOME/parameters.json
+    Invoke-WebRequest -Uri $securityCenterContactParametersURI -OutFile $HOME/parameters.json
 
     if(!($policyDefinition = Get-AzPolicyDefinition | Where-Object {$_.Name -Like "SLZ-securityContact"})){
-        $policyDefinition = New-AzPolicyDefinition -Name "SLZ-securityContact1" -Policy $HOME/rule.json -Parameter $HOME/parameters.json -ManagementGroupName "lz-management-group"
+        $policyDefinition = New-AzPolicyDefinition -Name "SLZ-securityContact" -Policy $HOME/rule.json -Parameter $HOME/parameters.json -ManagementGroupName "lz-management-group"
     }
 
     if(!(Get-AzPolicyAssignment | Where-Object {$_.Name -Like "SLZ-securityContact1"})){
