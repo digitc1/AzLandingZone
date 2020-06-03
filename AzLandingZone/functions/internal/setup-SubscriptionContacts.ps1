@@ -13,8 +13,8 @@ Function setup-SubscriptionContacts {
     #
     # External resources
     #
-    $definitionSecurityCenterContactURI = ""
-    $securityCenterContactParametersURI = ""
+    $definitionSecurityCenterContactURI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2FsecurityCenter%2Fdefinition-securityContact.json&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
+    $securityCenterContactParametersURI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2FsecurityCenter%2Fdefinition-securityContact.parameters.json&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
 
     Invoke-WebRequest -Uri $definitionSecurityCenterContactURI -OutFile $HOME/rule.json
     Invoke-WebRequest -Uri $securityCenterContactURI -OutFile $HOME/parameters.json
