@@ -37,8 +37,6 @@ Function setup-Policy {
     $location = $GetResourceGroup.Location
     $scope = ($GetManagementGroup).Id
 
-    Write-Host "Location is : $location" -ForegroundColor Green
-
     #
     # Creating policy definition related to Azure Security Center
     #
@@ -54,14 +52,14 @@ Function setup-Policy {
     }
     if(!(Get-AzPolicyAssignment | where-Object {$_.Name -Like "SLZ-SCCoverage"})){
         Invoke-WebRequest -Uri $definitionSecurityCenterCoverage -OutFile $HOME/rule.json
-        $policyDefinition = New-AzPolicyDefinition -Name "SLZ-securityCenterCoverage" -Policy $HOME/rule.json -ManagementGroupName "lz-management-group"
-        New-AzPolicyAssignment -name "SLZ-securityCenterCoverage" -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location | Out-Null
+        $policyDefinition = New-AzPolicyDefinition -Name "SLZ-SCCoverage" -Policy $HOME/rule.json -ManagementGroupName "lz-management-group"
+        New-AzPolicyAssignment -name "SLZ-SCCoverage" -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location | Out-Null
         Remove-Item -Path $HOME/rule.json
     }
     if(!(Get-AzPolicyAssignment | where-Object {$_.Name -Like "SLZ-SCAutoProvisioning"})){
         Invoke-WebRequest -Uri $definitionSecurityCenterAutoProvisioning -OutFile $HOME/rule.json
-        $policyDefinition = New-AzPolicyDefinition -Name "SLZ-securityCenterAutoProvisioning" -Policy $HOME/rule.json -ManagementGroupName "lz-management-group"
-        New-AzPolicyAssignment -name "SLZ-securityCenterAutoProvisioning" -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location | Out-Null
+        $policyDefinition = New-AzPolicyDefinition -Name "SLZ-SCAutoProvisioning" -Policy $HOME/rule.json -ManagementGroupName "lz-management-group"
+        New-AzPolicyAssignment -name "SLZ-SCAutoProvisioning" -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location | Out-Null
         Remove-Item -Path $HOME/rule.json
     }
 
