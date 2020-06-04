@@ -52,13 +52,13 @@ Function setup-Policy {
             $Policy = Get-AzPolicySetDefinition | Where-Object {$_.Properties.displayName -EQ '[Preview]: Audit CIS Microsoft Azure Foundations Benchmark 1.1.0 recommendations and deploy specific supporting VM Extensions'}
             New-AzPolicyAssignment -Name "ASC_CIS" -DisplayName "Azure Security Center - CIS Compliance" -PolicySetDefinition $Policy -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -listOfRegionsWhereNetworkWatcherShouldBeEnabled $location | Out-Null
     }
-    if(!(Get-AzPolicyAssignment | where-Object {$_.Name -Like "SLZ-securityCenterCoverage"})){
+    if(!(Get-AzPolicyAssignment | where-Object {$_.Name -Like "SLZ-SCCoverage"})){
         Invoke-WebRequest -Uri $definitionSecurityCenterCoverage -OutFile $HOME/rule.json
         $policyDefinition = New-AzPolicyDefinition -Name "SLZ-securityCenterCoverage" -Policy $HOME/rule.json -ManagementGroupName "lz-management-group"
         New-AzPolicyAssignment -name "SLZ-securityCenterCoverage" -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location | Out-Null
         Remove-Item -Path $HOME/rule.json
     }
-    if(!(Get-AzPolicyAssignment | where-Object {$_.Name -Like "SLZ-securityCenterAutoProvisioning"})){
+    if(!(Get-AzPolicyAssignment | where-Object {$_.Name -Like "SLZ-SCAutoProvisioning"})){
         Invoke-WebRequest -Uri $definitionSecurityCenterAutoProvisioning -OutFile $HOME/rule.json
         $policyDefinition = New-AzPolicyDefinition -Name "SLZ-securityCenterAutoProvisioning" -Policy $HOME/rule.json -ManagementGroupName "lz-management-group"
         New-AzPolicyAssignment -name "SLZ-securityCenterAutoProvisioning" -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location | Out-Null
