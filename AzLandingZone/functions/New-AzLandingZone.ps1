@@ -46,6 +46,7 @@ Function New-AzLandingZone {
         setup-Automation -Name $name
     }
 
+    setup-SubscriptionContacts -SOC $SOC
     setup-Policy -Name $name
 }
 Export-ModuleMember -Function New-AzLandingZone
