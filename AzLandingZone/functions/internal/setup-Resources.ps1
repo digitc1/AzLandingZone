@@ -7,7 +7,6 @@ Function Setup-Resources {
     #
     # variables
     #
-    Get-AzContext
     $subscription = Get-AzSubscription | Where-Object {$_.Name -Like "SECLOG*"}
 
     #
@@ -21,7 +20,6 @@ Function Setup-Resources {
         $resourceGroupName = $name + "_rg"
         $GetResourceGroup = New-AzResourceGroup -Name $resourceGroupName -Location $location
     }
-    Write-Host "Using Resource Group : "$GetResourceGroup.ResourceGroupName
 
     #
     # Checking if an Activity Log Profile exists for the secure Landing Zone
@@ -41,7 +39,6 @@ Function Setup-Resources {
         Write-Host "No lock found on the resource group"
         Write-Host "Applying 'CannotDelete' lock"
         New-AzResourceLock -LockName "LandingZoneLock" -LockLevel CannotDelete -ResourceGroupName $GetResourceGroup.ResourceGroupName -Force | Out-Null
-        Write-Host "Created resource lock on the resource group"
     }
 
     #
