@@ -18,7 +18,6 @@ Function setup-Policy {
     #
     # Create variables needed for this script
     #
-
     if(!($GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*$name*")){
             Write-Host "No Resource Group for Secure Landing Zone found"
             Write-Host "Please run setup script before running the policy script"
@@ -41,19 +40,19 @@ Function setup-Policy {
     # Creating policy definition related to Azure Security Center
     #
     Write-Host "Checking registration for Azure Security Center CIS Benchmark" -ForegroundColor Yellow
-    if(!(Get-AzPolicyAssignment -ManagementGroupName "lz-management-group" | Where-Object {$_.Name -Like "ASC_Default"})){
+    if(!(Get-AzPolicyAssignment -Scope "lz-management-group" | Where-Object {$_.Name -Like "ASC_Default"})){
             Write-Host "Enabling first monitoring in Azure Security Center"
             $Policy = Get-AzPolicySetDefinition | Where-Object {$_.Properties.displayName -EQ 'Enable Monitoring in Azure Security Center'}
             New-AzPolicyAssignment -Name "ASC_Default" -DisplayName "Azure Security Center - Default" -PolicySetDefinition $Policy -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" | Out-Null
     }
     Write-Host "Checking registration for extended Azure Security Center CIS Benchmark" -ForegroundColor Yellow
-    if(!(Get-AzPolicyAssignment -ManagementGroupName "lz-management-group" | Where-Object {$_.Name -Like "ASC_CIS"})){
+    if(!(Get-AzPolicyAssignment -Scope "lz-management-group" | Where-Object {$_.Name -Like "ASC_CIS"})){
             Write-Host "Enabling second monitoring in Azure Security Center"
             $Policy = Get-AzPolicySetDefinition | Where-Object {$_.Properties.displayName -EQ '[Preview]: Audit CIS Microsoft Azure Foundations Benchmark 1.1.0 recommendations and deploy specific supporting VM Extensions'}
             New-AzPolicyAssignment -Name "ASC_CIS" -DisplayName "Azure Security Center - CIS Compliance" -PolicySetDefinition $Policy -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -listOfRegionsWhereNetworkWatcherShouldBeEnabled $location | Out-Null
     }
     Write-Host "Checking policy for Azure Security Center coverage" -ForegroundColor Yellow
-    if(!(Get-AzPolicyAssignment -ManagementGroupName "lz-management-group" | where-Object {$_.Name -Like "SLZ-SCCoverage"})){
+    if(!(Get-AzPolicyAssignment -Scope "lz-management-group" | where-Object {$_.Name -Like "SLZ-SCCoverage"})){
         Write-Host "Enabling Azure Security Center coverage"
         Invoke-WebRequest -Uri $definitionSecurityCenterCoverage -OutFile $HOME/rule.json
         $policyDefinition = New-AzPolicyDefinition -Name "SLZ-SCCoverage" -Policy $HOME/rule.json -ManagementGroupName "lz-management-group"
@@ -61,7 +60,7 @@ Function setup-Policy {
         Remove-Item -Path $HOME/rule.json
     }
     Write-Host "Checking policy for Azure Security Center Auto-provisioning agents" -ForegroundColor Yellow
-    if(!(Get-AzPolicyAssignment -ManagementGroupName "lz-management-group" | where-Object {$_.Name -Like "SLZ-SCAutoProvisioning"})){
+    if(!(Get-AzPolicyAssignment -Scope "lz-management-group" | where-Object {$_.Name -Like "SLZ-SCAutoProvisioning"})){
         Write-Host "Enabling Azure Security Center auto-provisioning"
         Invoke-WebRequest -Uri $definitionSecurityCenterAutoProvisioning -OutFile $HOME/rule.json
         $policyDefinition = New-AzPolicyDefinition -Name "SLZ-SCAutoProvisioning" -Policy $HOME/rule.json -ManagementGroupName "lz-management-group"
