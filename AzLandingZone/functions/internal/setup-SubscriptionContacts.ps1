@@ -23,14 +23,17 @@ Function setup-SubscriptionContacts {
         $policyDefinition = New-AzPolicyDefinition -Name "SLZ-securityContact" -Policy $HOME/rule.json -Parameter $HOME/parameters.json -ManagementGroupName "lz-management-group"
     }
 
+    Write-Host "Checking registration for DIGIT-CLOUD-VIRTUAL-TASK-FORCE@ec.europa.eu as security contact" -ForeGroundColor Yellow
     if(!(Get-AzPolicyAssignment | Where-Object {$_.Name -Like "SLZ-securityContact1"})){
         New-AzPolicyAssignment -name "SLZ-securityContact1" -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location "westeurope" -contactEmail "DIGIT-CLOUD-VIRTUAL-TASK-FORCE@ec.europa.eu" -contactName "default1" | Out-Null
     }
 
     if($SOC -eq "DIGIT"){
+        Write-Host "Checking registration for EC-DIGIT-CSIRC@ec.europa.eu as security contact" -ForeGroundColor Yellow
         if(!(Get-AzPolicyAssignment | Where-Object {$_.Name -Like "SLZ-securityContact2"})){
             New-AzPolicyAssignment -name "SLZ-securityContact2" -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location "westeurope" -contactEmail "EC-DIGIT-CSIRC@ec.europa.eu" -contactName "default2" | Out-Null
         }
+        Write-Host "Checking registration for EC-DIGIT-CLOUDSEC@ec.europa.eu as security contact" -ForeGroundColor Yellow
         if(!(Get-AzPolicyAssignment | Where-Object {$_.Name -Like "SLZ-securityContact3"})){
             New-AzPolicyAssignment -name "SLZ-securityContact3" -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location "westeurope" -contactEmail "EC-DIGIT-CLOUDSEC@ec.europa.eu" -contactName "default3" | Out-Null
         }
