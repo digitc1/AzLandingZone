@@ -40,23 +40,29 @@ Function setup-Policy {
     #
     # Creating policy definition related to Azure Security Center
     #
+    Write-Host "Checking registration for Azure Security Center CIS Benchmark" -ForegroundColor Yellow
     if(!(Get-AzPolicyAssignment | Where-Object {$_.Name -Like "ASC_Default"})){
-            Write-Host "Enabling first monitoring in Azure Security Center" -ForegroundColor Yellow
+            Write-Host "Enabling first monitoring in Azure Security Center"
             $Policy = Get-AzPolicySetDefinition | Where-Object {$_.Properties.displayName -EQ 'Enable Monitoring in Azure Security Center'}
             New-AzPolicyAssignment -Name "ASC_Default" -DisplayName "Azure Security Center - Default" -PolicySetDefinition $Policy -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" | Out-Null
     }
+    Write-Host "Checking registration for extended Azure Security Center CIS Benchmark" -ForegroundColor Yellow
     if(!(Get-AzPolicyAssignment | Where-Object {$_.Name -Like "ASC_CIS"})){
-            Write-Host "Enabling second monitoring in Azure Security Center" -ForegroundColor Yellow
+            Write-Host "Enabling second monitoring in Azure Security Center"
             $Policy = Get-AzPolicySetDefinition | Where-Object {$_.Properties.displayName -EQ '[Preview]: Audit CIS Microsoft Azure Foundations Benchmark 1.1.0 recommendations and deploy specific supporting VM Extensions'}
             New-AzPolicyAssignment -Name "ASC_CIS" -DisplayName "Azure Security Center - CIS Compliance" -PolicySetDefinition $Policy -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -listOfRegionsWhereNetworkWatcherShouldBeEnabled $location | Out-Null
     }
+    Write-Host "Checking policy for Azure Security Center coverage" -ForegroundColor Yellow
     if(!(Get-AzPolicyAssignment | where-Object {$_.Name -Like "SLZ-SCCoverage"})){
+        Write-Host "Enabling Azure Security Center coverage"
         Invoke-WebRequest -Uri $definitionSecurityCenterCoverage -OutFile $HOME/rule.json
         $policyDefinition = New-AzPolicyDefinition -Name "SLZ-SCCoverage" -Policy $HOME/rule.json -ManagementGroupName "lz-management-group"
         New-AzPolicyAssignment -name "SLZ-SCCoverage" -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location | Out-Null
         Remove-Item -Path $HOME/rule.json
     }
+    Write-Host "Checking policy for Azure Security Center Auto-provisioning agents" -ForegroundColor Yellow
     if(!(Get-AzPolicyAssignment | where-Object {$_.Name -Like "SLZ-SCAutoProvisioning"})){
+        Write-Host "Enabling Azure Security Center auto-provisioning"
         Invoke-WebRequest -Uri $definitionSecurityCenterAutoProvisioning -OutFile $HOME/rule.json
         $policyDefinition = New-AzPolicyDefinition -Name "SLZ-SCAutoProvisioning" -Policy $HOME/rule.json -ManagementGroupName "lz-management-group"
         New-AzPolicyAssignment -name "SLZ-SCAutoProvisioning" -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location | Out-Null
@@ -125,7 +131,7 @@ Function setup-Policy {
     
             Write-Host "Checking policy : $policyName" -ForegroundColor Yellow
     
-            $GetDefinition = Get-AzPolicyDefinition | Where-Object {$_.Name -Like $policyName}
+            $GetDefinition = Get-AzPolicyDefinition -ManagementGroupName "lz-management-group" | Where-Object {$_.Name -Like $policyName}
             if($GetDefinition)
             {
                     if($GetDefinition.Properties.metadata.version -eq $policyVersion){
@@ -177,7 +183,7 @@ Function setup-Policy {
 
             Write-Host "Checking policy : $policyName" -ForegroundColor Yellow
 
-            $GetDefinition = Get-AzPolicyDefinition | Where-Object {$_.Name -Like $policyName}
+            $GetDefinition = Get-AzPolicyDefinition -ManagementGroupName "lz-management-group" | Where-Object {$_.Name -Like $policyName}
             if($GetDefinition)
             {
                 if(!($GetDefinition.Properties.metadata.version -eq $policyVersion)){
