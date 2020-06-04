@@ -103,6 +103,7 @@ Function setup-Policy {
                             $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
                             New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location -region $location -storageAccountId $storageAccountId | Out-Null
                             Remove-Item -Path $HOME/$policyName.json
+                            Write-Host "Updated policy: $policyName"
                     }
             }
             else{
@@ -111,6 +112,7 @@ Function setup-Policy {
                     $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
                     New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location -region $location -storageAccountId $storageAccountId | Out-Null
                     Remove-Item -Path $HOME/$policyName.json
+                    Write-Host "Created policy: $policyName"
             }
     }
     Remove-Item -Path $HOME/parameters.json
@@ -134,11 +136,7 @@ Function setup-Policy {
             $GetDefinition = Get-AzPolicyDefinition -ManagementGroupName "lz-management-group" | Where-Object {$_.Name -Like $policyName}
             if($GetDefinition)
             {
-                    if($GetDefinition.Properties.metadata.version -eq $policyVersion){
-                            Write-Host "$policyName already exist and is up-to-date"
-                    }
-                    else{
-                            Write-Host "$policyName requires update"
+                    if(!($GetDefinition.Properties.metadata.version -eq $policyVersion)){
                             if($objectId = (Get-AzRoleAssignment | where-Object {$_.DisplayName -Like $policyName}).ObjectId){
                                 Remove-AzRoleAssignment -ObjectId $objectId -RoleDefinitionName "Contributor" -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" | Out-Null
                             }
@@ -153,7 +151,6 @@ Function setup-Policy {
                    }
             }
             else{
-                    Write-Host "Create the new policy"
                     Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
                     $metadata = '{"version":"'+$policyVersion+'"}'
                     $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
@@ -197,6 +194,7 @@ Function setup-Policy {
                     $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
                     New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location -region $location -eventHubRuleId $GetEventHubAuthorizationRuleId.Id | Out-Null
                     Remove-Item -Path $HOME/$policyName.json
+                    Write-Host "Updated : $policyName"
                 }
             }
             else{
@@ -205,6 +203,7 @@ Function setup-Policy {
                 $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
                 New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location $location -region $location -eventHubRuleId $GetEventHubAuthorizationRuleId.Id | Out-Null
                 Remove-Item -Path $HOME/$policyName.json
+                Write-Host "Created : $policyName"
             }
         }
         Remove-Item -Path $HOME/parameters.json
