@@ -1,5 +1,5 @@
 #
-# Manifeste de module pour le module « AzLandingZone »
+# Manifeste de module pour le module « DevAzLandingZone »
 #
 # Généré par : Augustin Colle
 #

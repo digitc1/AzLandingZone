@@ -41,7 +41,6 @@ Function setup-Automation {
         Write-Host "Creating automation account"
         $GetAutomationAccount = New-AzAutomationAccount -Name $automationAccountName -ResourceGroupName $GetResourceGroup.ResourceGroupName -Location $GetResourceGroup.Location
     }
-    Write-Host "Using Automation Account : "$GetAutomationAccount.AutomationAccountName
 
     #
     # Checking Azure Run As account for Landing Zone automation account
@@ -64,7 +63,6 @@ Function setup-Automation {
         #$automationServicePrincipal = Get-AzAdServicePrincipal | Where-Object {$_.DisplayName -Like "*$automationAccountName*"}
         #New-AzRoleAssignment -ApplicationId $automationServicePrincipal.Id -Scope $scope -RoleDefinitionName "Contributor"
     }
-    Write-Host "Using automation account service principal : "$automationServicePrincipal.DisplayName
 
     #
     # Assign contributor at management group level #

@@ -19,7 +19,7 @@ steps:
 - task: NuGetCommand@2
   inputs:
     command: 'pack'
-    packagesToPack: '$(System.DefaultWorkingDirectory)/AzLandingZone/AzLandingZone.nuspec'
+    packagesToPack: '$(System.DefaultWorkingDirectory)/AzLandingZone/DevAzLandingZone.nuspec'
     versioningScheme: byEnvVar
     versionEnvVar: buildVer
     buildProperties: 'VERSIONHERE=$(buildVer)'
@@ -28,4 +28,4 @@ steps:
     command: 'push'
     packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
     nuGetFeedType: 'internal'
-    publishVstsFeed: '6414d3a7-f802-4703-8cd7-9cef7c9a9617/f001f8f3-a2b7-4333-8ede-11ce014f147d'
+    publishVstsFeed: '6414d3a7-f802-4703-8cd7-9cef7c9a9617/6a3c56f7-797c-4a29-b562-75b5178170f0'
