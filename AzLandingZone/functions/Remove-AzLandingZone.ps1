@@ -41,7 +41,7 @@ Function Remove-AzLandingZone {
                 Get-AzRoleAssignment | Where-Object {$_.DisplayName -Like $GetAutomationServicePrincipal.DisplayName} | Remove-AzRoleAssignment | Out-Null
                 Remove-AzADApplication -ObjectId $GetAutomationServicePrincipal.ObjectId -Force
             }
-            Remove-AzAutomationAccount -ResourceGroupName $GetResourceGroup.ResourceGroupName -Name $GetAutomationAccount.AutomationAccountName
+            Remove-AzAutomationAccount -ResourceGroupName $GetResourceGroup.ResourceGroupName -Name $GetAutomationAccount.AutomationAccountName -Force
         }
         #Remove Azure Sentinel
         #Remove Analytics workspace
