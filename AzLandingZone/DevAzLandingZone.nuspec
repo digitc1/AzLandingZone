@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package >
   <metadata>
-    <id>DevAzLandingZone</id>
+    <id>AzLandingZone</id>
     <version>$VERSIONHERE$</version>
     <authors>Augustin Colle</authors>
     <owners>Augustin Colle</owners>
