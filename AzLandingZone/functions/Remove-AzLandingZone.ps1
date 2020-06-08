@@ -1,5 +1,5 @@
 Function Remove-AzLandingZone {
-    if($GetManagementGroup = Get-AzManagementGroup | Where-Object {$_.Name -Like "lz-management-group"}){
+    if($GetManagementGroup = Get-AzManagementGroup -ErrorAction "silentlyContinue" | Where-Object {$_.Name -Like "lz-management-group"}){
         Write-Host "Removing Landing Zone role assignments at the manamagement group level" -ForegroundColor Yellow
         Get-AzRoleAssignment -Scope $GetManagementGroup.Id | Where-Object {$_.DisplayName -Like "SLZ-*"} | Remove-AzRoleAssignment | Out-Null
         Write-Host "Removing Landing Zone policy assignments at the manamagement group level" -ForegroundColor Yellow
@@ -7,7 +7,8 @@ Function Remove-AzLandingZone {
         Write-Host "Removing Landing Zone policy definition at the manamagement group level" -ForegroundColor Yellow
         Get-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name | Where-Object {$_.Name -Like "SLZ-*"} | Remove-AzPolicyDefinition -Force | Out-Null
         Write-Host "Removing Landing Zone manamagement group" -ForegroundColor Yellow
-        (Get-AzManagementGroup -Expand -GroupName $GetManagementGroup.Name).Children | ForEach-Object {Remove-AzManagementGroupSubscription -GroupName $GetManagementGroup.Name -SubscriptionId ($_.Id.Split("/"))[2]}
+        try{(Get-AzManagementGroup -Expand -GroupName $GetManagementGroup.Name).Children | ForEach-Object {Remove-AzManagementGroupSubscription -GroupName $GetManagementGroup.Name -SubscriptionId ($_.Id.Split("/"))[2]}}
+        catch {} # Could not find any children, nothing to do
         Remove-AzManagementGroup -GroupName $GetManagementGroup.Name
     }
     if($GetManagedServicesDefinition = Get-AzManagedServicesDefinition | Where-Object {$_.Properties.ManagedByTenantId -Like "3a8968a8-fbcf-4414-8b5c-77255f50f37b"}){
