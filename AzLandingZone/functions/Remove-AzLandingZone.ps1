@@ -43,7 +43,7 @@ Function Remove-AzLandingZone {
         Set-AzSecurityPricing -Name "KeyVaults" -PricingTier "Free" | Out-Null             
     }
     
-    if($GetResourceGroup = Get-AzResourceGroup | Where-Object {$_.ResourceGroupName -Like "lzslz*"}){}
+    if($GetResourceGroup = Get-AzResourceGroup | Where-Object {$_.ResourceGroupName -Like "lzslz*"}){
         if($GetResourceLock = Get-AzResourceLock | Where-Object {$_.Name -Like "LandingZoneLock"}){
             Write-Host "Removing Landing Zone resource lock" -ForegroundColor Yellow
             Remove-AzResourceLock -LockId $GetResourceLock.ResourceId -Force | Out-Null
