@@ -27,6 +27,7 @@ Function Remove-AzLandingZone {
     $i = 0
     while($i -ne $GetSecurityContact.Count){
         Set-AzSecurityContact -Name "default$($i+1)" -Email $GetSecurityContact[$i].Email -AlertAdmin -NotifyOnAlert | Out-Null
+        $i=$i+1
     }
     
     Write-Host "Keep Azure security center standard tier ?"
