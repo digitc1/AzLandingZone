@@ -6,7 +6,7 @@ Function Remove-AzLandingZone {
         Get-AzPolicyAssignment -Scope $GetManagementGroup.Id | Where-Object {$_.ResourceName -Like "SLZ-*"} | Remove-AzPolicyAssignment | Out-Null
         # Remove policy definition
         Get-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name | Where-Object {$_.Name -Like "SLZ-*"} | Remove-AzPolicyDefinition -Force | Out-Null
-        # Remove all subscriptions from the resource group
+        # Remove all subscriptions from the management group
         (Get-AzManagementGroup -Expand -GroupName $GetManagementGroup.Name).Children | ForEach-Object {Remove-AzManagementGroupSubscription -GroupName $GetManagementGroup.Name -SubscriptionId ($_.Id.Split("/"))[2]}
         # Delete management group
         Remove-AzManagementGroup -GroupName $GetManagementGroup.Name
@@ -22,15 +22,20 @@ Function Remove-AzLandingZone {
     #Azure security center
     $GetSecurityContact = Get-AzSecurityContact | Where-Object {$_.Email -Like "DIGIT-CLOUD-VIRTUAL-TASK-FORCE@ec.europa.eu" -Or $_.Email -Like "EC-DIGIT-CSIRC@ec.europa.eu" -Or $_.Email -Like "EC-DIGIT-CLOUDSEC@ec.europa.eu"}
     # TO DO - remove security contact
-    Set-AzSecurityPricing -Name "VirtualMachines" -PricingTier "Free" | Out-Null
-    Set-AzSecurityPricing -Name "SqlServers" -PricingTier "Free" | Out-Null
-    Set-AzSecurityPricing -Name "AppServices" -PricingTier "Free" | Out-Null
-    Set-AzSecurityPricing -Name "StorageAccounts" -PricingTier "Free" | Out-Null
-    Set-AzSecurityPricing -Name "KubernetesService" -PricingTier "Free" | Out-Null
-    Set-AzSecurityPricing -Name "SqlServerVirtualMachines" -PricingTier "Free" | Out-Null
-    Set-AzSecurityPricing -Name "ContainerRegistry" -PricingTier "Free" | Out-Null
-    Set-AzSecurityPricing -Name "KeyVaults" -PricingTier "Free" | Out-Null
 
+    Write-Host "Do you want to keep Azure security center"
+    $param = read-Host "enter y or n (default Yes)"
+    if($param -Like "n") {
+       Set-AzSecurityPricing -Name "VirtualMachines" -PricingTier "Free" | Out-Null
+        Set-AzSecurityPricing -Name "SqlServers" -PricingTier "Free" | Out-Null
+        Set-AzSecurityPricing -Name "AppServices" -PricingTier "Free" | Out-Null
+        Set-AzSecurityPricing -Name "StorageAccounts" -PricingTier "Free" | Out-Null
+        Set-AzSecurityPricing -Name "KubernetesService" -PricingTier "Free" | Out-Null
+        Set-AzSecurityPricing -Name "SqlServerVirtualMachines" -PricingTier "Free" | Out-Null
+        Set-AzSecurityPricing -Name "ContainerRegistry" -PricingTier "Free" | Out-Null
+        Set-AzSecurityPricing -Name "KeyVaults" -PricingTier "Free" | Out-Null             
+    }
+    
     if($GetResourceGroup = Get-AzResourceGroup | Where-Object {$_.ResourceGroupName -Like "lzslz*"}){
         if($GetResourceLock = Get-AzResourceLock | Where-Object {$_.Name -Like "LandingZoneLock"}){
             # This one does not work, could not be found
@@ -45,7 +50,13 @@ Function Remove-AzLandingZone {
         }
         #Remove Azure Sentinel
         #Remove Analytics workspace
+        if($GetLogAnalyticsWorkspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName){
+            Remove-AzOperationalInsightsWorkspace -Name $GetLogAnalyticsWorkspace.Name -ResourceGroupName $GetResourceGroup.ResourceGroupName -Force
+        }
         #Remove Event Hub
+        if($GetEventHubNamespace = Get-AzEventHubNamespace -ResourceGroupName $GetResourceGroup.ResourceGroupName){
+            Remove-AzEventHubNamespace -InputObject $GetEventHubNamespace
+        }
     }
 }
 Export-ModuleMember -Function Remove-AzLandingZone
