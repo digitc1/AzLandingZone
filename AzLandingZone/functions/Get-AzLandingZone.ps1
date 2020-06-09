@@ -31,7 +31,8 @@ Function Get-AzLandingZone {
         return 2
     }
     
-    if(Get-AzManagementGroup -GroupName "lz-management-group") {
+    if($GetManagementGroup = Get-AzManagementGroup -GroupName "lz-management-group") {
+        $scope = $GetManagementGroup.Id
         Write-Host "Landing Zone management group properly configured" -ForegroundColor Green
     }
     else {
@@ -53,23 +54,25 @@ Function Get-AzLandingZone {
             return 2
         }
 
-        Invoke-WebRequest -Uri $definitionListv1URI -OutFile $HOME/definitionList.txt
-        Get-Content -Path $HOME/definitionList.txt | ForEAch-Object {
-            $policyName = "SLZ-" + $_.Split(',')[0] + "1"
-            $policyVersion = $_.Split(',')[1]
-            if($policy = Get-AzPolicyAssignment | Where-Object {$_.Name -Like $policyName}){
-                $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
-                if(!($definition.Properties.metadata.version -eq $policyVersion)){
-                    Write-Host "Policy '$policyName' is not up to date" -ForegroundColor Yellow
+        if($scope){
+            Invoke-WebRequest -Uri $definitionListv1URI -OutFile $HOME/definitionList.txt
+            Get-Content -Path $HOME/definitionList.txt | ForEAch-Object {
+                $policyName = "SLZ-" + $_.Split(',')[0] + "1"
+                $policyVersion = $_.Split(',')[1]
+                if($policy = Get-AzPolicyAssignment -Scope $scope| Where-Object {$_.Name -Like $policyName}){
+                    $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
+                    if(!($definition.Properties.metadata.version -eq $policyVersion)){
+                        Write-Host "Policy '$policyName' is not up to date" -ForegroundColor Yellow
+                        $policyStatus = $false
+                    }
+                }
+                else{
+                    Write-Host "Policy '$policyName' does not exist" -ForegroundColor Red
                     $policyStatus = $false
                 }
             }
-            else{
-                Write-Host "Policy '$policyName' does not exist" -ForegroundColor Red
-                $policyStatus = $false
-            }
+            Remove-Item -Path $HOME/definitionList.txt
         }
-        Remove-Item -Path $HOME/definitionList.txt
     }
     else {
         Write-Host "Landing Zone not installed" -ForegroundColor Red
@@ -80,23 +83,25 @@ Function Get-AzLandingZone {
     if($lzLogAnalyticsWorkspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName $lzResourceGroup.ResourceGroupName) {
         Write-Host "Optional Azure log analytics and Azure Sentinel are properly configured" -ForegroundColor Green
         
-        Invoke-WebRequest -Uri $definitionListv2URI -OutFile $HOME/definitionList.txt
-        Get-Content -Path $HOME/definitionList.txt | ForEAch-Object {
-            $policyName = "SLZ-" + $_.Split(',')[0] + "2"
-            $policyVersion = $_.Split(',')[1]
-            if($policy = Get-AzPolicyAssignment | Where-Object {$_.Name -Like $policyName}){
-                $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
-                if(!($definition.Properties.metadata.version -eq $policyVersion)){
-                    Write-Host "Policy '$policyName' is not up to date" -ForegroundColor Yellow
+        if($scope){
+            Invoke-WebRequest -Uri $definitionListv2URI -OutFile $HOME/definitionList.txt
+            Get-Content -Path $HOME/definitionList.txt | ForEAch-Object {
+                $policyName = "SLZ-" + $_.Split(',')[0] + "2"
+                $policyVersion = $_.Split(',')[1]
+                if($policy = Get-AzPolicyAssignment -Scope $scope | Where-Object {$_.Name -Like $policyName}){
+                    $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
+                    if(!($definition.Properties.metadata.version -eq $policyVersion)){
+                        Write-Host "Policy '$policyName' is not up to date" -ForegroundColor Yellow
+                        $policyStatus = $false
+                    }
+                }
+                else{
+                    Write-Host "Policy '$policyName' does not exist" -ForegroundColor Red
                     $policyStatus = $false
                 }
             }
-            else{
-                Write-Host "Policy '$policyName' does not exist" -ForegroundColor Red
-                $policyStatus = $false
-            }
+            Remove-Item -Path $HOME/definitionList.txt
         }
-        Remove-Item -Path $HOME/definitionList.txt
     }
     else {
         Write-Host "Optional Azure log analytics and Azure Sentinel are not configured" -ForegroundColor Yellow
@@ -109,24 +114,25 @@ Function Get-AzLandingZone {
         else {
             Write-Host "Optional Azure event-hub is installed but not properly configured" -ForegroundColor Red
         }
-
-        Invoke-WebRequest -Uri $definitionListv3URI -OutFile $HOME/definitionList.txt
-        Get-Content -Path $HOME/definitionList.txt | ForEAch-Object {
-            $policyName = "SLZ-" + $_.Split(',')[0] + "3"
-            $policyVersion = $_.Split(',')[1]
-            if($policy = Get-AzPolicyAssignment | Where-Object {$_.Name -Like $policyName}){
-                $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
-                if(!($definition.Properties.metadata.version -eq $policyVersion)){
-                    Write-Host "Policy '$policyName' is not up to date" -ForegroundColor Yellow
+        if($scope){
+            Invoke-WebRequest -Uri $definitionListv3URI -OutFile $HOME/definitionList.txt
+            Get-Content -Path $HOME/definitionList.txt | ForEAch-Object {
+                $policyName = "SLZ-" + $_.Split(',')[0] + "3"
+                $policyVersion = $_.Split(',')[1]
+                if($policy = Get-AzPolicyAssignment -Scope $scope | Where-Object {$_.Name -Like $policyName}){
+                    $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
+                    if(!($definition.Properties.metadata.version -eq $policyVersion)){
+                        Write-Host "Policy '$policyName' is not up to date" -ForegroundColor Yellow
+                        $policyStatus = $false
+                    }
+                }
+                else{
+                    Write-Host "Policy '$policyName' does not exist" -ForegroundColor Red
                     $policyStatus = $false
                 }
             }
-            else{
-                Write-Host "Policy '$policyName' does not exist" -ForegroundColor Red
-                $policyStatus = $false
-            }
+            Remove-Item -Path $HOME/definitionList.txt
         }
-        Remove-Item -Path $HOME/definitionList.txt
     }
     else {
         Write-Host "Optional Azure event-hub is not configured" -ForegroundColor Yellow
