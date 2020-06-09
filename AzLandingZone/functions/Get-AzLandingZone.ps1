@@ -1,14 +1,15 @@
 Function Get-AzLandingZone {
     Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
 
-    #$definitionListv1URI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2FdefinitionList1.txt&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
-    #$definitionListv2URI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2FdefinitionList2.txt&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
-    #$definitionListv3URI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2FdefinitionList3.txt&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
+    $definitionListv1URI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2FdefinitionList1.txt&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
+    $definitionListv2URI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2FdefinitionList2.txt&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
+    $definitionListv3URI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2FdefinitionList3.txt&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
     
     #
     # variables
     #
     $name = "lzslz"
+    $policyStatus = $true
     #$policyCount = 0
     #$policyUpdates = 0
     #$policyMissing = 0
@@ -30,7 +31,8 @@ Function Get-AzLandingZone {
         return 2
     }
     
-    if(Get-AzManagementGroup -GroupName "lz-management-group") {
+    if($GetManagementGroup = Get-AzManagementGroup -GroupName "lz-management-group") {
+        $scope = $GetManagementGroup.Id
         Write-Host "Landing Zone management group properly configured" -ForegroundColor Green
     }
     else {
@@ -52,24 +54,25 @@ Function Get-AzLandingZone {
             return 2
         }
 
-#        Invoke-WebRequest -Uri $definitionListv1URI -OutFile $HOME/definitionList.txt
-#        Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
-#            $policyName = "SLZ-" + $_.Split(',')[0] + "1"
-#            $policyVersion = $_.Split(',')[1]
-#            if($policy = Get-AzPolicyAssignment | Where-Object {$_.Name -Like $policyName}){
-#                $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
-#                if($definition.Properties.metadata.version -eq $policyVersion){
-#                    $policyCount = $policyCount + 1
-#                }
-#                else {
-#                    $policyUpdates = $policyUpdates + 1
-#                }
-#            }
-#            else{
-#                $policyMissing = $policyMissing + 1
-#            }
-#        }
-#        Remove-Item -Path $HOME/definitionList.txt
+        if($scope){
+            Invoke-WebRequest -Uri $definitionListv1URI -OutFile $HOME/definitionList.txt
+            Get-Content -Path $HOME/definitionList.txt | ForEAch-Object {
+                $policyName = "SLZ-" + $_.Split(',')[0] + "1"
+                $policyVersion = $_.Split(',')[1]
+                if($policy = Get-AzPolicyAssignment -Scope $scope| Where-Object {$_.Name -Like $policyName}){
+                    $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
+                    if(!($definition.Properties.metadata.version -eq $policyVersion)){
+                        Write-Host "Policy '$policyName' is not up to date" -ForegroundColor Yellow
+                        $policyStatus = $false
+                    }
+                }
+                else{
+                    Write-Host "Policy '$policyName' does not exist" -ForegroundColor Red
+                    $policyStatus = $false
+                }
+            }
+            Remove-Item -Path $HOME/definitionList.txt
+        }
     }
     else {
         Write-Host "Landing Zone not installed" -ForegroundColor Red
@@ -80,24 +83,25 @@ Function Get-AzLandingZone {
     if($lzLogAnalyticsWorkspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName $lzResourceGroup.ResourceGroupName) {
         Write-Host "Optional Azure log analytics and Azure Sentinel are properly configured" -ForegroundColor Green
         
-#        Invoke-WebRequest -Uri $definitionListv1URI -OutFile $HOME/definitionList.txt
-#        Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
-#            $policyName = "SLZ-" + $_.Split(',')[0] + "1"
-#            $policyVersion = $_.Split(',')[1]
-#            if($policy = Get-AzPolicyAssignment | Where-Object {$_.Name -Like $policyName}){
-#                $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
-#                if($definition.Properties.metadata.version -eq $policyVersion){
-#                    $policyCount = $policyCount + 1
-#                }
-#                else {
-#                    $policyUpdates = $policyUpdates + 1
-#                }
-#            }
-#            else{
-#                $policyMissing = $policyMissing + 1
-#            }
-#        }
-#        Remove-Item -Path $HOME/definitionList.txt
+        if($scope){
+            Invoke-WebRequest -Uri $definitionListv2URI -OutFile $HOME/definitionList.txt
+            Get-Content -Path $HOME/definitionList.txt | ForEAch-Object {
+                $policyName = "SLZ-" + $_.Split(',')[0] + "2"
+                $policyVersion = $_.Split(',')[1]
+                if($policy = Get-AzPolicyAssignment -Scope $scope | Where-Object {$_.Name -Like $policyName}){
+                    $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
+                    if(!($definition.Properties.metadata.version -eq $policyVersion)){
+                        Write-Host "Policy '$policyName' is not up to date" -ForegroundColor Yellow
+                        $policyStatus = $false
+                    }
+                }
+                else{
+                    Write-Host "Policy '$policyName' does not exist" -ForegroundColor Red
+                    $policyStatus = $false
+                }
+            }
+            Remove-Item -Path $HOME/definitionList.txt
+        }
     }
     else {
         Write-Host "Optional Azure log analytics and Azure Sentinel are not configured" -ForegroundColor Yellow
@@ -110,41 +114,32 @@ Function Get-AzLandingZone {
         else {
             Write-Host "Optional Azure event-hub is installed but not properly configured" -ForegroundColor Red
         }
-
-#        Invoke-WebRequest -Uri $definitionListv1URI -OutFile $HOME/definitionList.txt
-#        Get-Content -Path $HOME/definitionList.txt | ForEAch-Object -Parallel {
-#            $policyName = "SLZ-" + $_.Split(',')[0] + "1"
-#            $policyVersion = $_.Split(',')[1]
-#            if($policy = Get-AzPolicyAssignment | Where-Object {$_.Name -Like $policyName}){
-#                $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
-#                if($definition.Properties.metadata.version -eq $policyVersion){
-#                    $policyCount = $policyCount + 1
-#                }
-#                else {
-#                    $policyUpdates = $policyUpdates + 1
-#                }
-#            }
-#            else{
-#                $policyMissing = $policyMissing + 1
-#            }
-#        }
-#        Remove-Item -Path $HOME/definitionList.txt
+        if($scope){
+            Invoke-WebRequest -Uri $definitionListv3URI -OutFile $HOME/definitionList.txt
+            Get-Content -Path $HOME/definitionList.txt | ForEAch-Object {
+                $policyName = "SLZ-" + $_.Split(',')[0] + "3"
+                $policyVersion = $_.Split(',')[1]
+                if($policy = Get-AzPolicyAssignment -Scope $scope | Where-Object {$_.Name -Like $policyName}){
+                    $definition = Get-AzPolicyDefinition -Id $policy.Properties.policyDefinitionId
+                    if(!($definition.Properties.metadata.version -eq $policyVersion)){
+                        Write-Host "Policy '$policyName' is not up to date" -ForegroundColor Yellow
+                        $policyStatus = $false
+                    }
+                }
+                else{
+                    Write-Host "Policy '$policyName' does not exist" -ForegroundColor Red
+                    $policyStatus = $false
+                }
+            }
+            Remove-Item -Path $HOME/definitionList.txt
+        }
     }
     else {
         Write-Host "Optional Azure event-hub is not configured" -ForegroundColor Yellow
     }
 
-#    if($policyMissing -eq 0 -And $policyUpdates -eq 0){
-#        Write-Host "$policyCount are up-to-date" -ForegroundColor Green
-#    }
-#    else{
-#        Write-Host "$policyCount are up-to-date" -ForegroundColor Yellow
-#        if($policyMissing -ne 0){
-#            Write-Host "$policyMissing not implemented" -ForegroundColor Red
-#        }
-#        if($policyUpdates -ne 0){
-#            Write-Host "$policyUpdates policy updates available" -ForegroundColor Yellow
-#        }
-#    }
+    if($policyStatus) {
+        Write-Host "Landing Zone policies are created and are up to date" -ForegroundColor "Green"
+    }
 }
 Export-ModuleMember -Function Get-AzLandingZone
