@@ -16,3 +16,4 @@ function Test-AzSecurityCenterTier {
         Write-Host -ForegroundColor Red "[!] Your ASC is not Standard tier. Please enable Standard tier first!"
     }
 }
+Export-ModuleMember -Function Test-AzSecurityCenterTier
