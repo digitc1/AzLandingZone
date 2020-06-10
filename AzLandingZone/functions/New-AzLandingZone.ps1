@@ -48,5 +48,6 @@ Function New-AzLandingZone {
 
     setup-SubscriptionContacts -SOC $SOC
     setup-Policy -Name $name
+    setup-Lighthouse -SOC $SOC
 }
 Export-ModuleMember -Function New-AzLandingZone
