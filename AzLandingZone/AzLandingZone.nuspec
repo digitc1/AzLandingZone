@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>AzLandingZone</id>
+    <version>$VERSIONHERE$</version>
+    <authors>Augustin Colle</authors>
+    <owners>Augustin Colle</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <description>Package created by DIGIT for Azure Landing Zone</description>
+    <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
+    <copyright>Copyright 2020</copyright>
+    <tags>Azure LandingZone DIGIT</tags>
+    <dependencies>
+      <group targetFramework=".NETStandard2.1">
+      </group>
+    </dependencies>
+  </metadata>
+</package>
