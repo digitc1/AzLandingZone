@@ -1,3 +1,40 @@
+Function Get-AzAccessToken {
+    $context = Get-AzContext
+    $profile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
+    $profileClient = New-Object -TypeName Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient -ArgumentList ($profile)
+    $token = $profileClient.AcquireAccessToken($context.Subscription.TenantId)
+    $authHeader = @{
+        'Content-Type'  = 'application/json'
+        'Authorization' = 'Bearer ' + $token.AccessToken
+    }
+
+    return $authHeader
+}
+
+function New-ConnectorConfiguration {
+
+    Param(
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $SubscriptionId
+    )
+        $connnectorCfg = [PSCustomObject]@{
+            name = $SubscriptionId
+            etag = (New-Guid).Guid
+            kind = "AzureSecurityCenter"
+            properties = @{
+                SubscriptionId = $SubscriptionId
+                dataTypes = @{
+                    alerts = @{
+                        state = "Enabled"
+                    }
+                }
+            }
+        }
+    return $connnectorCfg
+}
+
 function setup-SentinelConnector {
     Param(
         [Parameter(Mandatory = $true)]
