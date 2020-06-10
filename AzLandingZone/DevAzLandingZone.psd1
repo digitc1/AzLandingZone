@@ -84,7 +84,7 @@ NestedModules = @(
         '.\functions\internal\setup-Storage.ps1',
         '.\functions\internal\setup-Subscription.ps1',
         '.\functions\internal\setup-SubscriptionContacts.ps1',
-        '.\functions\internal\tmp.ps1'
+        '.\functions\internal\tmp.ps1',
         '.\functions\internal\sentinel\Get-AzAccessToken.ps1',
         '.\functions\internal\sentinel\New-ConnectorConfiguration.ps1',
         '.\functions\internal\sentinel\setup-SentinelConnector.ps1',
