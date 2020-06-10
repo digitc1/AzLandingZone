@@ -22,7 +22,7 @@ function setup-SentinelConnector {
     }
 
     if(!(Get-AzSubscription -SubscriptionId $SubscriptionId)){
-        Write-Host -ForegroundColor Red "[!] Could not subscription linked to provided subscriptionId"
+        Write-Host -ForegroundColor Red "[!] Could not find subscription linked to provided subscriptionId"
         return $false
     }
 
