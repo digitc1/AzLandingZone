@@ -23,8 +23,5 @@ Function Onboard-AzLandingZone {
     if($GetLogAnalyticsWorkspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName "lzslz_rg"){
         setup-SentinelConnector -WorkspaceRg "lzslz_rg" -WorkspaceName $GetLogAnalyticsWorkspace.Name -SubscriptionId $GetSubscription.Id
     }
-
-    Set-AzContext -SubscriptionId $GetSubscription.Name | Out-Null
-    setup-Lighthouse -SOC $SOC
 }
 Export-ModuleMember -Function Onboard-AzLandingZone
