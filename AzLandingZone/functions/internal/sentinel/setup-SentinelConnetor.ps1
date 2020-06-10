@@ -26,10 +26,10 @@ function setup-SentinelConnector {
         return $false
     }
 
-    $status = Test-AzSecurityCenterTier -SubscriptionId $subscriptionId
+    #$status = Test-AzSecurityCenterTier -SubscriptionId $subscriptionId
     $authHeader = Get-AzAccessToken
     $connectorName = $subscriptionId
-    if ($status -eq $true) {
+    #if ($status -eq $true) {
         Write-Host -ForegroundColor Green "[-] Connecting ASC to Azure Sentinel is going to be started"
         $requestBody = New-ConnectorConfiguration -SubscriptionId $subscriptionId | ConvertTo-Json -Depth 4
         $uri = "https://management.azure.com" + $workspaceId + "/providers/Microsoft.SecurityInsights/dataConnectors/" + $connectorName + "?api-version=2019-01-01-preview"
@@ -40,6 +40,6 @@ function setup-SentinelConnector {
         else {
             Write-Host -ForegroundColor Red "[!] Failed to connect to Azure Sentinel"
         }
-    }
+    #}
 }
 Export-ModuleMember -Function setup-SentinelConnector
