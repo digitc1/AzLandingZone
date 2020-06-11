@@ -26,7 +26,7 @@ Function setup-LogPipeline {
             if(!($GetEventHubNamespace = Get-AzEventHubNameSpace -ResourceGroupName $GetResourceGroup.ResourceGroupName | Where-Object {$_.Name -Like "$name*"})){
                 $rand = Get-Random -Minimum 1000000 -Maximum 9999999999
                 $eventHubNamespace= $name +"-ehns"+$rand
-                $GetEventHubNamespace = New-AzEventHubNamespace -ResourceGroupName $GetResourceGroup.ResourceGroupName -Name $eventHubNamespace -Location $AzDCLocation
+                $GetEventHubNamespace = New-AzEventHubNamespace -ResourceGroupName $GetResourceGroup.ResourceGroupName -Name $eventHubNamespace -Location $GetResourceGroup.Location
             }
         }
         default {
