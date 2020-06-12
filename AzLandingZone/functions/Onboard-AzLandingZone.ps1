@@ -8,7 +8,7 @@ Function Onboard-AzLandingZone {
     # Onboard the specified subscription
     #
 
-    if(!($GetSubscription = Get-AzSubscription | Where-Object {$_.Name -Like "$subscription"})){
+    if(!($GetSubscription = Get-AzSubscription | Where-Object {$_.Name -Like "$subscription" -Or $_.Id -Like "$subscription"})){
         Write-Host "Provided subscription is invalid. Make sure to provide a valid subscription name."
         return
     }
@@ -20,7 +20,8 @@ Function Onboard-AzLandingZone {
         New-AzManagementGroupSubscription -GroupName "lz-management-group" -SubscriptionId $GetSubscription.Id | Out-Null
     }
 
-    Set-AzContext -SubscriptionId $GetSubscription.Name | Out-Null
-    setup-Lighthouse -SOC $SOC
+    if($GetLogAnalyticsWorkspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName "lzslz_rg"){
+        setup-SentinelConnector -WorkspaceRg "lzslz_rg" -WorkspaceName $GetLogAnalyticsWorkspace.Name -SubscriptionId $GetSubscription.Id
+    }
 }
 Export-ModuleMember -Function Onboard-AzLandingZone
