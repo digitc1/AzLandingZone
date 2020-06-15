@@ -1,16 +1,7 @@
 Function Update-AzLandingZone {
-    Param(
-        [ValidateSet("DIGIT", "CERTEU", "None")]
-        [string] $SOC,
-        [Parameter(Mandatory=$true)]
-        [bool] $autoupdate,
-        [ValidateSet("westeurope", "northeurope", "francecentral", "germanywestcentral")]
-        [string] $location
-    )
-
     Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
 
-    if(!(Test-AzLandingZone)){
+    if(Test-AzLandingZone){
         Write-Host "Pre-requisite for Azure LandingZone are not met."
         Write-Host "Run 'Test-AzLandingZone -verbose' for additional information."
     }
@@ -24,24 +15,17 @@ Function Update-AzLandingZone {
     #
     # variables
     #
-    $subscription = Get-AzSubscription | where-Object {$_.Name -Like "DIGIT_C1*"}
-    $context = Set-AzContext -SubscriptionId $subscription.Id
+    Write-Host "Creating variables and launching creation" -ForegroundColor Yellow
+    $context = Get-AzContext
     $name = "lzslz"
-    $locations = (Get-AzLocation).Location
-    $locations += "global"
-    if(!($location) -And !(Get-AzResourceGroup | where-Object {$_.ResourceGroupName -Like "$name*"})){
-        $location = "westeurope"
+    if(!($GetResourceGroup = Get-AzResourceGroup | where-Object {$_.ResourceGroupName -Like "$name*"})){
+        Write-Host "The Azure Landing Zone could not be found in the current context. Switch context with 'Set-AzContext -SubscriptionId <id>' cmdlet or install the Landing Zone first" -ForegroundColor Red
+        exit
     }
+    $location = $GetResourceGroup.Location
 
     setup-Resources -Name $name -Location $location
-            setup-Storage -Name $name
-            setup-LogPipeline -Name $name -SOC $SOC
-            setup-Lighthouse -SOC $SOC
-
-    if($autoupdate -eq $true) {
-        setup-Automation -Name $name
-    }
-
+    setup-Storage -Name $name
     setup-Policy -Name $name
 }
 Export-ModuleMember -Function Update-AzLandingZone
