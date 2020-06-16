@@ -1,5 +1,8 @@
 Function setup-Storage {
-    Param([Parameter(Mandatory=$true)][string]$name)
+    Param(
+        [Parameter(Mandatory=$true)][string]$name,
+        [int]retentionPeriod = 185
+    )
     
     if(!($GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*$name*")){
             Write-Host "No Resource Group for Secure Landing Zone found"
@@ -37,9 +40,10 @@ Function setup-Storage {
     #
     Write-Host "Checking immutability policy" -ForegroundColor Yellow
     if(((Get-AzRmStorageContainerImmutabilityPolicy -StorageAccountName $GetStorageAccount.StorageAccountName -ResourceGroupName $GetResourceGroup.ResourceGroupName -ContainerName "landingzonelogs").ImmutabilityPeriodSinceCreationInDays) -eq 0){
-    Write-Host "No immutability policy found for logs container"
-    Write-Host "Creating immutability policy (default 185 days)"
-    Set-AzRmStorageContainerImmutabilityPolicy -ResourceGroupName $GetResourceGroup.ResourceGroupName -StorageAccountName $GetStorageAccount.StorageAccountName -ContainerName "landingzonelogs" -ImmutabilityPeriod 185 | Out-Null
+        Write-Host "No immutability policy found for logs container"
+        Write-Host "Creating immutability policy (default 185 days)"
+        $policy = Set-AzRmStorageContainerImmutabilityPolicy -ResourceGroupName $GetResourceGroup.ResourceGroupName -StorageAccountName $GetStorageAccount.StorageAccountName -ContainerName "landingzonelogs" -ImmutabilityPeriod $retentionPeriod
+        #Lock-AzRmStorageContainerImmutabilityPolicy -ResourceGroupName $GetResourceGroup.ResourceGroupName -StorageAccountName $GetStorageAccount.StorageAccountName -ContainerName "landingzonelogs" -Etag $policy.Etag
     }
 }
 Export-ModuleMember -Function setup-Storage
