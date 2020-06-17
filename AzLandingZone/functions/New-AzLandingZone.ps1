@@ -5,7 +5,8 @@ Function New-AzLandingZone {
 		[ValidateSet("westeurope", "northeurope", "francecentral", "germanywestcentral")][string]$location = "westeurope",
 		[bool]$enableSentinel = $false,
 		[bool]$enableEventHub = $false,
-		[int]$retentionPeriod = 185
+		[int]$retentionPeriod = 185,
+        [String[]]$securityContacts
 	)
 
     Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
@@ -52,7 +53,7 @@ Function New-AzLandingZone {
         setup-Automation -Name $name
     }
 
-    setup-SubscriptionContacts -SOC $SOC
+    setup-SubscriptionContacts -SOC $SOC -securityContacts $securityContacts
     setup-Policy -Name $name
     setup-Lighthouse -SOC $SOC
 }
