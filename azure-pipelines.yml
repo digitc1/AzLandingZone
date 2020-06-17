@@ -51,5 +51,5 @@ steps:
       Register-PSRepository -Name "AzLandingZoneRepo" -SourceLocation "https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/publicfeed/nuget/v2 " -publishLocation "https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/publicfeed/nuget/v2"
       Install-Module -Force -Name "DevAzLandingZone" -Repository "AzLandingZoneRepo"
       Import-Module DevAzLandingZone    
-      New-AzLandingZone -SOC "DIGIT" -autoupdate $false -location "westeurope"
+      New-AzLandingZone -SOC "CERTEU" -autoupdate $false -location "westeurope"
     azurePowerShellVersion: 'LatestVersion'
