@@ -7,7 +7,8 @@
 Function setup-SubscriptionContacts {
     param(
         [ValidateSet("DIGIT", "CERTEU", "None", "")]
-        [string] $SOC
+        [string] $SOC,
+        [String[]]$securityContacts
     )
 
     #
@@ -39,13 +40,10 @@ Function setup-SubscriptionContacts {
         }
     }
 
-    $param = read-Host "Would you like to setup additional contacts for security alerts (y/n)"
-    while($param -Like "y"){
-            $param -Like "n"
-            $tmp = Read-Host "Enter the email address for new contact"
-            $count = (Get-AzSecurityContact).Count
-            New-AzPolicyAssignment -name "SLZ-securityContact3" -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location "westeurope" -contactEmail $tmp -contactName "default$($count+1)" | Out-Null
-            $param = Read-Host "Successfully added security contact. Add another (y/n) ?"
+    foreach ($contact in $securityContacts)  
+    { 
+        $count = (Get-AzSecurityContact).Count
+        New-AzPolicyAssignment -name "SLZ-securityContact$count" -PolicyDefinition $policyDefinition -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -AssignIdentity -Location "westeurope" -contactEmail $contact -contactName "default$($count+1)" | Out-Null
     }
 
     Remove-item -Path $HOME/rule.json
