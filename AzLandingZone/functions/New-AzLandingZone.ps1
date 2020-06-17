@@ -9,7 +9,7 @@ Function New-AzLandingZone {
     )
 
     Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
-    [Environment]::Username)
+    [Environment]::Username
 
     if(Test-AzLandingZone){
         Write-Host "Pre-requisite for Azure LandingZone are not met."
