@@ -216,7 +216,7 @@ Function setup-Policy {
     Write-Host "Create role assignment for created and updated policies" -ForegroundColor Yellow
     $GetPolicyAssignment = Get-AzPolicyAssignment -Scope $scope | where-object {$_.Name -like "SLZ-*"}
     ForEach ($policyAssignment in $GetPolicyAssignment) {
-        if(!(Get-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId)){
+        if(!(Get-AzRoleAssignment -Scope $scope -ObjectId $policyAssignment.Identity.principalId)){
             New-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
             Write-Host "Created role assignment for: "$policyAssignment.Name
         }
