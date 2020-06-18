@@ -1,7 +1,7 @@
 Function Setup-Resources {
     param(
-	    [Parameter(Mandatory=$true)][string] $name,
-        [Parameter(Mandatory=$true)][string] $location
+	    [Parameter(Mandatory=$true)][string]$name,
+        [Parameter(Mandatory=$true)][string]$location
     )
 
     #
