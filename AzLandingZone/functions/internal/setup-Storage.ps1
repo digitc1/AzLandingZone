@@ -1,7 +1,7 @@
 Function setup-Storage {
     Param(
         [Parameter(Mandatory=$true)][string]$name,
-        [int]retentionPeriod = 185
+        [int]$retentionPeriod = 185
     )
     
     if(!($GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*$name*")){
