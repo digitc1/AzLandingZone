@@ -48,7 +48,7 @@ Function setup-Policy {
     Write-Host "Checking registration for extended Azure Security Center CIS Benchmark" -ForegroundColor Yellow
     if(!(Get-AzPolicyAssignment -Scope $scope | Where-Object {$_.Name -Like "ASC_CIS"})){
             Write-Host "Enabling second monitoring in Azure Security Center"
-            $Policy = Get-AzPolicySetDefinition | Where-Object {$_.Properties.displayName -EQ '[Preview]: Audit CIS Microsoft Azure Foundations Benchmark 1.1.0 recommendations and deploy specific supporting VM Extensions'}
+            $Policy = Get-AzPolicySetDefinition | Where-Object {$_.Properties.displayName -EQ 'CIS Microsoft Azure Foundations Benchmark 1.1.0'}
             New-AzPolicyAssignment -Name "ASC_CIS" -DisplayName "Azure Security Center - CIS Compliance" -PolicySetDefinition $Policy -Scope $scope -listOfRegionsWhereNetworkWatcherShouldBeEnabled $location | Out-Null
     }
     Write-Host "Checking policy for Azure Security Center coverage" -ForegroundColor Yellow
