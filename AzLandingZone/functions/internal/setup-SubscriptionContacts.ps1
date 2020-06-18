@@ -51,7 +51,7 @@ Function setup-SubscriptionContacts {
     { 
         if($contact -notin ((Get-AzPolicyAssignment -Scope $scope | where-Object {$_.Name -Like "SLZ-securityContact*"}).Properties.Parameters.contactEmail.value)){
             $count = (Get-AzPolicyAssignment -Scope $scope | where-Object {$_.Name -Like "SLZ-securityContact*"}).Count
-            New-AzPolicyAssignment -name "SLZ-securityContact$count" -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location "westeurope" -contactEmail $contact -contactName "default$($count+1)" | Out-Null
+            New-AzPolicyAssignment -name "SLZ-securityContact$($count+1)" -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location "westeurope" -contactEmail $contact -contactName "default$($count+1)" | Out-Null
         }
     }
 
