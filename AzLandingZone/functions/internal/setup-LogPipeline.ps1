@@ -1,7 +1,7 @@
 Function setup-LogPipeline {
     param(
-        [Parameter(Mandatory=$true)][string]$name
-        [bool]$enableEventHub = $false
+        [Parameter(Mandatory=$true)][string]$name,
+        [bool]$enableEventHub = $false,
         [bool]$enableSentinel = $false
     )
 
