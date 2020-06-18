@@ -125,7 +125,7 @@ Function setup-Policy {
         Get-Content -Path $HOME/definitionList.txt | ForEAch-Object {
             $location = (Get-AzResourceGroup -ResourceGroupName "*lzslz*").Location
             $GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*lzslz*"
-            $workspaceId = (Get-AzureRmOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName).ResourceId
+            $workspaceId = (Get-AzOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName).ResourceId
             $policyName = "SLZ-" + $_.Split(',')[0] + "2"
             $policyVersion = $_.Split(',')[1]
             $policyLink = $_.Split(',')[2]
