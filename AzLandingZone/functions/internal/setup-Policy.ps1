@@ -118,7 +118,7 @@ Function setup-Policy {
     Remove-Item -Path $HOME/definitionList.txt
 
     # Loop to create all "SLZ-...........DiagnosticToLogAnalytics" policies if log analytics workspace exists
-    if($GetLogAnalyticsWorkspace = Get-AzureRmOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName){
+    if($GetLogAnalyticsWorkspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName){
         Invoke-WebRequest -Uri $definitionParametersv2URI -OutFile $HOME/parameters.json
         Invoke-WebRequest -Uri $definitionListv2URI -OutFile $HOME/definitionList.txt
             
