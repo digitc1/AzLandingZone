@@ -88,7 +88,8 @@ NestedModules = @(
         '.\functions\internal\sentinel\Get-AzAccessToken.ps1',
         '.\functions\internal\sentinel\New-ConnectorConfiguration.ps1',
         '.\functions\internal\sentinel\setup-SentinelConnector.ps1',
-        '.\functions\internal\sentinel\Test-AzSecurityCenterTier.ps1'
+        '.\functions\internal\sentinel\Test-AzSecurityCenterTier.ps1',
+        '.\functions\internal\sentinel\Set-LzSentinel.ps1'
     )
 
 # Fonctions à exporter à partir de ce module. Pour de meilleures performances, n’utilisez pas de caractères génériques et ne supprimez pas l’entrée. Utilisez un tableau vide si vous n’avez aucune fonction à exporter.
