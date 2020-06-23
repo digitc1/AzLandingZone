@@ -48,7 +48,7 @@ Function setup-Policy {
     Write-Host "Checking registration for extended Azure Security Center CIS Benchmark" -ForegroundColor Yellow
     if(!(Get-AzPolicyAssignment -Scope $scope | Where-Object {$_.Name -Like "ASC_CIS"})){
             Write-Host "Enabling second monitoring in Azure Security Center"
-            $Policy = Get-AzPolicySetDefinition | Where-Object {$_.Properties.displayName -EQ '[Preview]: Audit CIS Microsoft Azure Foundations Benchmark 1.1.0 recommendations and deploy specific supporting VM Extensions'}
+            $Policy = Get-AzPolicySetDefinition | Where-Object {$_.Properties.displayName -EQ 'CIS Microsoft Azure Foundations Benchmark 1.1.0'}
             New-AzPolicyAssignment -Name "ASC_CIS" -DisplayName "Azure Security Center - CIS Compliance" -PolicySetDefinition $Policy -Scope $scope -listOfRegionsWhereNetworkWatcherShouldBeEnabled $location | Out-Null
     }
     Write-Host "Checking policy for Azure Security Center coverage" -ForegroundColor Yellow
@@ -118,14 +118,14 @@ Function setup-Policy {
     Remove-Item -Path $HOME/definitionList.txt
 
     # Loop to create all "SLZ-...........DiagnosticToLogAnalytics" policies if log analytics workspace exists
-    if($GetLogAnalyticsWorkspace = Get-AzureRmOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName){
+    if($GetLogAnalyticsWorkspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName){
         Invoke-WebRequest -Uri $definitionParametersv2URI -OutFile $HOME/parameters.json
         Invoke-WebRequest -Uri $definitionListv2URI -OutFile $HOME/definitionList.txt
             
         Get-Content -Path $HOME/definitionList.txt | ForEAch-Object {
             $location = (Get-AzResourceGroup -ResourceGroupName "*lzslz*").Location
             $GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*lzslz*"
-            $workspaceId = (Get-AzureRmOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName).ResourceId
+            $workspaceId = (Get-AzOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName).ResourceId
             $policyName = "SLZ-" + $_.Split(',')[0] + "2"
             $policyVersion = $_.Split(',')[1]
             $policyLink = $_.Split(',')[2]
@@ -216,7 +216,7 @@ Function setup-Policy {
     Write-Host "Create role assignment for created and updated policies" -ForegroundColor Yellow
     $GetPolicyAssignment = Get-AzPolicyAssignment -Scope $scope | where-object {$_.Name -like "SLZ-*"}
     ForEach ($policyAssignment in $GetPolicyAssignment) {
-        if(!(Get-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId)){
+        if(!(Get-AzRoleAssignment -Scope $scope -ObjectId $policyAssignment.Identity.principalId)){
             New-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
             Write-Host "Created role assignment for: "$policyAssignment.Name
         }
