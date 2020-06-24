@@ -93,23 +93,26 @@ Function setup-Policy {
             {
                     if(!($GetDefinition.Properties.metadata.version -eq $policyVersion)){
                         if($objectId = (Get-AzRoleAssignment | where-Object {$_.DisplayName -Like $policyName}).ObjectId){
-                                    Remove-AzRoleAssignment -ObjectId $objectId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
-                            }
-                            Remove-AzPolicyAssignment -Name $policyName -Scope $scope | Out-Null
-                            Remove-AzPolicyDefinition -Name $policyName -Force | Out-Null
-                            Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
-                            $metadata = '{"version":"'+$policyVersion+'"}'
-                            $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
-                            New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location -region $location -storageAccountId $storageAccountId | Out-Null
-                            Remove-Item -Path $HOME/$policyName.json
-                            Write-Host "Updated policy: $policyName"
+                            Remove-AzRoleAssignment -ObjectId $objectId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
+                        }
+                        if(!($effect = (Get-AzPolicyAssignment -Scope $scope -Name $policyName).Properties.Parameters.effect.Value)){
+                            $effect = "DeployIfNotExists"
+                        }
+                        Remove-AzPolicyAssignment -Name $policyName -Scope $scope | Out-Null
+                        Remove-AzPolicyDefinition -Name $policyName -Force | Out-Null
+                        Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
+                        $metadata = '{"version":"'+$policyVersion+'"}'
+                        $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
+                        New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location -region $location -storageAccountId $storageAccountId -effect $effect | Out-Null
+                        Remove-Item -Path $HOME/$policyName.json
+                        Write-Host "Updated policy: $policyName"
                     }
             }
             else{
                     Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
                     $metadata = '{"version":"'+$policyVersion+'"}'
                     $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
-                    New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location -region $location -storageAccountId $storageAccountId | Out-Null
+                    New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location -region $location -storageAccountId $storageAccountId -effect "DeployIfNotExists" | Out-Null
                     Remove-Item -Path $HOME/$policyName.json
                     Write-Host "Created policy: $policyName"
             }
@@ -136,24 +139,27 @@ Function setup-Policy {
             if($GetDefinition)
             {
                     if(!($GetDefinition.Properties.metadata.version -eq $policyVersion)){
-                            if($objectId = (Get-AzRoleAssignment | where-Object {$_.DisplayName -Like $policyName}).ObjectId){
-                                Remove-AzRoleAssignment -ObjectId $objectId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
-                            }
-                            Remove-AzPolicyAssignment -Name $policyName -Scope $scope | Out-Null
-                            Remove-AzPolicyDefinition -Name $policyName -Force | Out-Null
-                            Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
-                            $metadata = '{"version":"'+$policyVersion+'"}'
-                            $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
-                            New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location -region $location -workspaceId $workspaceId | Out-Null
-                            Remove-Item -Path $HOME/$policyName.json
-                            Write-Host "Updated : $policyName"
+                        if($objectId = (Get-AzRoleAssignment | where-Object {$_.DisplayName -Like $policyName}).ObjectId){
+                            Remove-AzRoleAssignment -ObjectId $objectId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
+                        }
+                        if(!($effect = (Get-AzPolicyAssignment -Scope $scope -Name $policyName).Properties.Parameters.effect.Value)){
+                            $effect = "DeployIfNotExists"
+                        }
+                        Remove-AzPolicyAssignment -Name $policyName -Scope $scope | Out-Null
+                        Remove-AzPolicyDefinition -Name $policyName -Force | Out-Null
+                        Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
+                        $metadata = '{"version":"'+$policyVersion+'"}'
+                        $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
+                        New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location -region $location -workspaceId $workspaceId -effect $effect | Out-Null
+                        Remove-Item -Path $HOME/$policyName.json
+                        Write-Host "Updated : $policyName"
                    }
             }
             else{
                     Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
                     $metadata = '{"version":"'+$policyVersion+'"}'
                     $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
-                    New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location -region $location -workspaceId $workspaceId | Out-Null
+                    New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location -region $location -workspaceId $workspaceId -effect "DeployIfNotExists" | Out-Null
                     Remove-Item -Path $HOME/$policyName.json
                     Write-Host "Created : $policyName"
             }
@@ -186,12 +192,15 @@ Function setup-Policy {
                     if($objectId = (Get-AzRoleAssignment | where-Object {$_.DisplayName -Like $policyName}).ObjectId){
                         Remove-AzRoleAssignment -ObjectId $objectId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
                     }
+                    if(!($effect = (Get-AzPolicyAssignment -Scope $scope -Name $policyName).Properties.Parameters.effect.Value)){
+                        $effect = "DeployIfNotExists"
+                    }
                     Remove-AzPolicyAssignment -Name $policyName -Scope $scope | Out-Null
                     Remove-AzPolicyDefinition -Name $policyName -Force | Out-Null
                     Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
                     $metadata = '{"version":"'+$policyVersion+'"}'
                     $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
-                    New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location -region $location -eventHubRuleId $GetEventHubAuthorizationRuleId.Id | Out-Null
+                    New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location -region $location -eventHubRuleId $GetEventHubAuthorizationRuleId.Id -effect $effect | Out-Null
                     Remove-Item -Path $HOME/$policyName.json
                     Write-Host "Updated : $policyName"
                 }
@@ -200,7 +209,7 @@ Function setup-Policy {
                 Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
                 $metadata = '{"version":"'+$policyVersion+'"}'
                 $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
-                New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location -region $location -eventHubRuleId $GetEventHubAuthorizationRuleId.Id | Out-Null
+                New-AzPolicyAssignment -name $policyName -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location -region $location -eventHubRuleId $GetEventHubAuthorizationRuleId.Id -effect "DeployIfNotExists" | Out-Null
                 Remove-Item -Path $HOME/$policyName.json
                 Write-Host "Created : $policyName"
             }
