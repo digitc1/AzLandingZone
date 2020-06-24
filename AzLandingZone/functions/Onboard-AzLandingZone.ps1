@@ -20,10 +20,10 @@ Function Onboard-AzLandingZone {
         New-AzManagementGroupSubscription -GroupName "lz-management-group" -SubscriptionId $GetSubscription.Id | Out-Null
     }
 
-    Set-ActivityLogs $GetSubscription.Id
+    Set-ActivityLogs -subscriptionId $GetSubscription.Id
 
     if($GetLogAnalyticsWorkspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName "lzslz_rg"){
-        setup-SentinelConnector -WorkspaceRg "lzslz_rg" -WorkspaceName $GetLogAnalyticsWorkspace.Name -SubscriptionId $GetSubscription.Id
+        Set-LzSentinel -name "lzslz_rg"
     }
 }
 Export-ModuleMember -Function Onboard-AzLandingZone
