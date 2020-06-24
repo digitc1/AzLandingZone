@@ -1,3 +1,8 @@
+$module = Get-Module Az.Accounts 
+if ($module -ne $null -and $module.Version.ToString().CompareTo("1.9.0") -lt 0) 
+{
+	Update-Module -Name Az.Accounts -RequiredVersion "1.9.0" -Force
+} 
 if(!(Get-Module AzSentinel)){
 	Install-Module -Force -Name "AzSentinel"
 	Import-Module AzSentinel
