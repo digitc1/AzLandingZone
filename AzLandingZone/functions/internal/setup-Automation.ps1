@@ -10,9 +10,9 @@ Function setup-Automation {
     $runAsURI = "https://dev.azure.com/devops0837/6414d3a7-f802-4703-8cd7-9cef7c9a9617/_apis/git/repositories/0707bade-f83f-4a91-bbb6-9a13502def90/items?path=%2FLandingZone%2Fsetup-runAs.ps1&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
     #
     # TODO:
-    # Provide a token with read access on code repo
+    # Check with Microsoft for a way to access public resources without token
+    # Alternatively, set token a read only on the public part of the Landing Zone
     #
-    #$token = "kxuyox3celk4uagq2qjsgvldz6us55meya3hgybve22mafquux7a"
     $token = "hfobtlrxx5cnlcjak5l7bhqwbwfvdwfa7z2u23gjd6wzpllovoxq"
     $repoURI = "https://dev.azure.com/devops0837/LandingZonePublic/_git/LandingZonePublic"
     #
