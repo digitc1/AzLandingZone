@@ -8,7 +8,7 @@ Function setup-LogPipeline {
     if(!($GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*$name*")){
             Write-Host "No Resource Group for Secure Landing Zone found"
             Write-Host "Please run setup script before running the policy script"
-            return 1;
+            return;
     }
 
     if($enableSentinel){
