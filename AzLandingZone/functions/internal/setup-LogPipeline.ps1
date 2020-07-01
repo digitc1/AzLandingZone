@@ -8,7 +8,7 @@ Function setup-LogPipeline {
     if(!($GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*$name*")){
             Write-Host "No Resource Group for Secure Landing Zone found"
             Write-Host "Please run setup script before running the policy script"
-            return 1;
+            return;
     }
 
     if($enableSentinel){
@@ -18,6 +18,7 @@ Function setup-LogPipeline {
             $workspaceName = $name +"-workspace"+$rand
             $GetLogAnalyticsWorkspace = New-AzOperationalInsightsWorkspace -Location $GetResourceGroup.Location -Name $workspaceName -Sku Standard -ResourceGroupName $GetResourceGroup.ResourceGroupName
             Set-LzSentinel -Name $name
+            Set-LzSentinelAlertRule -Name $name
             Write-Host "Created Landing Zone log analytics"
         }
     }

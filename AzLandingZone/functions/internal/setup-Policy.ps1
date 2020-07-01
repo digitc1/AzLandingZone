@@ -223,12 +223,17 @@ Function setup-Policy {
 
     #create role assignment for all policies
     Write-Host "Create role assignment for created and updated policies" -ForegroundColor Yellow
-    $GetPolicyAssignment = Get-AzPolicyAssignment -Scope $scope | where-object {$_.Name -like "SLZ-*"}
-    ForEach ($policyAssignment in $GetPolicyAssignment) {
-        if(!(Get-AzRoleAssignment -Scope $scope -ObjectId $policyAssignment.Identity.principalId)){
+    Get-AzPolicyAssignment -Scope $scope | where-object {$_.Name -like "SLZ-*"} | ForEach-Object {
+        if(!(Get-AzRoleAssignment -Scope $scope -ObjectId $_.Identity.principalId)){
             New-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
-            Write-Host "Created role assignment for: "$policyAssignment.Name
+            Write-Host "Created role assignment for: "$_.Name
         }
     }
+    #ForEach ($policyAssignment in $GetPolicyAssignment) {
+    #    if(!(Get-AzRoleAssignment -Scope $scope -ObjectId $policyAssignment.Identity.principalId)){
+    #        New-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
+    #        Write-Host "Created role assignment for: "$policyAssignment.Name
+    #    }
+    #}
 }
 Export-ModuleMember -Function setup-Policy

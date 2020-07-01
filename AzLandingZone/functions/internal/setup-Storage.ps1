@@ -7,7 +7,7 @@ Function setup-Storage {
     if(!($GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*$name*")){
             Write-Host "No Resource Group for Secure Landing Zone found" -ForegroundColor Red
             Write-Host "Run setup script before running this script"
-            return 1;
+            return;
     }
 
     #

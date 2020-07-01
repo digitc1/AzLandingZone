@@ -5,11 +5,6 @@ Function Setup-Resources {
     )
 
     #
-    # variables
-    #
-    $subscription = Get-AzSubscription | Where-Object {$_.Name -Like "SECLOG*"}
-
-    #
     # Checking if Resource Group for secure Landing Zone already exists
     # If it doesn't exist, create it
     #
@@ -20,15 +15,6 @@ Function Setup-Resources {
         $resourceGroupName = $name + "_rg"
         $GetResourceGroup = New-AzResourceGroup -Name $resourceGroupName -Location $location
     }
-
-    #
-    # Checking if an Activity Log Profile exists for the secure Landing Zone
-    # If it doesn't exist, create it
-    #
-    # The default Log Profile is 90 days retention for all logs
-    #
-    #Write-Host "Checking for ActivityLogProfile in the Secure Landing Zone" -ForegroundColor Yellow
-    #Write-Host "Log profile is no longer supported and must be setup manually"
 
     #
     # Check if resource lock (cannot delete) is correctly set on the resource group
@@ -51,10 +37,5 @@ Function Setup-Resources {
         Write-Host "Creating the default management group for the Landing Zone"
         New-AzManagementGroup -GroupName "lz-management-group" -DisplayName "Landing Zone management group" | Out-Null
     }
-
-    #
-    # TODO
-    # Add owners to the management group in order to avoid loss of control
-    #
 }
 Export-ModuleMember -Function Setup-Resources
