@@ -121,4 +121,4 @@ function Set-LzSentinelAlertRule {
         return 1
     }
 }
-Export-ModuleMember -Function Get-LzSentinel,Remove-LzSentinel,Set-LzSentinel
+Export-ModuleMember -Function Get-LzSentinelAlertRule,Remove-LzSentinelAlertRule,Set-LzSentinelAlertRule
