@@ -13,7 +13,7 @@ Function setup-Automation {
     # Check with Microsoft for a way to access public resources without token
     # Alternatively, set token a read only on the public part of the Landing Zone
     #
-    $token = "hfobtlrxx5cnlcjak5l7bhqwbwfvdwfa7z2u23gjd6wzpllovoxq"
+    $token = "oyvh2p5mmw6fv67cmbxbxo4ksr6get62tbeirgeai4qx7hrrcpta"
     $repoURI = "https://dev.azure.com/devops0837/LandingZonePublic/_git/LandingZonePublic"
     #
     # Checking variables and requirements
