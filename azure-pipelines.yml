@@ -21,9 +21,12 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      Write-Host "Hello World"
       $buildVersion = $env:BUILDVER
       $manifestPath = Join-Path -Path $env:SYSTEM_DEFAULTWORKINGDIRECTORY -ChildPath "AzLandingZone/DevAzLandingZone.psd1"
+      $manifestContent = Get-Content -Path $manifestPath -Raw
+      $manifestContent = $manifestContent -replace '<ModuleVersion>', $buildVersion
+      $manifestContent | Set-Content -Path $manifestPath
+      $manifestPath = Join-Path -Path $env:SYSTEM_DEFAULTWORKINGDIRECTORY -ChildPath "AzLandingZone/AzLandingZone.psd1"
       $manifestContent = Get-Content -Path $manifestPath -Raw
       $manifestContent = $manifestContent -replace '<ModuleVersion>', $buildVersion
       $manifestContent | Set-Content -Path $manifestPath
