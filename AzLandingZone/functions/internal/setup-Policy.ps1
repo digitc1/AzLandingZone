@@ -121,6 +121,7 @@ Function setup-Policy {
                 $policyDefinition = Set-AzPolicyDefinition -Id $policyDefinition.ResourceId -Policy $HOME/$policyName.json -Metadata $metadata
                 Remove-Item -Path $HOME/$policyName.json
                 Write-Host "Updated policy: $policyName"
+            }
         }
         else {
             Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
