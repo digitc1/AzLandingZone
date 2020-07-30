@@ -115,11 +115,12 @@ Function setup-Policy {
 
         $policyDefinition = Get-AzPolicyDefinition -ManagementGroupName "lz-management-group" | Where-Object { $_.Name -Like $policyName }
         if ($policyDefinition) {
-            Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
-            $metadata = '{"version":"' + $policyVersion + '"}'
-            $policyDefinition = Set-AzPolicyDefinition -Id $policyDefinition.ResourceId -Policy $HOME/$policyName.json -Metadata $metadata
-            Remove-Item -Path $HOME/$policyName.json
-            Write-Host "Updated policy: $policyName"
+            if (!($policyDefinition.Properties.metadata.version -eq $policyVersion)) {
+                Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
+                $metadata = '{"version":"' + $policyVersion + '"}'
+                $policyDefinition = Set-AzPolicyDefinition -Id $policyDefinition.ResourceId -Policy $HOME/$policyName.json -Metadata $metadata
+                Remove-Item -Path $HOME/$policyName.json
+                Write-Host "Updated policy: $policyName"
         }
         else {
             Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
