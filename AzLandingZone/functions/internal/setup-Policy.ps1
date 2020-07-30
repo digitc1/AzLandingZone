@@ -135,7 +135,7 @@ Function setup-Policy {
     }
     else {
         $policySetDefinition = New-AzPolicySetDefinition -ManagementGroupName "lz-management-group" -Name "SLZ-policyGroup1" -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5)
-        $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -AssignIdentity -Name $policySetDefinition.Name -location $GetResourceGroup.Location
+        $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -AssignIdentity -Name $policySetDefinition.Name -location $GetResourceGroup.Location  -Scope $scope
         New-AzRoleAssignment -ObjectId $policySetAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
     }
     Remove-Item -Path $HOME/parameters.json
@@ -206,7 +206,7 @@ Function setup-Policy {
         }
         else {
             $policySetDefinition = New-AzPolicySetDefinition -ManagementGroupName "lz-management-group" -Name "SLZ-policyGroup2" -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5)
-            $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -AssignIdentity -Name $policySetDefinition.Name -location $GetResourceGroup.Location
+            $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -AssignIdentity -Name $policySetDefinition.Name -location $GetResourceGroup.Location -Scope $scope
             New-AzRoleAssignment -ObjectId $policySetAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
         }
         Remove-Item -Path $HOME/parameters.json
@@ -279,7 +279,7 @@ Function setup-Policy {
         }
         else {
             $policySetDefinition = New-AzPolicySetDefinition -ManagementGroupName "lz-management-group" -Name "SLZ-policyGroup3" -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5)
-            $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -AssignIdentity -Name $policySetDefinition.Name -location $GetResourceGroup.Location
+            $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -AssignIdentity -Name $policySetDefinition.Name -location $GetResourceGroup.Location -Scope $scope
             New-AzRoleAssignment -ObjectId $policySetAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
         }
         Remove-Item -Path $HOME/parameters.json
