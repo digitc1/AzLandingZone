@@ -87,7 +87,7 @@ Function setup-Policy {
         Write-Host "Checking policy : $policyName" -ForegroundColor Yellow
 
         # Removes Role assignment and policy assignment from previous installation
-        if ($objectId = (Get-AzRoleAssignment | where-Object { $_.DisplayName -Like $policyName }).ObjectId) {
+        if ($objectId = (Get-AzRoleAssignment -Scope $scope | where-Object { $_.DisplayName -Like $policyName }).ObjectId) {
             Remove-AzRoleAssignment -ObjectId $objectId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
         }
         if ($GetPolicyAssignment = Get-AzPolicyAssignment -Scope $scope | where-Object { $_.Name -Like $policyName }) {
