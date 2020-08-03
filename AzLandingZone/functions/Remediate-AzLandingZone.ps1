@@ -1,8 +1,11 @@
 Function Remediate-AzLandingZone{
-    $assignmentIdList = (Get-AzPolicyState | Where-Object {$_.PolicyAssignmentName -Like "SLZ-*" -And $_.ComplianceState -Like "NonCompliant"}).PolicyAssignmentId | Sort-Object | Get-Unique
-    foreach ($assignmentId in $assignmentIdList){
-            $assignmentName = $assignmentId.split("/") | Select-Object -Last 1
-            Start-AzPolicyRemediation -Name "myRemedation_$assignmentName" -PolicyAssignmentId $assignmentId
+    Get-AzPolicyState -ManagementGroupName "lz-management-group" | where-Object {$_.PolicyAssignmentName -Like "SLZ-policyGroup*"} | ForEach-Object {
+        Write-Host "Creating remediation for $_.PolicyDefinitionName in $_.PolicyAssignmentName"
+        Start-AzPolicyRemediation -Name $_.PolicyDefinitionName -PolicyAssignmentId $_.PolicyAssignmentId -PolicyDefinitionReferenceId $_.PolicyDefinitionReferenceId | Out-Null
+    }
+    Get-AzPolicyState -ManagementGroupName "lz-management-group" | where-Object {$_.PolicyAssignmentName -like "SLZ-*"} | where-Object {$_.PolicyAssignmentName -notlike "SLZ-policyGroup*"} | where-Object {$_.ComplianceState -Like "NonCompliant"} | ForEach-Object {
+        Write-Host "Creating remediation for "$_.PolicyAssignmentName
+        Start-AzPolicyRemediation -Name $_.PolicyAssignmentName -PolicyAssignmentId $_.PolicyAssignmentId
     }
 }
 Export-ModuleMember -Function Remediate-AzLandingZone
