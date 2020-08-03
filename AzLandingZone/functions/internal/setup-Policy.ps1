@@ -87,9 +87,9 @@ Function setup-Policy {
         Write-Host "Checking policy : $policyName" -ForegroundColor Yellow
 
         # Removes Role assignment and policy assignment from previous installation
-#        if ($objectId = (Get-AzRoleAssignment -Scope $scope | where-Object { $_.DisplayName -Like $policyName }).ObjectId) {
-#            Remove-AzRoleAssignment -ObjectId $objectId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
-#        }
+        if ($objectId = (Get-AzRoleAssignment -Scope $scope | where-Object { $_.DisplayName -Like $policyName }).ObjectId) {
+            Remove-AzRoleAssignment -ObjectId $objectId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
+        }
         if ($GetPolicyAssignment = Get-AzPolicyAssignment -Scope $scope | where-Object { $_.Name -Like $policyName }) {
             # Quick cheat to keep the effect as defined by the customer
             # To be deleted once not in use anymore
@@ -138,7 +138,7 @@ Function setup-Policy {
     else {
         $policySetDefinition = New-AzPolicySetDefinition -ManagementGroupName "lz-management-group" -Name "SLZ-policyGroup1" -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5)
         $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -AssignIdentity -Name $policySetDefinition.Name -location $GetResourceGroup.Location  -Scope $scope
-#        New-AzRoleAssignment -ObjectId $policySetAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
+        New-AzRoleAssignment -ObjectId $policySetAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
     }
     Remove-Item -Path $HOME/parameters.json
     Remove-Item -Path $HOME/definitionList.txt
@@ -157,9 +157,9 @@ Function setup-Policy {
             Write-Host "Checking policy : $policyName" -ForegroundColor Yellow
 
             # Removes Role assignment and policy assignment from previous installation
-#            if ($objectId = (Get-AzRoleAssignment | where-Object { $_.DisplayName -Like $policyName }).ObjectId) {
-#                Remove-AzRoleAssignment -ObjectId $objectId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
-#            }
+            if ($objectId = (Get-AzRoleAssignment | where-Object { $_.DisplayName -Like $policyName }).ObjectId) {
+                Remove-AzRoleAssignment -ObjectId $objectId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
+            }
             if ($GetPolicyAssignment = Get-AzPolicyAssignment -Scope $scope | where-Object { $_.Name -Like $policyName }) {
                 # Quick cheat to keep the effect as defined by the customer
                 # To be deleted once not in use anymore
@@ -209,7 +209,7 @@ Function setup-Policy {
         else {
             $policySetDefinition = New-AzPolicySetDefinition -ManagementGroupName "lz-management-group" -Name "SLZ-policyGroup2" -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5)
             $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -AssignIdentity -Name $policySetDefinition.Name -location $GetResourceGroup.Location -Scope $scope
-#            New-AzRoleAssignment -ObjectId $policySetAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
+            New-AzRoleAssignment -ObjectId $policySetAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
         }
         Remove-Item -Path $HOME/parameters.json
         Remove-Item -Path $HOME/definitionList.txt
@@ -230,9 +230,9 @@ Function setup-Policy {
             Write-Host "Checking policy : $policyName" -ForegroundColor Yellow
 
             # Removes Role assignment and policy assignment from previous installation
-#            if ($objectId = (Get-AzRoleAssignment | where-Object { $_.DisplayName -Like $policyName }).ObjectId) {
-#                Remove-AzRoleAssignment -ObjectId $objectId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
-#            }
+            if ($objectId = (Get-AzRoleAssignment | where-Object { $_.DisplayName -Like $policyName }).ObjectId) {
+                Remove-AzRoleAssignment -ObjectId $objectId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
+            }
             if ($GetPolicyAssignment = Get-AzPolicyAssignment -Scope $scope | where-Object { $_.Name -Like $policyName }) {
                 # Quick cheat to keep the effect as defined by the customer
                 # To be deleted once not in use anymore
@@ -282,7 +282,7 @@ Function setup-Policy {
         else {
             $policySetDefinition = New-AzPolicySetDefinition -ManagementGroupName "lz-management-group" -Name "SLZ-policyGroup3" -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5)
             $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -AssignIdentity -Name $policySetDefinition.Name -location $GetResourceGroup.Location -Scope $scope
-#            New-AzRoleAssignment -ObjectId $policySetAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
+            New-AzRoleAssignment -ObjectId $policySetAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
         }
         Remove-Item -Path $HOME/parameters.json
         Remove-Item -Path $HOME/definitionList.txt
