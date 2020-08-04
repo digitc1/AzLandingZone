@@ -85,12 +85,18 @@
             '.\functions\internal\setup-Subscription.ps1',
             '.\functions\internal\setup-SubscriptionContacts.ps1',
             '.\functions\internal\sentinel\Get-AzAccessToken.ps1',
-            '.\functions\internal\sentinel\New-ConnectorConfiguration.ps1',
             '.\functions\internal\sentinel\Set-LzSentinel.ps1',
             '.\functions\internal\sentinel\Set-LzSentinelAlertRule.ps1',
             '.\functions\internal\sentinel\setup-SentinelConnector.ps1',
             '.\functions\internal\sentinel\Test-AzSecurityCenterTier.ps1',
-            '.\functions\internal\tmp.ps1'
+            '.\functions\internal\sentinel\activeDirectory\Connect-LzActiveDirectory.ps1',
+            '.\functions\internal\sentinel\activeDirectory\Set-LzActiveDirectoryAlertRule.ps1',
+            '.\functions\internal\sentinel\activeDirectory\Set-LzActiveDirectoryDiagnosticSettings.ps1',
+            '.\functions\internal\sentinel\securityCenter\Connect-LzSecurityCenter.ps1',
+            '.\functions\internal\sentinel\securityCenter\Set-LzSecurityCenterAlertRule.ps1',
+            '.\functions\internal\sentinel\securityCenter\Set-LzSecurityCenterAutoProvisioningSetting.ps1',
+            '.\functions\internal\sentinel\securityCenter\Set-LzSecurityPricing.ps1',
+            '.\functions\internal\sentinel\subscription\Set-LzSubscriptionDiagnosticSettings.ps1'
         )
     
     # Fonctions à exporter à partir de ce module. Pour de meilleures performances, n’utilisez pas de caractères génériques et ne supprimez pas l’entrée. Utilisez un tableau vide si vous n’avez aucune fonction à exporter.
