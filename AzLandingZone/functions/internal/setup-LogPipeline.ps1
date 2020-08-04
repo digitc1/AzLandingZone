@@ -18,7 +18,9 @@ Function setup-LogPipeline {
             $workspaceName = $name +"-workspace"+$rand
             $GetLogAnalyticsWorkspace = New-AzOperationalInsightsWorkspace -Location $GetResourceGroup.Location -Name $workspaceName -Sku Standard -ResourceGroupName $GetResourceGroup.ResourceGroupName
             Set-LzSentinel -Name $name
-            Set-LzSentinelAlertRule -Name $name
+            Set-LzSecurityCenterAlertRule -Name $name
+            Connect-LzActiveDirectory
+            Set-LzActiveDirectoryAlertRule -Name $name
             Write-Host "Created Landing Zone log analytics"
         }
     }
@@ -39,5 +41,6 @@ Function setup-LogPipeline {
             }
         }
     }
+    Set-LzActiveDirectoryDiagnosticSettings
 }
 Export-ModuleMember -Function setup-LogPipeline
