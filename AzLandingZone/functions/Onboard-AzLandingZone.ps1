@@ -23,7 +23,7 @@ Function Onboard-AzLandingZone {
     Set-LzSubscriptionDiagnosticSettings -subscriptionId $GetSubscription.Id
 
     Set-LzSecurityPricing -subscriptionId $GetSubscription.Id
-    Set-LzSecurityCenterAutoProvisioningSetting -subscriptionId $GetSubscription.Id
+    Set-LzSecurityAutoProvisioningSetting -subscriptionId $GetSubscription.Id
     if($GetLogAnalyticsWorkspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName "lzslz_rg"){
         Connect-LzSecurityCenter -subscriptionId $GetSubscription.Id
     }
