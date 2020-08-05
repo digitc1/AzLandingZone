@@ -31,13 +31,11 @@ jobs:
         $buildVersion = ${{ env.buildVer }}
         $manifestPath = Join-Path -Path "$env:GITHUB_WORKSPACE" -ChildPath "AzLandingZone/AzLandingZone.psd1"
         $manifestContent = Get-Content -Path $manifestPath -Raw
-        $manifestContent = $manifestContent -replace '<ModuleVersion>', ${{ env.buildVersion }}
+        $manifestContent = $manifestContent -replace '<ModuleVersion>', "$buildVersion"
         $manifestContent | Set-Content -Path $manifestPath
-      
-    - uses: nuget/setup-nuget@v1
-      with:
-        nuget-api-key: ${{ secrets.NuGetAPIKey }}
-        nuget-version: '5.x'
+    
+    - name: setup NuGet
+      uses: nuget/setup-nuget@v1
         
     - name: nuget pack        
       run: nuget pack AzLandingZone/AzLandingZone.nuspec
