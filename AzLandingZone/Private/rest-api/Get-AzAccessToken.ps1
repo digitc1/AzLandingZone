@@ -1,7 +1,7 @@
 Function Get-AzAccessToken {
     $context = Get-AzContext
-    $profile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
-    $profileClient = New-Object -TypeName Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient -ArgumentList ($profile)
+    $myProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
+    $profileClient = New-Object -TypeName Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient -ArgumentList ($myProfile)
     $token = $profileClient.AcquireAccessToken($context.Subscription.TenantId)
     $authHeader = @{
         'Content-Type'  = 'application/json'

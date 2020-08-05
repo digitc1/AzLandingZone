@@ -14,8 +14,8 @@ Function setup-SubscriptionContacts {
     #
     # External resources
     #
-    $definitionSecurityCenterContactURI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2FsecurityCenter%2Fdefinition-securityContact.json&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
-    $securityCenterContactParametersURI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2FsecurityCenter%2Fdefinition-securityContact.parameters.json&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
+    $definitionSecurityCenterContactURI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/LandingZone/definitions/securityCenter/definition-securityCenterContact.json"
+    $securityCenterContactParametersURI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/LandingZone/definitions/securityCenter/definition-securityCenterContact.parameters.json"
 
     if(!($GetManagementGroup = Get-AzManagementGroup -GroupName "lz-management-group" -Expand | Where-Object {$_.Name -Like "lz-management-group"})){
             Write-Host "No Management group found for Secure Landing Zone"

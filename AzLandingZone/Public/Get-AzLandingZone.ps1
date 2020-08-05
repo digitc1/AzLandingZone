@@ -1,9 +1,9 @@
 Function Get-AzLandingZone {
     Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
 
-    $definitionListv1URI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2FdefinitionList1.txt&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
-    $definitionListv2URI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2FdefinitionList2.txt&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
-    $definitionListv3URI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2FdefinitionList3.txt&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
+    $definitionListv1URI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/LandingZone/definitions/definitionList1.txt"
+    $definitionListv2URI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/LandingZone/definitions/definitionList2.txt"
+    $definitionListv3URI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/LandingZone/definitions/definitionList3.txt"
     
     #
     # variables

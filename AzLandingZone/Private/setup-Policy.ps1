@@ -6,14 +6,14 @@ Function setup-Policy {
     #
     # External resource required
     #
-    $definitionListv1URI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2FdefinitionList1.txt&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
-    $definitionParametersv1URI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2Fparameters1.json&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
-    $definitionListv2URI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2FdefinitionList2.txt&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
-    $definitionParametersv2URI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2Fparameters2.json&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
-    $definitionListv3URI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2FdefinitionList3.txt&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
-    $definitionParametersv3URI = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2Fparameters3.json&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
-    $definitionSecurityCenterCoverage = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2Fdefinition-securityCenterCoverage.json&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
-    $definitionSecurityCenterAutoProvisioning = "https://dev.azure.com/devops0837/LandingZonePublic/_apis/git/repositories/LandingZonePublic/items?path=%2FLandingZone%2Fdefinitions%2Fdefinition-securityCenterAutoProvisioning.json&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true"
+    $definitionListv1URI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/LandingZone/definitions/definitionList1.txt"
+    $definitionParametersv1URI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/LandingZone/definitions/parameters1.json"
+    $definitionListv2URI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/LandingZone/definitions/definitionList2.txt"
+    $definitionParametersv2URI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/LandingZone/definitions/parameters2.json"
+    $definitionListv3URI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/LandingZone/definitions/definitionList3.txt"
+    $definitionParametersv3URI = "https://raw.githubusercontent.com/digitc1/AZLandingZonePublic/master/LandingZone/definitions/parameters3.json"
+    $definitionSecurityCenterCoverage = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/LandingZone/definitions/securityCenter/definition-securityCenterCoverage.json"
+    $definitionSecurityCenterAutoProvisioning = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/LandingZone/definitions/securityCenter/definition-securityCenterAutoProvisioning.json"
 
     #
     # Create variables needed for this script
