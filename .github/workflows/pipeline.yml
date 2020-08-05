@@ -51,13 +51,13 @@ jobs:
 
     - name: setup NuGet
       uses: nuget/setup-nuget@v1
-        
+      
+    - name: Authenticate
+      run: nuget sources add -source https://nuget.pkg.github.com/digitc1/AzLandingZonePublic/index.json -name github -username augustincolle-digit -password ${{ secrets.MY_GITHUB_TOKEN }}
+              
     - name: nuget pack
       run: nuget pack AzLandingZone/AzLandingZone.nuspec
 
-    - name: Authenticate
-      run: nuget sources add -source https://nuget.pkg.github.com/digitc1/AzLandingZonePublic/index.json -name github -username augustincolle-digit -password ${{ secrets.MY_GITHUB_TOKEN }}
-      
     - name: push
       run: nuget push **.nupkg -source "github" -SkipDuplicate -ApiKey ${{ secrets.MY_GITHUB_TOKEN }}
       
