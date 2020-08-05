@@ -55,10 +55,10 @@ jobs:
       run: nuget pack AzLandingZone/AzLandingZone.nuspec
 
     - name: Authenticate
-      run: dotnet nuget add source https://nuget.pkg.github.com/digitc1/index.json -n github -u digitc1 -p TEST_GITHUB_TOKEN --store-password-in-clear-text
+      run: dotnet nuget add source https://nuget.pkg.github.com/digitc1/index.json -n github -u digitc1 -p GITHUB_TOKEN --store-password-in-clear-text
       
     - name: push
-      run: dotnet nuget push "AzLandingZone.0.0.1.nupkg" --source "github"
+      run: dotnet nuget push "AzLandingZone.0.0.1.nupkg" --source "github" -ApiKey GITHUB_TOKEN
       
     - name: nuget push for develop
       if: ${{ success() && github.ref == 'refs/heads/develop' }}
