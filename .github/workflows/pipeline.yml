@@ -54,6 +54,8 @@ jobs:
         $buildVersion = ${{ env.buildVer }}
         $manifestPath = Join-Path -Path "$env:GITHUB_WORKSPACE" -ChildPath "AzLandingZone/AzLandingZone.nuspec"
         $manifestContent = Get-Content -Path $manifestPath -Raw
+        $manifestContent
+        
     - name: setup NuGet
       uses: nuget/setup-nuget@v1
         
