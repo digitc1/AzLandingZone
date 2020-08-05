@@ -1,9 +1,9 @@
 Function Get-AzLandingZone {
     Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
 
-    $definitionListv1URI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/LandingZone/definitions/definitionList1.txt"
-    $definitionListv2URI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/LandingZone/definitions/definitionList2.txt"
-    $definitionListv3URI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/LandingZone/definitions/definitionList3.txt"
+    $definitionListv1URI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/definitionList1.txt"
+    $definitionListv2URI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/definitionList2.txt"
+    $definitionListv3URI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/definitionList3.txt"
     
     #
     # variables

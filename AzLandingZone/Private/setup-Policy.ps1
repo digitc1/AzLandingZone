@@ -6,14 +6,14 @@ Function setup-Policy {
     #
     # External resource required
     #
-    $definitionListv1URI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/LandingZone/definitions/definitionList1.txt"
-    $definitionParametersv1URI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/LandingZone/definitions/parameters1.json"
-    $definitionListv2URI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/LandingZone/definitions/definitionList2.txt"
-    $definitionParametersv2URI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/LandingZone/definitions/parameters2.json"
-    $definitionListv3URI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/LandingZone/definitions/definitionList3.txt"
-    $definitionParametersv3URI = "https://raw.githubusercontent.com/digitc1/AZLandingZonePublic/master/LandingZone/definitions/parameters3.json"
-    $definitionSecurityCenterCoverage = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/LandingZone/definitions/securityCenter/definition-securityCenterCoverage.json"
-    $definitionSecurityCenterAutoProvisioning = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/LandingZone/definitions/securityCenter/definition-securityCenterAutoProvisioning.json"
+    $definitionListv1URI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/definitionList1.txt"
+    $definitionParametersv1URI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/parameters1.json"
+    $definitionListv2URI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/definitionList2.txt"
+    $definitionParametersv2URI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/parameters2.json"
+    $definitionListv3URI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/definitionList3.txt"
+    $definitionParametersv3URI = "https://raw.githubusercontent.com/digitc1/AZLandingZonePublic/master/definitions/parameters3.json"
+    $definitionSecurityCenterCoverage = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/securityCenter/definition-securityCenterCoverage.json"
+    $definitionSecurityCenterAutoProvisioning = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/securityCenter/definition-securityCenterAutoProvisioning.json"
 
     #
     # Create variables needed for this script
