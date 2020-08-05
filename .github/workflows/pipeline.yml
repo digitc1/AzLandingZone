@@ -29,9 +29,9 @@ jobs:
       run: nuget pack AzLandingZone/AzLandingZone.nuspec
 
     - name: nuget push for develop
-      if: and(success(),eq(github.ref, 'refs/heads/develop'))
+      if: ${{ success() && github.ref == 'refs/heads/develop' }}
       run: nuget push AzLandingZone/AzLandingZone.nuspec
 
     - name: nuget push for master
-      if: and(success(),eq(github.ref, 'refs/heads/master'))
+      if: ${{ success() && github.ref == 'refs/heads/master' }}
       run: nuget push AzLandingZone/AzLandingZone.nuspec
