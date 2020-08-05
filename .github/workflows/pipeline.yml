@@ -48,10 +48,16 @@ jobs:
         $manifestContent = $manifestContent -replace '$VERSIONHERE$', "0.0.1"
         $manifestContent | Set-Content -Path $manifestPath
         
+    - name: checking build version
+      shell: pwsh    
+      run: |
+        $buildVersion = ${{ env.buildVer }}
+        $manifestPath = Join-Path -Path "$env:GITHUB_WORKSPACE" -ChildPath "AzLandingZone/AzLandingZone.nuspec"
+        $manifestContent = Get-Content -Path $manifestPath -Raw
     - name: setup NuGet
       uses: nuget/setup-nuget@v1
         
-    - name: nuget pack        
+    - name: nuget pack
       run: nuget pack AzLandingZone/AzLandingZone.nuspec
 
     - name: nuget push for develop
