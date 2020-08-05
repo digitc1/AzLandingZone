@@ -58,7 +58,7 @@ jobs:
       run: nuget sources add -source https://nuget.pkg.github.com/digitc1/index.json -name github -username digitc1 -password GITHUB_TOKEN
       
     - name: push
-      run: nuget push **.nupkg -source "github" -SkipDuplicate
+      run: nuget push **.nupkg -source "github" -SkipDuplicate -k GITHUB_TOKEN
       
     - name: nuget push for develop
       if: ${{ success() && github.ref == 'refs/heads/develop' }}
