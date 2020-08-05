@@ -16,9 +16,23 @@ jobs:
     runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
+    steps:      
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
+      
+    - name: update version
+      env: 
+        major: 0
+        minor: 0
+        patch: 1
+        buildVer: ${{ env.patch }}
+      shell: pwsh
+      run: |
+        $buildVersion = ${{ env.buildVer }}
+        $manifestPath = Join-Path -Path ${{ env.GITHUB_WORKSPACE }} -ChildPath "AzLandingZone/AzLandingZone.psd1"
+        $manifestContent = Get-Content -Path $manifestPath -Raw
+        $manifestContent = $manifestContent -replace '<ModuleVersion>', ${{ env.buildVersion }}
+        $manifestContent | Set-Content -Path $manifestPath
       
     - uses: nuget/setup-nuget@v1
       with:
