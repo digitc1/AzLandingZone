@@ -31,6 +31,7 @@ jobs:
         $buildVersion = ${{ env.buildVer }}
         $manifestPath = Join-Path -Path "$env:GITHUB_WORKSPACE" -ChildPath "AzLandingZone/AzLandingZone.psd1"
         $manifestContent = Get-Content -Path $manifestPath -Raw
+        $manifestContent
         $manifestContent = $manifestContent -replace '<ModuleVersion>', "0.0.1"
         $manifestContent | Set-Content -Path $manifestPath
     
