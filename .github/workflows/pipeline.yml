@@ -56,7 +56,7 @@ jobs:
 
     - name: nuget push for develop
       if: ${{ success() && github.ref == 'refs/heads/develop' }}
-      run: nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/digitc1/AzLandingZone/index.json" -UserName augustincolle-digit
+      run: nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/digitc1/AzLandingZonePublic/index.json" -UserName augustincolle-digit
       
     - name: nuget push for develop
       if: ${{ success() && github.ref == 'refs/heads/develop' }}
