@@ -33,6 +33,7 @@ jobs:
         $manifestContent = Get-Content -Path $manifestPath -Raw
         $manifestContent
         $manifestContent = $manifestContent -replace '<ModuleVersion>', "0.0.1"
+        $manifestContent
         $manifestContent | Set-Content -Path $manifestPath
     
     - name: setup NuGet
