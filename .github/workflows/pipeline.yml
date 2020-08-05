@@ -60,7 +60,7 @@ jobs:
     - name: push using external
       uses: tanaka-takayoshi/nuget-publish-to-github-packages-action@v2.1
       with:
-        nupkg-path:  './artifacts/*.nupkg'
+        nupkg-path:  '**.nupkg'
         repo-owner:  'digitc1'
         gh-user:  'digitc1'
         token:  ${{ secrets.GITHUB_TOKEN }}
