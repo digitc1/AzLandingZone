@@ -29,7 +29,7 @@ jobs:
       shell: pwsh
       run: |
         $buildVersion = ${{ env.buildVer }}
-        $manifestPath = Join-Path -Path $GITHUB_WORKSPACE -ChildPath "AzLandingZone/AzLandingZone.psd1"
+        $manifestPath = Join-Path -Path "AzLandingZone/AzLandingZone.psd1"
         $manifestContent = Get-Content -Path $manifestPath -Raw
         $manifestContent = $manifestContent -replace '<ModuleVersion>', ${{ env.buildVersion }}
         $manifestContent | Set-Content -Path $manifestPath
