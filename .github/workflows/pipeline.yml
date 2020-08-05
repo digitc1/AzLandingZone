@@ -57,16 +57,8 @@ jobs:
     - name: Authenticate
       run: dotnet nuget add source https://nuget.pkg.github.com/digitc1/index.json -n github -u digitc1 -p GITHUB_TOKEN --store-password-in-clear-text
       
-    - name: push using external
-      uses: tanaka-takayoshi/nuget-publish-to-github-packages-action@v2.1
-      with:
-        nupkg-path:  '**.nupkg'
-        repo-owner:  'digitc1'
-        gh-user:  'digitc1'
-        token:  ${{ secrets.GITHUB_TOKEN }}
-      
     - name: push
-      run: dotnet nuget push "AzLandingZone.0.0.1.nupkg" --source "github" -k GITHUB_TOKEN
+      run: dotnet nuget push "**AzLandingZone.0.0.1.nupkg" --source "github" -k GITHUB_TOKEN
       
     - name: nuget push for develop
       if: ${{ success() && github.ref == 'refs/heads/develop' }}
