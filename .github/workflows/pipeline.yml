@@ -20,7 +20,7 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
       
-    - name: update version
+    - name: update version in psd file
       env: 
         major: 0
         minor: 0
@@ -31,11 +31,23 @@ jobs:
         $buildVersion = ${{ env.buildVer }}
         $manifestPath = Join-Path -Path "$env:GITHUB_WORKSPACE" -ChildPath "AzLandingZone/AzLandingZone.psd1"
         $manifestContent = Get-Content -Path $manifestPath -Raw
-        $manifestContent
         $manifestContent = $manifestContent -replace '<ModuleVersion>', "0.0.1"
-        $manifestContent
         $manifestContent | Set-Content -Path $manifestPath
     
+    - name: update version in nuspec file
+      env: 
+        major: 0
+        minor: 0
+        patch: 1
+        buildVer: ${{ env.patch }}
+      shell: pwsh
+      run: |
+        $buildVersion = ${{ env.buildVer }}
+        $manifestPath = Join-Path -Path "$env:GITHUB_WORKSPACE" -ChildPath "AzLandingZone/AzLandingZone.nuspec"
+        $manifestContent = Get-Content -Path $manifestPath -Raw
+        $manifestContent = $manifestContent -replace '$VERSIONHERE$', "0.0.1"
+        $manifestContent | Set-Content -Path $manifestPath
+        
     - name: setup NuGet
       uses: nuget/setup-nuget@v1
         
