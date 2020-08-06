@@ -56,7 +56,7 @@ jobs:
       run: dotnet nuget add source https://nuget.pkg.github.com/digitc1/index.json -n github -u digitc1 -p GH_TOKEN --store-password-in-clear-text
               
     - name: nuget pack
-      run: dotnet pack --configuration Release
+      run: dotnet pack AzLandingZone/AzLandingZone.nuspec --configuration Release
 
     - name: push
       run: dotnet nuget push "**.nupkg" --source "github"
