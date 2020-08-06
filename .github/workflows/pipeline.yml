@@ -53,7 +53,7 @@ jobs:
       uses: nuget/setup-nuget@v1
       
     - name: Authenticate
-      run: dotnet nuget add source https://nuget.pkg.github.com/digitc1/index.json -n github -u digitc1 -p ${{ secrets.GH_TOKEN }}
+      run: dotnet nuget add source https://nuget.pkg.github.com/digitc1/index.json -n github -u digitc1 -p ${{ secrets.GITHUB_TOKEN }}
               
     - name: nuget pack
       run: nuget pack AzLandingZone/AzLandingZone.nuspec
