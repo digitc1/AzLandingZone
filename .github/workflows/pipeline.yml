@@ -31,6 +31,7 @@ jobs:
         $manifestContent = Get-Content -Path $manifestPath -Raw
         $manifestContent = $manifestContent -replace '<ModuleVersion>', ${{ env.buildVersion }}
         $manifestContent | Set-Content -Path $manifestPath
+        Write-Host $manifestContent
       env:
         buildVersion: '${{ env.major }}.${{ env.minor }}.${{ env.patch }}'
     
@@ -41,6 +42,7 @@ jobs:
         $manifestContent = Get-Content -Path $manifestPath -Raw
         $manifestContent = $manifestContent -replace 'VERSIONHERE', ${{ env.buildVersion }}
         $manifestContent | Set-Content -Path $manifestPath
+        write-Host $manifestContent
       env:
         buildVersion: '${{ env.major }}.${{ env.minor }}.${{ env.patch }}'
 
