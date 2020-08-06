@@ -2,12 +2,13 @@
 <package >
   <metadata>
     <id>AzLandingZone</id>
-    <version>$VERSIONHERE$</version>
+    <version><ModuleVersion></version>
     <authors>Augustin Colle</authors>
     <owners>Augustin Colle</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MIT</license>
     <description>Package created by DIGIT for Azure Landing Zone</description>
+    <repository type="git" url="https://github.com/digitc1/AzLandingZone.git" />
     <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
     <copyright>Copyright 2020</copyright>
     <tags>Azure LandingZone DIGIT</tags>

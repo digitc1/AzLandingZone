@@ -18,7 +18,7 @@ Function Set-LzSecurityAutoProvisioningSettings {
 	try {
 		Write-Host -ForegroundColor Green "Configuring Azure security center agents auto-provisioning"
 		$auth = Get-AzAccessToken
-		$requestResult = Invoke-webrequest -Uri $uri -Method Put -Headers $auth -Body ($body | ConvertTo-Json -Depth 5)
+		Invoke-webrequest -Uri $uri -Method Put -Headers $auth -Body ($body | ConvertTo-Json -Depth 5) | Out-Null
 		Write-Host -ForegroundColor Green "Configured Azure security center agents auto-provisioning"
 	}
 	catch {
