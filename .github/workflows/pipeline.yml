@@ -29,9 +29,10 @@ jobs:
     - name: update version in psd file
       shell: pwsh
       run: |
+        $buildVersion
         $manifestPath = Join-Path -Path "$env:GITHUB_WORKSPACE" -ChildPath "AzLandingZone/AzLandingZone.psd1"
         $manifestContent = Get-Content -Path $manifestPath -Raw
-        $manifestContent = $manifestContent -replace '<ModuleVersion>', ${{ env.buildVersion }}
+        $manifestContent = $manifestContent -replace '<ModuleVersion>', $buildVersion
         $manifestContent | Set-Content -Path $manifestPath
     
     - name: update version in nuspec file
@@ -39,7 +40,7 @@ jobs:
       run: |
         $manifestPath = Join-Path -Path "$env:GITHUB_WORKSPACE" -ChildPath "AzLandingZone/AzLandingZone.nuspec"
         $manifestContent = Get-Content -Path $manifestPath -Raw
-        $manifestContent = $manifestContent -replace 'VERSIONHERE', ${{ env.buildVersion }}
+        $manifestContent = $manifestContent -replace 'VERSIONHERE', $buildVersion
         $manifestContent | Set-Content -Path $manifestPath
 
     - name: setup NuGet
