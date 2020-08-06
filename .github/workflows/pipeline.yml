@@ -39,7 +39,7 @@ jobs:
       run: |
         $manifestPath = Join-Path -Path "$env:GITHUB_WORKSPACE" -ChildPath "AzLandingZone/AzLandingZone.nuspec"
         $manifestContent = Get-Content -Path $manifestPath -Raw
-        $manifestContent = $manifestContent -replace 'VERSIONHERE', ${{ buildVersion }}
+        $manifestContent = $manifestContent -replace 'VERSIONHERE', ${{ env.buildVersion }}
         $manifestContent | Set-Content -Path $manifestPath
       env:
         buildVersion: '${{ env.major }}.${{ env.minor }}.${{ env.patch }}'
