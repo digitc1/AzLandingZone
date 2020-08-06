@@ -59,7 +59,7 @@ jobs:
       run: nuget pack AzLandingZone/AzLandingZone.nuspec
 
     - name: push
-      run: nuget push "**.nupkg" -source "github"
+      run: nuget push "**.nupkg" -source "github" -ApiKey GITHUB_TOKEN
       
     - name: nuget push for develop
       if: ${{ success() && github.ref == 'refs/heads/develop' }}
