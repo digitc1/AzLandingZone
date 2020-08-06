@@ -17,8 +17,8 @@ jobs:
     env:
       major: 0
       minor: 0
-      patch: $env:GITHUB_RUN_ID
-      buildVersion: $major.$minor.$patch
+      patch: 0
+      buildVersion: ${{ env.major }}.${{ env.minor }}.${{ env.patch }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:      
