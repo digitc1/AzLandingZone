@@ -18,7 +18,6 @@ jobs:
       major: '0'
       minor: '0'
       patch: '0'
-      buildVersion: '${{ env.major }}.${{ env.minor }}.${{ env.patch }}'
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:      
@@ -34,6 +33,8 @@ jobs:
         $manifestContent = Get-Content -Path $manifestPath -Raw
         $manifestContent = $manifestContent -replace '<ModuleVersion>', $buildVersion
         $manifestContent | Set-Content -Path $manifestPath
+      env:
+        buildVersion: '${{ env.major }}.${{ env.minor }}.${{ env.patch }}'
     
     - name: update version in nuspec file
       shell: pwsh
