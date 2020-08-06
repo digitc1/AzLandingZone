@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>AzLandingZone</id>
-    <version><ModuleVersion></version>
+    <version>VERSIONHERE</version>
     <authors>Augustin Colle</authors>
     <owners>Augustin Colle</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
