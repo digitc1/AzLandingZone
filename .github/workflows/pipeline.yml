@@ -17,7 +17,7 @@ jobs:
     env:
       major: '0'
       minor: '0'
-      patch: '0'
+      patch: '2'
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:      
@@ -27,11 +27,9 @@ jobs:
     - name: update version in psd file
       shell: pwsh
       run: |
-        Write-Host $buildVersion
-        echo $major $minor $patch $env:GITHUB_RUN_ID
         $manifestPath = Join-Path -Path "$env:GITHUB_WORKSPACE" -ChildPath "AzLandingZone/AzLandingZone.psd1"
         $manifestContent = Get-Content -Path $manifestPath -Raw
-        $manifestContent = $manifestContent -replace '<ModuleVersion>', $buildVersion
+        $manifestContent = $manifestContent -replace '<ModuleVersion>', ${{ env.buildVersion }}
         $manifestContent | Set-Content -Path $manifestPath
       env:
         buildVersion: '${{ env.major }}.${{ env.minor }}.${{ env.patch }}'
@@ -41,8 +39,10 @@ jobs:
       run: |
         $manifestPath = Join-Path -Path "$env:GITHUB_WORKSPACE" -ChildPath "AzLandingZone/AzLandingZone.nuspec"
         $manifestContent = Get-Content -Path $manifestPath -Raw
-        $manifestContent = $manifestContent -replace 'VERSIONHERE', $buildVersion
+        $manifestContent = $manifestContent -replace 'VERSIONHERE', ${{ buildVersion }}
         $manifestContent | Set-Content -Path $manifestPath
+      env:
+        buildVersion: '${{ env.major }}.${{ env.minor }}.${{ env.patch }}'
 
     - name: setup NuGet
       uses: nuget/setup-nuget@v1
