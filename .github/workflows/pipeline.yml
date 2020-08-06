@@ -15,10 +15,10 @@ jobs:
     runs-on: windows-latest
     
     env:
-      major: 0
-      minor: 0
-      patch: 0
-      buildVersion: ${{ env.major }}.${{ env.minor }}.${{ env.patch }}
+      major: '0'
+      minor: '0'
+      patch: '0'
+      buildVersion: '${{ env.major }}.${{ env.minor }}.${{ env.patch }}'
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:      
