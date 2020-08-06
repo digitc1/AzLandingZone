@@ -59,7 +59,7 @@ jobs:
       run: nuget pack AzLandingZone/AzLandingZone.nuspec
 
     - name: push
-      run: dotnet nuget push "**.nupkg" --source "github" --api-key GH_TOKEN
+      run: dotnet nuget push "**.nupkg" --source "github" --api-key ${{ secrets.GITHUB_TOKEN }}
       
     - name: nuget push for develop
       if: ${{ success() && github.ref == 'refs/heads/develop' }}
