@@ -57,6 +57,9 @@ jobs:
               
     - name: nuget pack
       run: nuget pack AzLandingZone/AzLandingZone.nuspec
+  
+    - name: nuget set key
+      run: nuget setapikey ${{ secrets.GITHUB_TOKEN }} -Source https://nuget.pkg.github.com/digitc1/index.json
       
     - name: Push Nupkg to GitHub Packages
       uses: tanaka-takayoshi/nuget-publish-to-github-packages-action@v2.1
