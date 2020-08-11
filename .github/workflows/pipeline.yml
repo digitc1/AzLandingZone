@@ -50,14 +50,14 @@ jobs:
       uses: nuget/setup-nuget@v1
       
     - name: Authenticate
-      run: nuget sources add -source https://nuget.pkg.github.com/digitc1/index.json -name github -u digitc1 -p ${{ secrets.GITHUB_TOKEN }}
+      run: nuget sources add -source https://nuget.pkg.github.com/digitc1/index.json -name github -u digitc1 -p ${{ secrets.AUGUSTIN_GITHUB_TOKEN }}
               
     - name: nuget pack
       run: nuget pack AzLandingZone/AzLandingZone.nuspec
 
     - name: push
       if: ${{ success() && github.ref == 'refs/heads/develop' }}
-      run: nuget push **.nupkg -source github -apikey ${{ secrets.GITHUB_TOKEN }}
+      run: nuget push **.nupkg -source github -apikey ${{ secrets.AUGUSTIN_GITHUB_TOKEN }}
 
     - name: nuget push for master
       if: ${{ success() && github.ref == 'refs/heads/master' }}
