@@ -1,4 +1,36 @@
 Function New-AzLandingZone {
+    <#
+        .SYNOPSIS
+        Installs all the components of the Landing Zone
+        .DESCRIPTION
+        Installs all the components of the Landing Zone
+        .PARAMETER autoupdate
+        Switch to enable auto-update. If no value is provided then default to $false.
+        .PARAMETER SOC
+        Enter the name of the SOC to connect to. If no value is provided then default to none.
+        .PARAMETER location
+        Enter a location to install the Landing Zone. If no value is provided then default to West Europe.
+        .PARAMETER enableSentinel
+        Switch to enable installation of Azure Sentinel. If no value is provided then default to $false. This parameter is overwritten to $true if using parameter "-SOC DIGIT".
+        .PARAMETER enableEventHub
+        Switch to enable installation of event hub namespace. If no value is provided then default to $false. This parameter is overwritten to $true if using parameter "-SOC CERTEU".
+        .PARAMETER retentionPeriod
+        Enter the number of days to retain the logs in legal hold. If not value is provided then default to 185 days (6 months). This parameters cannot be less than 185 days.
+        .PARAMETER securityContacts
+        Enter a coma-separated list of users to notify in case of security alerts.
+        .EXAMPLE
+        New-AzLandingZone
+        Install the default components of the Landing Zone with default values.
+        .EXAMPLE
+        New-AzLandingZone -SOC "DIGIT" -autoupdate $true -location "northeurope"
+        Install the default components of the Landing Zone + log analytics workspace and Azure sentinel in region North Europe. Enables auto-update and connectivity for DIGIT-CLOUDSEC team.
+        .EXAMPLE
+        New-AzLandingZone -EnableSentinel $true -retentionPeriod 365
+        Install the default components of the Landing Zone + log analytics workspace and Azure sentinel. Retention policy for legal hold is set to 365 days (storage account only).
+        .EXAMPLE
+        New-AzLandingZone -EnableEventHub $true -securityContacts "alice@domain.com,bob@domain.com"
+        Install the default components of the Landing Zone + event hub namespace with a specific event hub and key. The users "alice@domain.com" and "bob@domain.com" are used for security notifications.
+    #>
     Param (
 		[bool]$autoupdate = $true,
 		[ValidateSet("DIGIT", "CERTEU", "None")][string]$SOC = "None",

@@ -15,14 +15,14 @@ Register-AzLandingZone [-Subscription <String>]
 ### EXAMPLE 1
 ```
 Register-AzLandingZone -Subscrition "<subscription-name>"
-Register the subscription <subscription-name> in Azure Landing Zone
 ```
+Register the subscription <subscription-name> in Azure Landing Zone
 
 ### EXAMPLE 2
 ```
-Register-AzLandingZone -Subscrition "<subscription-id>"
-Register the subscription <subscription-id> in Azure Landing Zone
+Register-AzLandingZone -Subscrition "<subscription-id>" -SOC "DIGIT"
 ```
+Register the subscription <subscription-id> in Azure Landing Zone and enable lighthouse for DIGIT.S access
 
 ## PARAMETERS
 
@@ -30,8 +30,23 @@ Register the subscription <subscription-id> in Azure Landing Zone
 Enter the name or id of the subscription to register
 
 ```yaml
-Type: bool
+Type: String
 Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: Named
+Default value: 
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -SOC
+Enter SOC value for additional features (lighthouse, Sentinel multi-workspace, ...)
+
+```yaml
+Type: String
+Parameter Sets: DIGIT, CERTEU, none
 Aliases:
 
 Required: True

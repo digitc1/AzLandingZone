@@ -15,26 +15,26 @@ New-AzLandingZone [-autoupdate <bool>] [-SOC <string>] [-location <string>] [-en
 ### EXAMPLE 1
 ```
 New-AzLandingZone
-Install the default components of the Landing Zone with default values.
 ```
+Install the default components of the Landing Zone with default values.
 
 ### EXAMPLE 2
 ```
 New-AzLandingZone -SOC "DIGIT" -autoupdate $true -location "northeurope"
-Install the default components of the Landing Zone + log analytics workspace and Azure sentinel in region North Europe. Enables auto-update and connectivity for DIGIT-CLOUDSEC team.
 ```
+Install the default components of the Landing Zone + log analytics workspace and Azure sentinel in region North Europe. Enables auto-update and connectivity for DIGIT-CLOUDSEC team.
 
 ### EXAMPLE 3
 ```
 New-AzLandingZone -EnableSentinel $true -retentionPeriod 365
-Install the default components of the Landing Zone + log analytics workspace and Azure sentinel. Retention policy for legal hold is set to 365 days (storage account only).
 ```
+Install the default components of the Landing Zone + log analytics workspace and Azure sentinel. Retention policy for legal hold is set to 365 days (storage account only).
 
 ### EXAMPLE 4
 ```
 New-AzLandingZone -EnableEventHub $true -securityContacts "alice@domain.com,bob@domain.com"
-Install the default components of the Landing Zone + event hub namespace with a specific event hub and key. The users "alice@domain.com" and "bob@domain.com" are used for security notifications.
 ```
+Install the default components of the Landing Zone + event hub namespace with a specific event hub and key. The users "alice@domain.com" and "bob@domain.com" are used for security notifications.
 
 ## PARAMETERS
 
