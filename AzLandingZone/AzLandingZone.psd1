@@ -79,6 +79,7 @@
             '.\Private\setup-LogPipeline.ps1',
             '.\Private\setup-Policy.ps1',
             '.\Private\setup-Prerequisites.ps1',
+            '.\Private\register-AzResourcesProviders.ps1',
             '.\Private\setup-Resources.ps1',
             '.\Private\setup-RunAs.ps1',
             '.\Private\setup-Storage.ps1',
@@ -93,7 +94,10 @@
             '.\Private\rest-api\securityCenter\Set-LzSecurityCenterAlertRule.ps1',
             '.\Private\rest-api\securityCenter\Set-LzSecurityCenterAutoProvisioningSettings.ps1',
             '.\Private\rest-api\securityCenter\Set-LzSecurityCenterPricing.ps1',
-            '.\Private\rest-api\subscriptions\Set-LzSubscriptionDiagnosticSettings.ps1'
+            '.\Private\rest-api\subscriptions\Register-LzInsightsProvider.ps1',
+            '.\Private\rest-api\subscriptions\Register-LzManagedServicesProvider.ps1',
+            '.\Private\rest-api\subscriptions\Register-LzPolicyInsightsProvider.ps1',
+            '.\Private\rest-api\subscriptions\Register-LzSecurityProvider.ps1'
         )
     
     # Fonctions à exporter à partir de ce module. Pour de meilleures performances, n’utilisez pas de caractères génériques et ne supprimez pas l’entrée. Utilisez un tableau vide si vous n’avez aucune fonction à exporter.
