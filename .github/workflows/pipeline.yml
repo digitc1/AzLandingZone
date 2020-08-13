@@ -53,7 +53,7 @@ jobs:
       run: nuget sources add -source https://nuget.pkg.github.com/digitc1/index.json -name github -u digitc1 -p ${{ secrets.AUGUSTIN_GITHUB_TOKEN }}
               
     - name: Authenticate Devops
-      run: nuget sources add -source https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/developmentfeed/nuget/v3/index.json -name devops -p ${{ secrets.AUGUSTIN_DEVOPS_TOKEN }}
+      run: nuget sources add -source https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/developmentfeed/nuget/v3/index.json -name devops -p ${{ secrets.AUGUSTIN_DEVOPS_TOKEN }} -u devops@acp4eu074hotmail.onmicrosoft.com
               
     - name: nuget pack
       run: nuget pack AzLandingZone/AzLandingZone.nuspec
