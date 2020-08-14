@@ -27,7 +27,7 @@ Function Set-LzSecurityCenterAlertRule {
 
 	try {
 		Write-Host -ForegroundColor Green "Enabling alerts creation for Azure Security Center in Sentinel"
-		$auth = Get-AzAccessToken
+		$auth = Get-LzAccessToken
 		$requestResult = Invoke-webrequest -Uri $uri -Method Put -Headers $auth -Body ($body | ConvertTo-Json -Depth 5)
 		Write-Host -ForegroundColor Green "Enabled alerts creation for Azure Security Center in Sentinel"
 	}

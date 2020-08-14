@@ -18,7 +18,7 @@ Function Register-LzManagedServices {
 
 	try {
 		Write-Host -ForegroundColor Green "Configuring subscription diagnostic settings"
-		$auth = Get-AzAccessToken
+		$auth = Get-LzAccessToken
 		$requestResult = Invoke-webrequest -Uri $uri -Method Post -Headers $auth -Body ($body | ConvertTo-Json -Depth 5)
 		Write-Host -ForegroundColor Green "Configured subscription diagnostic settings"
 	}

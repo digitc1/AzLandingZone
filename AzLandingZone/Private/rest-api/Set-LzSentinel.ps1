@@ -19,7 +19,7 @@ function Get-LzSentinel {
     $uri = "https://management.azure.com" + $GetResourceGroup.ResourceId + "/providers/Microsoft.OperationsManagement/solutions/SecurityInsights(" + $GetLogAnalyticsWorkspace.Name + ")?api-version=2015-11-01-preview"
     
     try {
-        $auth = Get-AzAccessToken
+        $auth = Get-LzAccessToken
         $requestResult = Invoke-webrequest -Uri $uri -Method Get -Headers $auth
         return 0
     }
@@ -58,7 +58,7 @@ function Remove-LzSentinel {
     $uri = "https://management.azure.com" + $GetResourceGroup.ResourceId + "/providers/Microsoft.OperationsManagement/solutions/SecurityInsights(" + $GetLogAnalyticsWorkspace.Name + ")?api-version=2015-11-01-preview"
     
     try {
-        $auth = Get-AzAccessToken
+        $auth = Get-LzAccessToken
         $requestResult = Invoke-webrequest -Uri $uri -Method Delete -Headers $auth
         return 0
     }
@@ -118,7 +118,7 @@ function Set-LzSentinel {
     }
 
     try {
-        $auth = Get-AzAccessToken
+        $auth = Get-LzAccessToken
         $requestResult = Invoke-webrequest -Uri $uri -Method Put -Headers $auth -Body ($body | ConvertTo-Json)
         return 0
     }

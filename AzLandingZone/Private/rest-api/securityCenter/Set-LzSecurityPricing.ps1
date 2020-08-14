@@ -16,7 +16,7 @@ Function Set-LzSecurityPricing {
 
 	try {
 		Write-Host -ForegroundColor Green "Configuring  Azure Security Center to standard tier"
-		$auth = Get-AzAccessToken
+		$auth = Get-LzAccessToken
 		"virtualMachines", "SqlServers", "AppServices", "StorageAccounts", "SqlServerVirtualMachines", "KubernetesService", "ContainerRegistry", "KeyVaults" | ForEach-Object {
 			$uri = "https://management.azure.com/subscriptions/" + $subscriptionId + "/providers/Microsoft.Security/pricings/" + $_ + "?api-version=2018-06-01"
 			$requestResult = Invoke-webrequest -Uri $uri -Method Put -Headers $auth -Body ($body | ConvertTo-Json -Depth 5)

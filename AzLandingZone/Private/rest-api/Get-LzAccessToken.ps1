@@ -1,4 +1,4 @@
-Function Get-AzAccessToken {
+Function Get-LzAccessToken {
     $context = Get-AzContext
     $myProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
     $profileClient = New-Object -TypeName Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient -ArgumentList ($myProfile)
@@ -10,4 +10,4 @@ Function Get-AzAccessToken {
 
     return $authHeader
 }
-Export-ModuleMember -Function Get-AzAccessToken
+Export-ModuleMember -Function Get-LzAccessToken

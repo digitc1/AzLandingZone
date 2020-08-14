@@ -34,7 +34,7 @@ Function Connect-LzSecurityCenter{
 
 	try{
 		Write-Host -ForegroundColor Green "Connecting ASC to Azure Sentinel"
-		$auth = Get-AzAccessToken
+		$auth = Get-LzAccessToken
 		Invoke-webrequest -Uri $uri -Method Put -Headers $auth -Body ($body | ConvertTo-Json -Depth 5) | Out-Null
 		Write-Host -ForegroundColor Green "Connected ASC to Azure Sentinel"
 	}
