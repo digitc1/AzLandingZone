@@ -57,7 +57,7 @@ Function Set-LzActiveDirectoryDiagnosticSettings {
 
 	try{
 		Write-Host -ForegroundColor Green "Configuring active directory diagnostic settings"
-		$auth = Get-AzAccessToken
+		$auth = Get-LzAccessToken
 		$requestResult = Invoke-webrequest -Uri $uri -Method Put -Headers $auth -Body ($body | ConvertTo-Json -Depth 5)
 		Write-Host -ForegroundColor Green "Configured subscription diagnostic settings"
 	}
