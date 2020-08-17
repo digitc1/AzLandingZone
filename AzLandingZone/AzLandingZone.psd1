@@ -84,7 +84,7 @@
             '.\Private\setup-Storage.ps1',
             '.\Private\setup-Subscription.ps1',
             '.\Private\setup-SubscriptionContacts.ps1',
-            '.\Private\rest-api\Get-AzAccessToken.ps1',
+            '.\Private\rest-api\Get-LzAccessToken.ps1',
             '.\Private\rest-api\Set-LzSentinel.ps1',
             '.\Private\rest-api\activeDirectory\Connect-LzActiveDirectory.ps1',
             '.\Private\rest-api\activeDirectory\Set-LzActiveDirectoryAlertRule.ps1',
