@@ -5,7 +5,7 @@ name: build
 # events but only for the develop branch
 on:
   push:
-    branches: [ 'refs/heads/release/**', 'refs/heads/master' ]
+    branches: [ 'release/**', 'master' ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -50,11 +50,11 @@ jobs:
       uses: nuget/setup-nuget@v1
       
     - name: Authenticate development Feed
-      if: ${{ success() && github.ref == 'refs/heads/release/**' }}
+      if: ${{ success() && github.ref == 'release/**' }}
       run: nuget sources add -source https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/developmentfeed/nuget/v3/index.json -name devops -p ${{ secrets.AUGUSTIN_DEVOPS_TOKEN }} -u devops@acp4eu074hotmail.onmicrosoft.com
 
     - name: Authenticate public Feed
-      if: ${{ success() && github.ref == 'refs/heads/master' }}
+      if: ${{ success() && github.ref == 'master' }}
       run: nuget sources add -source https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/publicfeed/nuget/v3/index.json -name devops -p ${{ secrets.AUGUSTIN_DEVOPS_TOKEN }} -u devops@acp4eu074hotmail.onmicrosoft.com
             
     - name: nuget pack
