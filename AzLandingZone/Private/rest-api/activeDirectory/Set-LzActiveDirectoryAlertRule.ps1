@@ -1,6 +1,6 @@
 Function Set-LzActiveDirectoryAlertRule {
 	Param (
-		[Parameter(Mandatory=$true)][String] $name
+		[String] $name = "lzslz"
 	)
 
 	if(!($GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*$name*")){

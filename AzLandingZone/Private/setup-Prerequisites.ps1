@@ -21,5 +21,12 @@ Function setup-Prerequisites {
             Start-Sleep -s 10
         }
     }
+    Write-Host "Checking registration for Microsoft Managed Services" -ForegroundColor Yellow
+    if(!((Get-AzResourceProvider -ProviderNamespace 'Microsoft.ManagedServices').RegistrationState[0] -Like "Registered")){
+        Register-AzResourceProvider -ProviderNamespace 'Microsoft.ManagedServices'
+        while(!((Get-AzResourceProvider -ProviderNamespace 'Microsoft.ManagedServices').RegistrationState[0] -Like "Registered")){
+            Start-Sleep -s 10
+        }
+    }
 }
 Export-ModuleMember -Function setup-Prerequisites
