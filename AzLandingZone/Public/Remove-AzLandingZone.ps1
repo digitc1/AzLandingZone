@@ -1,4 +1,12 @@
 Function Remove-AzLandingZone {
+    <#
+        .SYNOPSIS
+        Remove all the components of the Landing Zone except storage account for legal hold
+        .DESCRIPTION
+        Remove all the components of the Landing Zone except storage account for legal hold
+        .EXAMPLE
+        Remove-AzLandingZone
+    #>
     if($GetManagementGroup = Get-AzManagementGroup -ErrorAction "silentlyContinue" | Where-Object {$_.Name -Like "lz-management-group"}){
         Write-Host "Removing Landing Zone role assignments at the manamagement group level" -ForegroundColor Yellow
         Get-AzRoleAssignment -Scope $GetManagementGroup.Id | Where-Object {$_.DisplayName -Like "SLZ-*"} | Remove-AzRoleAssignment | Out-Null

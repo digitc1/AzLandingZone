@@ -1,4 +1,20 @@
 Function Register-AzLandingZone {
+    <#
+        .SYNOPSIS
+        Register a subscription in Azure Landing Zone management groups (policies and log collection apply)
+        .DESCRIPTION
+        Register a subscription in Azure Landing Zone management groups (policies and log collection apply)
+        .PARAMETER Subscription
+        Enter the name or id of the subscription to register
+        .PARAMETER SOC
+        Enter SOC value for additional features (lighthouse, Sentinel multi-workspace, ...)
+        .EXAMPLE
+        Register-AzLandingZone -Subscrition "<subscription-name>"
+        Register the subscription <subscription-name> in Azure Landing Zone
+        .EXAMPLE
+        Register-AzLandingZone -Subscrition "<subscription-id>" -SOC "DIGIT" 
+        Register the subscription <subscription-id> in Azure Landing Zone and enable lighthouse for DIGIT.S access
+    #>
     Param(
         [Parameter(Mandatory=$true)][string]$subscription,
         [ValidateSet("DIGIT", "CERTEU", "None", "")][string] $SOC = "None"

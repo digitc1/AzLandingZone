@@ -1,4 +1,12 @@
 Function Test-AzLandingZone {
+    <#
+        .SYNOPSIS
+        Test if current user has sufficient rights to apply the Landing Zone
+        .DESCRIPTION
+        Test if current user has sufficient rights to apply the Landing Zone
+        .EXAMPLE
+        Test-AzLandingZone
+    #>
     [cmdletbinding()]
     Param()
 

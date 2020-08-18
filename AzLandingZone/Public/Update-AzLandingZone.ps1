@@ -1,4 +1,12 @@
 Function Update-AzLandingZone {
+    <#
+        .SYNOPSIS
+        Update Landing Zone policies and resources to latest configuration
+        .DESCRIPTION
+        Update Landing Zone policies and resources to latest configuration
+        .EXAMPLE
+        Update-AzLandingZone
+    #>
     Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
 
     if(Test-AzLandingZone){

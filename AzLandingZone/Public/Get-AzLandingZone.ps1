@@ -1,4 +1,12 @@
 Function Get-AzLandingZone {
+    <#
+      .SYNOPSIS
+      Get all the components of the Landing Zone and checks the configuration of the resources
+      .DESCRIPTION
+      Get all the components of the Landing Zone and checks the configuration of the resources
+      .EXAMPLE
+      Get-AzLandingZone
+    #>
     Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
 
     $definitionListv1URI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/definitionList1.txt"

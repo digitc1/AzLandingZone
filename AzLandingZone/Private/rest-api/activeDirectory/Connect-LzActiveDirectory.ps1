@@ -31,7 +31,7 @@ Function Connect-LzActiveDirectory{
 
 	try{
 		Write-Host -ForegroundColor Green "Connecting Active Directory logs to Azure Sentinel"
-		$auth = Get-AzAccessToken
+		$auth = Get-LzAccessToken
 		$requestResult = Invoke-webrequest -Uri $uri -Method Put -Headers $auth -Body ($body | ConvertTo-Json -Depth 5)
 		Write-Host -ForegroundColor Green "Connected Active Directory logs to Azure Sentinel"
 	}
