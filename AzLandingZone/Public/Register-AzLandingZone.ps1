@@ -23,7 +23,6 @@ Function Register-AzLandingZone {
     #
     # Onboard the specified subscription
     #
-
     if(!($GetSubscription = Get-AzSubscription | Where-Object {$_.Name -Like "$subscription" -Or $_.Id -Like "$subscription"})){
         Write-Host "Provided subscription is invalid. Make sure to provide a valid subscription name."
         return
@@ -35,6 +34,8 @@ Function Register-AzLandingZone {
     if($GetSubscription.Name -notin $GetManagementGroup.Children.DisplayName){
         New-AzManagementGroupSubscription -GroupName "lz-management-group" -SubscriptionId $GetSubscription.Id | Out-Null
     }
+    
+    register-LzResourceProviders -subscriptionId $GetSubscription.Id
 
     Set-LzSubscriptionDiagnosticSettings -subscriptionId $GetSubscription.Id
 

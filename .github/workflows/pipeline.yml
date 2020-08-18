@@ -17,7 +17,7 @@ jobs:
     env:
       major: '0'
       minor: '0'
-      patch: '6'
+      patch: '7'
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:      
@@ -49,18 +49,12 @@ jobs:
     - name: setup NuGet
       uses: nuget/setup-nuget@v1
       
-    - name: Authenticate
-      run: nuget sources add -source https://nuget.pkg.github.com/digitc1/index.json -name github -u digitc1 -p ${{ secrets.AUGUSTIN_GITHUB_TOKEN }}
-              
     - name: Authenticate Devops
       run: nuget sources add -source https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/developmentfeed/nuget/v3/index.json -name devops -p ${{ secrets.AUGUSTIN_DEVOPS_TOKEN }} -u devops@acp4eu074hotmail.onmicrosoft.com
+
               
     - name: nuget pack
       run: nuget pack AzLandingZone/AzLandingZone.nuspec
-
-    - name: push
-      if: ${{ success() && github.ref == 'refs/heads/develop' }}
-      run: nuget push **.nupkg -source github -apikey ${{ secrets.AUGUSTIN_GITHUB_TOKEN }}
     
     - name: push devops
       if: ${{ success() && github.ref == 'refs/heads/develop' }}
@@ -68,4 +62,4 @@ jobs:
 
     - name: nuget push for master
       if: ${{ success() && github.ref == 'refs/heads/master' }}
-      run: nuget push **.nupkg -source github -apikey ${{ secrets.GITHUB_TOKEN }}
+      run: nuget push **.nupkg -source github -apikey ${{ secrets.AUGUSTIN_GITHUB_TOKEN }}
