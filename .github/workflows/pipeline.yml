@@ -50,7 +50,7 @@ jobs:
       uses: nuget/setup-nuget@v1
       
     - name: Authenticate development Feed
-      if: ${{ success() && startsWith(github.ref, 'release') }}
+      if: ${{ success() && contains(github.ref, 'release') }}
       run: nuget sources add -source https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/developmentfeed/nuget/v3/index.json -name devops -p ${{ secrets.AUGUSTIN_DEVOPS_TOKEN }} -u devops@acp4eu074hotmail.onmicrosoft.com
 
     - name: Authenticate public Feed
