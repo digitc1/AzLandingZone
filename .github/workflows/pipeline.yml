@@ -5,7 +5,7 @@ name: build
 # events but only for the develop branch
 on:
   push:
-    branches: [ develop, master ]
+    branches: [ 'refs/heads/release/*', 'refs/heads/master' ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -17,7 +17,7 @@ jobs:
     env:
       major: '0'
       minor: '0'
-      patch: '513'
+      patch: '514'
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:      
@@ -49,17 +49,16 @@ jobs:
     - name: setup NuGet
       uses: nuget/setup-nuget@v1
       
-    - name: Authenticate Devops
+    - name: Authenticate development Feed
+      if: ${{ success() && github.ref == 'refs/heads/release/*' }}
       run: nuget sources add -source https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/developmentfeed/nuget/v3/index.json -name devops -p ${{ secrets.AUGUSTIN_DEVOPS_TOKEN }} -u devops@acp4eu074hotmail.onmicrosoft.com
 
-              
+    - name: Authenticate public Feed
+      if: ${{ success() && github.ref == 'refs/heads/master' }}
+      run: nuget sources add -source https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/publicfeed/nuget/v3/index.json -name devops -p ${{ secrets.AUGUSTIN_DEVOPS_TOKEN }} -u devops@acp4eu074hotmail.onmicrosoft.com
+            
     - name: nuget pack
       run: nuget pack AzLandingZone/AzLandingZone.nuspec
     
-    - name: push devops
-      if: ${{ success() && github.ref == 'refs/heads/develop' }}
+    - name: Push package to feed
       run: nuget push **.nupkg -source devops -apikey ${{ secrets.AUGUSTIN_DEVOPS_TOKEN }}
-
-    - name: nuget push for master
-      if: ${{ success() && github.ref == 'refs/heads/master' }}
-      run: nuget push **.nupkg -source github -apikey ${{ secrets.AUGUSTIN_GITHUB_TOKEN }}
