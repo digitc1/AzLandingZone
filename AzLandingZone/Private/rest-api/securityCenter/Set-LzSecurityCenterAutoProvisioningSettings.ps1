@@ -16,10 +16,10 @@ Function Set-LzSecurityAutoProvisioningSettings {
 	$uri = "https://management.azure.com/subscriptions/" + $subscriptionId + "/providers/Microsoft.Security/autoProvisioningSettings/default?api-version=2019-01-01"
 
 	try {
-		Write-Host -ForegroundColor Green "Configuring Azure security center agents auto-provisioning"
+		Write-Host -ForegroundColor Yellow "Configuring Azure security center agents auto-provisioning"
 		$auth = Get-LzAccessToken
 		Invoke-webrequest -Uri $uri -Method Put -Headers $auth -Body ($body | ConvertTo-Json -Depth 5) | Out-Null
-		Write-Host -ForegroundColor Green "Configured Azure security center agents auto-provisioning"
+		Write-Host "Configured Azure security center agents auto-provisioning"
 	}
 	catch {
 		Switch ($_.Exception.Response.StatusCode.value__)

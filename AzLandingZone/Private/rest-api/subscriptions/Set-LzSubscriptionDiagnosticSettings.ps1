@@ -68,10 +68,10 @@ Function Set-LzSubscriptionDiagnosticSettings {
 	$uri = "https://management.azure.com/subscriptions/" + $subscriptionId + "/providers/microsoft.insights/diagnosticSettings/" + $logProfileName + "?api-version=2017-05-01-preview"
 
 	try {
-		Write-Host -ForegroundColor Green "Configuring subscription diagnostic settings"
+		Write-Host -ForegroundColor Yellow "Configuring subscription diagnostic settings"
 		$auth = Get-LzAccessToken
 		$requestResult = Invoke-webrequest -Uri $uri -Method Put -Headers $auth -Body ($body | ConvertTo-Json -Depth 5)
-		Write-Host -ForegroundColor Green "Configured subscription diagnostic settings"
+		Write-Host "Configured subscription diagnostic settings"
 	}
 	catch {
 		Switch ($_.Exception.Response.StatusCode.value__)
