@@ -85,8 +85,11 @@ Function New-AzLandingZone {
         setup-Automation -Name $name
     }
 
-    setup-SubscriptionContacts -SOC $SOC -securityContacts $securityContacts
+    #setup-SubscriptionContacts -SOC $SOC -securityContacts $securityContacts
     setup-Policy -Name $name
     setup-Lighthouse -SOC $SOC
+    if($enableSentinel) {
+        setup-Sentinel -Name $name
+    }
 }
 Export-ModuleMember -Function New-AzLandingZone

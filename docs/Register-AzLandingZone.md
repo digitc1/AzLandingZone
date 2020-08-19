@@ -20,9 +20,9 @@ Register the subscription <subscription-name> in Azure Landing Zone
 
 ### EXAMPLE 2
 ```
-Register-AzLandingZone -Subscrition "<subscription-id>" -SOC "DIGIT"
+Register-AzLandingZone -Subscrition "<subscription-id>" -SOC "DIGIT" -securityContacts "alice@domain.com,bob@domain.com"
 ```
-Register the subscription <subscription-id> in Azure Landing Zone and enable lighthouse for DIGIT.S access
+Register the subscription <subscription-id> in Azure Landing Zone, enable lighthouse for DIGIT.S access and register alice and bob as security contacts
 
 ## PARAMETERS
 
@@ -46,10 +46,25 @@ Enter SOC value for additional features (lighthouse, Sentinel multi-workspace, .
 
 ```yaml
 Type: String
-Parameter Sets: DIGIT, CERTEU, none
+Parameter Sets: DIGIT, CERTEU, None
 Aliases:
 
-Required: True
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -securityContacts
+Enter comma separated list of email addresses
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
 Position: Named
 Default value: 
 Accept pipeline input: False

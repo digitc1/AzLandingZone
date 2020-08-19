@@ -34,11 +34,11 @@ Function Set-LzActiveDirectoryDiagnosticSettings {
 					'enabled' = 'true'
 				}
 				@{
-					'category' = 'ServicePrincipalSingInLogs';
+					'category' = 'ServicePrincipalSignInLogs';
 					'enabled' = 'true'
 				}
 				@{
-					'category' = 'ManagedIdentitySingInLogs';
+					'category' = 'ManagedIdentitySignInLogs';
 					'enabled' = 'true'
 				}
 			)

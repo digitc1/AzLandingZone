@@ -17,11 +17,11 @@ Function setup-LogPipeline {
             $rand = Get-Random -Minimum 1000000 -Maximum 9999999999
             $workspaceName = $name +"-workspace"+$rand
             $GetLogAnalyticsWorkspace = New-AzOperationalInsightsWorkspace -Location $GetResourceGroup.Location -Name $workspaceName -Sku Standard -ResourceGroupName $GetResourceGroup.ResourceGroupName
-            Set-LzSentinel -Name $name
-            Set-LzSecurityCenterAlertRule -Name $name
-            Connect-LzActiveDirectory
-            Set-LzActiveDirectoryAlertRule -Name $name
+            Start-Sleep -s 15
             Write-Host "Created Landing Zone log analytics"
+        }
+        if(!((Get-LzSentinel -Name $name) -eq 0)) {
+            Set-LzSentinel -Name $name
         }
     }
     if($enableEventHub){
@@ -30,13 +30,16 @@ Function setup-LogPipeline {
             $rand = Get-Random -Minimum 1000000 -Maximum 9999999999
             $eventHubNamespace= $name +"-ehns"+$rand
             $GetEventHubNamespace = New-AzEventHubNamespace -ResourceGroupName $GetResourceGroup.ResourceGroupName -Name $eventHubNamespace -Location $GetResourceGroup.Location
+            Write-Host "Created event hub namespace"
             Write-Host "Checking Event Hub 'insights-operational-logs' in the Secure Landing Zone" -ForegroundColor Yellow
             if(!(Get-AzEventHub -ResourceGroupName $GetResourceGroup.ResourceGroupName -Namespace $GetEventHubNamespace.Name | Where-Object {$_.Name -Like "insights-operational-logs"})){
+                Write-Host "Creating 'insights-operational-logs' event hub"
                 New-AzEventHub -ResourceGroupName $GetResourceGroup.ResourceGroupName -NamespaceName $GetEventHubNamespace.Name -Name "insights-operational-logs" | Out-Null
             }
 
             Write-Host "Checking Access Key 'landingZoneAccessKey' in the Secure Landing Zone" -ForegroundColor Yellow
             if(!(Get-AzEventHubAuthorizationRule -ResourceGroupName $GetResourceGroup.ResourceGroupName -Namespace $GetEventHubNamespace.Name | Where-Object {$_.Name -like "landingZoneAccessKey"})){
+                Write-Host "Creating 'landingZoneAccess Key'"
                 New-AzEventHubAuthorizationRule -ResourceGroupName $GetResourceGroup.ResourceGroupName -Namespace $GetEventHubNamespace.Name -Name "landingZoneAccessKey" -Rights @("Listen","Send","Manage") | Out-Null
             }
         }
