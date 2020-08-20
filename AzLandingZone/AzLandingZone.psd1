@@ -74,7 +74,7 @@
             'Public\Sync-AzLandingZone.ps1',
             'Public\Test-AzLandingZone.ps1',
             'Public\Update-AzLandingZone.ps1',
-            'Private\register-AzResourcesProviders.ps1',
+            'Private\register-AzResourceProviders.ps1',
             'Private\setup-Automation.ps1',
             'Private\setup-Lighthouse.ps1',
             'Private\setup-LogPipeline.ps1',
