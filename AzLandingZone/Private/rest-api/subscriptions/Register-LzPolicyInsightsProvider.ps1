@@ -8,7 +8,7 @@ Function Register-LzPolicyInsightsProvider {
 
 	try {
 		Write-Host -ForegroundColor Green "Registering Microsoft.policyInsights resource provider"
-		$auth = Get-AzAccessToken
+		$auth = Get-LzAccessToken
 		$requestResult = Invoke-webrequest -Uri $uri -Method Post -Headers $auth
 		Write-Host -ForegroundColor Green "Registered Microsoft.policyInsights resource provider"
 	}
