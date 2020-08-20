@@ -14,16 +14,16 @@ Function Set-LzSecurityCenterContacts {
 			'email' = $securityContact
 			'phone' = ''
 			'alertNotifications' = 'On'
-			'alertsToAdmins' = ''
+			'alertsToAdmins' = 'On'
 		}
     }
     $uri = "https://management.azure.com/subscriptions/" + $subscriptionId + "/providers/Microsoft.Security/securityContacts/" + $securityContact.Replace("@","-") + "?api-version=2017-08-01-preview"
 
 	try {
-		Write-Host -ForegroundColor Yellow "Registering security contacts for Azure security center notifications"
+		Write-Host -ForegroundColor Yellow "Registering security contact $securityContact for Azure security center notifications"
 		$auth = Get-LzAccessToken
 		$requestResult = Invoke-webrequest -Uri $uri -Method Put -Headers $auth -Body ($body | ConvertTo-Json -Depth 5)
-		Write-Host "Configured security contacts for Azure security center notifications"
+		Write-Host "Configured security contact for Azure security center notifications"
 	}
 	catch {
 		Switch ($_.Exception.Response.StatusCode.value__)
