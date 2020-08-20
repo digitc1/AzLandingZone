@@ -7,10 +7,10 @@ Function Register-LzSecurityProvider {
 	$uri = "https://management.azure.com/subscriptions/" + $subscriptionId + "/providers/microsoft.security/register?api-version=2019-09-01"
 
 	try {
-		Write-Host -ForegroundColor Green "Registering Microsoft.security resource provider"
+		Write-Host -ForegroundColor Yellow "Registering Microsoft.security resource provider"
 		$auth = Get-LzAccessToken
 		$requestResult = Invoke-webrequest -Uri $uri -Method Post -Headers $auth
-		Write-Host -ForegroundColor Green "Registered Microsoft.security resource provider"
+		Write-Host "Registered Microsoft.security resource provider"
 	}
 	catch {
 		Switch ($_.Exception.Response.StatusCode.value__)

@@ -7,10 +7,10 @@ Function Register-LzPolicyInsightsProvider {
 	$uri = "https://management.azure.com/subscriptions/" + $subscriptionId + "/providers/microsoft.policyInsights/register?api-version=2019-09-01"
 
 	try {
-		Write-Host -ForegroundColor Green "Registering Microsoft.policyInsights resource provider"
+		Write-Host -ForegroundColor Yellow "Registering Microsoft.policyInsights resource provider"
 		$auth = Get-LzAccessToken
 		$requestResult = Invoke-webrequest -Uri $uri -Method Post -Headers $auth
-		Write-Host -ForegroundColor Green "Registered Microsoft.policyInsights resource provider"
+		Write-Host "Registered Microsoft.policyInsights resource provider"
 	}
 	catch {
 		Switch ($_.Exception.Response.StatusCode.value__)

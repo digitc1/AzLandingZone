@@ -1,8 +1,8 @@
 Function Set-LzSecurityCenterContacts {
 	Param (
         [Parameter(Mandatory=$true)][string]$subscriptionId,
-        [string]$securityContacts
-        )
+        [Parameter(Mandatory=$true)][string]$securityContact
+    )
 
 	if(!(Get-AzSubscription -SubscriptionId $SubscriptionId)){
 		Write-Host -ForegroundColor Red "Could not find subscription linked to provided subscriptionId"
@@ -11,20 +11,13 @@ Function Set-LzSecurityCenterContacts {
 
 	$body = @{
 		'properties' = @{
-			'notificationsByRole' = @{
-                'state'= 'On'
-                'roles' = @(
-                    'Owner'
-                )
-            }
-            'emails' = $securityContacts
-            'alertsNotifications' = @{
-                'state' = 'On'
-                'minimalSeverity' = 'Low'
-            }
+			'email' = $securityContact
+			'phone' = ''
+			'alertNotifications' = 'On'
+			'alertsToAdmins' = ''
 		}
     }
-    $uri = "https://management.azure.com/subscriptions/" + $subscriptionId + "/providers/Microsoft.Security/securityContacts/default?api-version=2020-01-01-preview"
+    $uri = "https://management.azure.com/subscriptions/" + $subscriptionId + "/providers/Microsoft.Security/securityContacts/" + $securityContact.Replace("@","-") + "?api-version=2017-08-01-preview"
 
 	try {
 		Write-Host -ForegroundColor Yellow "Registering security contacts for Azure security center notifications"
@@ -35,7 +28,7 @@ Function Set-LzSecurityCenterContacts {
 	catch {
 		Switch ($_.Exception.Response.StatusCode.value__)
 		{
-			409 {Write-Host "Auto-provisioning already exists" -ForegroundColor Yellow}
+			409 {Write-Host "Security contact already exists" -ForegroundColor Yellow}
 			default {Write-Host "An unexpected error happened. Contact Landing Zone FMB for additional support." -ForegroundColor Red}
 		}
 	}

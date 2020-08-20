@@ -41,19 +41,17 @@ Function Register-AzLandingZone {
     register-AzResourceProviders -subscriptionId $GetSubscription.Id
 
     Set-LzSubscriptionDiagnosticSettings -subscriptionId $GetSubscription.Id
-
     Set-LzSecurityCenterPricing -subscriptionId $GetSubscription.Id
     Set-LzSecurityAutoProvisioningSettings -subscriptionId $GetSubscription.Id
 
-    $params = "DIGIT-CLOUD-VIRTUAL-TASK-FORCE@ec.europa.eu"
+    Set-LzSecurityCenterContacts -subscriptionId $GetSubscription.Id -securityContact "DIGIT-CLOUD-VIRTUAL-TASK-FORCE@ec.europa.eu"
     if($SOC -eq "DIGIT"){
-        $params += ";EC-DIGIT-CSIRC@ec.europa.eu;EC-DIGIT-CLOUDSEC@ec.europa.eu"
+        Set-LzSecurityCenterContacts -subscriptionId $GetSubscription.Id -securityContact "EC-DIGIT-CLOUDSEC@ec.europa.eu"
+        Set-LzSecurityCenterContacts -subscriptionId $GetSubscription.Id -securityContact "EC-DIGIT-CSIRC@ec.europa.eu"
     }
-    foreach ($contact in $securityContacts.Split(','))  
-    { 
-        $params += ";$contact"
+    foreach ($securityContact in $securityContacts.Split(',')){ 
+        Set-LzSecurityCenterContacts -subscriptionId $GetSubscription.Id -securityContact $securityContact
     }
-    Set-LzSecurityCenterContacts -subscriptionId $GetSubscription.Id -securityContacts $params
     if(Get-AzOperationalInsightsWorkspace -ResourceGroupName "lzslz_rg"){
         Connect-LzSecurityCenter -subscriptionId $GetSubscription.Id
     }
