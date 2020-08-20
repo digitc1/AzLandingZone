@@ -8,19 +8,19 @@ Function Register-AzLandingZone {
         Enter the name or id of the subscription to register
         .PARAMETER SOC
         Enter SOC value for additional features (lighthouse, Sentinel multi-workspace, ...)
-        .PARAMETER securityContact
+        .PARAMETER securityContacts
         Enter comma separated list of email addresses
         .EXAMPLE
         Register-AzLandingZone -Subscrition "<subscription-name>"
         Register the subscription <subscription-name> in Azure Landing Zone
         .EXAMPLE
-        Register-AzLandingZone -Subscrition "<subscription-id>" -SOC "DIGIT" -securityContact "alice@domain.com,bob@domain.com"
+        Register-AzLandingZone -Subscrition "<subscription-id>" -SOC "DIGIT" -securityContacts "alice@domain.com,bob@domain.com"
         Register the subscription <subscription-id> in Azure Landing Zone, enable lighthouse for DIGIT.S access and register alice and bob as security contacts
     #>
     Param(
         [Parameter(Mandatory=$true)][string]$subscription,
         [ValidateSet("DIGIT", "CERTEU", "None", "")][string] $SOC = "None",
-        [string] $securityContact
+        [string] $securityContacts = ""
     )
 
     #
