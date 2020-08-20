@@ -9,7 +9,7 @@ Function Register-LzManagedServicesProvider {
 	try {
 		Write-Host -ForegroundColor Green "Registering Microsoft.ManagedServices resource provider"
 		$auth = Get-AzAccessToken
-		$requestResult = Invoke-webrequest -Uri $uri -Method Post -Headers $auth -Body ($body | ConvertTo-Json -Depth 5)
+		$requestResult = Invoke-webrequest -Uri $uri -Method Post -Headers $auth
 		Write-Host -ForegroundColor Green "Registered Microsoft.ManagedServices resource provider"
 	}
 	catch {

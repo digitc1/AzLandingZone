@@ -98,7 +98,6 @@
             'Private\rest-api\securityCenter\Set-LzSecurityCenterPricing.ps1',
             'Private\rest-api\securityCenter\Test-LzSecurityCenterPricing.ps1',
             'Private\rest-api\subscriptions\Register-LzInsightsProvider.ps1',
-            'Private\rest-api\subscriptions\Register-LzManagedServices.ps1',
             'Private\rest-api\subscriptions\Register-LzManagedServicesProvider.ps1',
             'Private\rest-api\subscriptions\Register-LzPolicyInsightsProvider.ps1',
             'Private\rest-api\subscriptions\Register-LzSecurityProvider.ps1',

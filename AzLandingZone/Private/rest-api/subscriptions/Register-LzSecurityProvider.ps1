@@ -9,7 +9,7 @@ Function Register-LzSecurityProvider {
 	try {
 		Write-Host -ForegroundColor Green "Registering Microsoft.security resource provider"
 		$auth = Get-AzAccessToken
-		$requestResult = Invoke-webrequest -Uri $uri -Method Post -Headers $auth -Body ($body | ConvertTo-Json -Depth 5)
+		$requestResult = Invoke-webrequest -Uri $uri -Method Post -Headers $auth
 		Write-Host -ForegroundColor Green "Registered Microsoft.security resource provider"
 	}
 	catch {

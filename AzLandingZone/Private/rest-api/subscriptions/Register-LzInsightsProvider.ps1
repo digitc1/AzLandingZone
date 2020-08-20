@@ -9,7 +9,7 @@ Function Register-LzInsightsProvider {
 	try {
 		Write-Host -ForegroundColor Green "Registering Microsoft.insights resource provider"
 		$auth = Get-AzAccessToken
-		$requestResult = Invoke-webrequest -Uri $uri -Method Post -Headers $auth -Body ($body | ConvertTo-Json -Depth 5)
+		$requestResult = Invoke-webrequest -Uri $uri -Method Post -Headers $auth
 		Write-Host -ForegroundColor Green "Registered Microsoft.insights resource provider"
 	}
 	catch {
