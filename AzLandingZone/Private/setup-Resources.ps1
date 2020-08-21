@@ -10,7 +10,6 @@ Function Setup-Resources {
     #
     Write-Host "Checking Resource Group for the Secure Landing Zone" -ForegroundColor Yellow
     if(!($GetResourceGroup = Get-AzResourceGroup -ResourceGroupName $name*)){
-        Write-Host "No Resource Group for Secure Landing Zone found"
         Write-Host "Creating a new Resource Group for the Secure Landing Zone"
         $resourceGroupName = $name + "_rg"
         $GetResourceGroup = New-AzResourceGroup -Name $resourceGroupName -Location $location
@@ -22,7 +21,6 @@ Function Setup-Resources {
     #
     Write-Host "Checking 'CannotDelete' lock on the resource-group" -ForegroundColor Yellow
     if(!(Get-AzResourceLock | Where-Object {$_.Name -Like "LandingZoneLock"})){
-        Write-Host "No lock found on the resource group"
         Write-Host "Applying 'CannotDelete' lock"
         New-AzResourceLock -LockName "LandingZoneLock" -LockLevel CannotDelete -ResourceGroupName $GetResourceGroup.ResourceGroupName -Force | Out-Null
     }
@@ -33,9 +31,9 @@ Function Setup-Resources {
     #
     Write-Host "Checking Landing Zone management group" -ForegroundColor Yellow
     if(!(Get-AzManagementGroup -Erroraction "silentlycontinue "| Where-Object {$_.Name -Like "lz-management-group"})){
-        Write-Host "No management group found"
         Write-Host "Creating the default management group for the Landing Zone"
         New-AzManagementGroup -GroupName "lz-management-group" -DisplayName "Landing Zone management group" | Out-Null
+        Start-Sleep -s 20
     }
 }
 Export-ModuleMember -Function Setup-Resources

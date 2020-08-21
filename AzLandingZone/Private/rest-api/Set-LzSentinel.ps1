@@ -5,7 +5,7 @@ function Get-LzSentinel {
         [Parameter(Mandatory=$true)][String] $name
     )
 
-    if(!($GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*$name*")){
+    if(!($GetResourceGroup = Get-AzResourceGroup | where-Object {$_.ResourceGroupName -like "*$name*"})){
         Write-Host "No Resource Group for Secure Landing Zone found"
         Write-Host "Please run setup script before running this script"
         return 1;
@@ -40,7 +40,7 @@ function Remove-LzSentinel {
         [Parameter(Mandatory=$true)][String] $name
     )
 
-    if(!($GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*$name*")){
+    if(!($GetResourceGroup = Get-AzResourceGroup | where-Object {$_.ResourceGroupName -like "*$name*"})){
         Write-Host "No Resource Group for Secure Landing Zone found"
         Write-Host "Please run setup script before running this script"
         return 1;
@@ -78,7 +78,7 @@ function Set-LzSentinel {
         [Parameter(Mandatory=$true)][String] $name
     )
 
-    if(!($GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*$name*")){
+    if(!($GetResourceGroup = Get-AzResourceGroup | where-Object {$_.ResourceGroupName -like "*$name*"})){
         Write-Host "No Resource Group for Secure Landing Zone found"
         Write-Host "Please run setup script before running this script"
         return 1;
@@ -119,7 +119,7 @@ function Set-LzSentinel {
 
     try {
         $auth = Get-LzAccessToken
-        $requestResult = Invoke-webrequest -Uri $uri -Method Put -Headers $auth -Body ($body | ConvertTo-Json)
+        $requestResult = Invoke-webrequest -Uri $uri -Method Put -Headers $auth -Body ($body | ConvertTo-Json -Depth 5)
         return 0
     }
     catch [Microsoft.PowerShell.Commands.HttpResponseException] {

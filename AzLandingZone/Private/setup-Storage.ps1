@@ -16,10 +16,10 @@ Function setup-Storage {
     #
     Write-Host "Checking Storage Account for Landing Zone Logs in the Secure Landing Zone"  -ForegroundColor Yellow
     while(!($GetStorageAccount = Get-AzStorageAccount -ResourceGroupName $GetResourceGroup.ResourceGroupName | Where-Object {$_.StorageAccountName -Like "$name*"})){
+        Write-Host "Creating Landing Zone storage account"
         $rand = Get-Random -Minimum 1000000 -Maximum 9999999999
         $storName = $name + $rand + "sa"
         $GetStorageAccount = New-AzStorageAccount -ResourceGroupName $GetResourceGroup.ResourceGroupName -Name $storName -Location $GetResourceGroup.Location -SkuName Standard_LRS -Kind StorageV2
-        Write-Host "Created storage account"
     }
 
     #

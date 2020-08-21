@@ -1,4 +1,4 @@
-Function register-AzResourcesProviders {
+Function register-AzResourceProviders {
     Param(
 		[string]$name = "lzslz",
 		[Parameter(Mandatory = $true)][string]$subscriptionId
@@ -14,4 +14,4 @@ Function register-AzResourcesProviders {
     Register-LzPolicyInsightsProvider -subscriptionId $GetSubscription.Id
     Register-LzSecurityProvider -subscriptionId $GetSubscription.Id
 }
-Export-ModuleMember -Function register-AzResourcesProviders
+Export-ModuleMember -Function register-AzResourceProviders

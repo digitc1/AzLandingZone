@@ -8,16 +8,19 @@ Function Register-AzLandingZone {
         Enter the name or id of the subscription to register
         .PARAMETER SOC
         Enter SOC value for additional features (lighthouse, Sentinel multi-workspace, ...)
+        .PARAMETER securityContacts
+        Enter comma separated list of email addresses
         .EXAMPLE
         Register-AzLandingZone -Subscrition "<subscription-name>"
         Register the subscription <subscription-name> in Azure Landing Zone
         .EXAMPLE
-        Register-AzLandingZone -Subscrition "<subscription-id>" -SOC "DIGIT" 
-        Register the subscription <subscription-id> in Azure Landing Zone and enable lighthouse for DIGIT.S access
+        Register-AzLandingZone -Subscrition "<subscription-id>" -SOC "DIGIT" -securityContacts "alice@domain.com,bob@domain.com"
+        Register the subscription <subscription-id> in Azure Landing Zone, enable lighthouse for DIGIT.S access and register alice and bob as security contacts
     #>
     Param(
         [Parameter(Mandatory=$true)][string]$subscription,
-        [ValidateSet("DIGIT", "CERTEU", "None", "")][string] $SOC = "None"
+        [ValidateSet("DIGIT", "CERTEU", "None", "")][string] $SOC = "None",
+        [string] $securityContacts = ""
     )
 
     #
@@ -35,14 +38,24 @@ Function Register-AzLandingZone {
         New-AzManagementGroupSubscription -GroupName "lz-management-group" -SubscriptionId $GetSubscription.Id | Out-Null
     }
     
-    register-LzResourceProviders -subscriptionId $GetSubscription.Id
+    register-AzResourceProviders -subscriptionId $GetSubscription.Id
 
     Set-LzSubscriptionDiagnosticSettings -subscriptionId $GetSubscription.Id
-
-    Set-LzSecurityPricing -subscriptionId $GetSubscription.Id
+    Set-LzSecurityCenterPricing -subscriptionId $GetSubscription.Id
     Set-LzSecurityAutoProvisioningSettings -subscriptionId $GetSubscription.Id
+
+    Set-LzSecurityCenterContacts -subscriptionId $GetSubscription.Id -securityContact "DIGIT-CLOUD-VIRTUAL-TASK-FORCE@ec.europa.eu"
+    if($SOC -eq "DIGIT"){
+        Set-LzSecurityCenterContacts -subscriptionId $GetSubscription.Id -securityContact "EC-DIGIT-CLOUDSEC@ec.europa.eu"
+        Set-LzSecurityCenterContacts -subscriptionId $GetSubscription.Id -securityContact "EC-DIGIT-CSIRC@ec.europa.eu"
+    }
+    foreach ($securityContact in $securityContacts.Split(',')){ 
+        Set-LzSecurityCenterContacts -subscriptionId $GetSubscription.Id -securityContact $securityContact
+    }
     if(Get-AzOperationalInsightsWorkspace -ResourceGroupName "lzslz_rg"){
         Connect-LzSecurityCenter -subscriptionId $GetSubscription.Id
     }
+    Register-LzManagedServicesDefinition -subscriptionId $GetSubscription.Id
+    Register-LzManagedServicesAssignment -subscriptionId $GetSubscription.Id
 }
 Export-ModuleMember -Function Register-AzLandingZone

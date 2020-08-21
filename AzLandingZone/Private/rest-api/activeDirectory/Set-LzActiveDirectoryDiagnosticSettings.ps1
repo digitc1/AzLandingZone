@@ -34,11 +34,11 @@ Function Set-LzActiveDirectoryDiagnosticSettings {
 					'enabled' = 'true'
 				}
 				@{
-					'category' = 'ServicePrincipalSingInLogs';
+					'category' = 'ServicePrincipalSignInLogs';
 					'enabled' = 'true'
 				}
 				@{
-					'category' = 'ManagedIdentitySingInLogs';
+					'category' = 'ManagedIdentitySignInLogs';
 					'enabled' = 'true'
 				}
 			)
@@ -56,15 +56,15 @@ Function Set-LzActiveDirectoryDiagnosticSettings {
 	$uri = "https://management.azure.com/providers/microsoft.aadiam/diagnosticSettings/" + $logProfileName + "?api-version=2017-04-01"
 
 	try{
-		Write-Host -ForegroundColor Green "Configuring active directory diagnostic settings"
+		Write-Host -ForegroundColor Yellow "Configuring active directory diagnostic settings"
 		$auth = Get-LzAccessToken
 		$requestResult = Invoke-webrequest -Uri $uri -Method Put -Headers $auth -Body ($body | ConvertTo-Json -Depth 5)
-		Write-Host -ForegroundColor Green "Configured subscription diagnostic settings"
+		Write-Host "Configured active directory diagnostic settings"
 	}
 	catch {
 		Switch ($_.Exception.Response.StatusCode.value__)
 		{
-			409 {Write-Host "Diagnostic settings already configured" -ForegroundColor Yellow}
+			409 {Write-Host "Diagnostic settings already configured"}
 			default {Write-Host "An unexpected error happened. Contact Landing Zone FMB for additional support." -ForegroundColor Red}
 		}
 	}
