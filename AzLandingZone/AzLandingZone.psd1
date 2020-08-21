@@ -9,10 +9,10 @@
 @{
 
     # Module de script ou fichier de module binaire associé à ce manifeste
-    RootModule = './New-AzLandingZone.psm1'
+    RootModule = 'AzLandingZone.psm1'
     
     # Numéro de version de ce module.
-    ModuleVersion = '1.0'
+    ModuleVersion = '<ModuleVersion>'
     
     # Éditions PS prises en charge
     # CompatiblePSEditions = @()
@@ -67,41 +67,55 @@
     
     # Modules à importer en tant que modules imbriqués du module spécifié dans RootModule/ModuleToProcess
     NestedModules = @(
-            '.\functions\Get-AzLandingZone.ps1',
-            '.\functions\New-AzLandingZone.ps1',
-            '.\functions\Onboard-AzLandingZone.ps1',
-            '.\functions\Remediate-AzLandingZone.ps1',
-            '.\functions\Remove-AzLandingZone.ps1',
-            '.\functions\Test-AzLandingZone.ps1',
-            '.\functions\Update-AzLandingZone.ps1',
-            '.\functions\internal\setup-Automation.ps1',
-            '.\functions\internal\setup-Lighthouse.ps1',
-            '.\functions\internal\setup-LogPipeline.ps1',
-            '.\functions\internal\setup-Policy.ps1',
-            '.\functions\internal\setup-Prerequisites.ps1',
-            '.\functions\internal\setup-Resources.ps1',
-            '.\functions\internal\setup-RunAs.ps1',
-            '.\functions\internal\setup-Storage.ps1',
-            '.\functions\internal\setup-Subscription.ps1',
-            '.\functions\internal\setup-SubscriptionContacts.ps1',
-            '.\functions\internal\sentinel\Get-AzAccessToken.ps1',
-            '.\functions\internal\sentinel\New-ConnectorConfiguration.ps1',
-            '.\functions\internal\sentinel\Set-LzSentinel.ps1',
-            '.\functions\internal\sentinel\Set-LzSentinelAlertRule.ps1',
-            '.\functions\internal\sentinel\setup-SentinelConnector.ps1',
-            '.\functions\internal\sentinel\Test-AzSecurityCenterTier.ps1',
-            '.\functions\internal\tmp.ps1'
+            'Public\Get-AzLandingZone.ps1',
+            'Public\New-AzLandingZone.ps1',
+            'Public\Register-AzLandingZone.ps1',
+            'Public\Remove-AzLandingZone.ps1',
+            'Public\Sync-AzLandingZone.ps1',
+            'Public\Test-AzLandingZone.ps1',
+            'Public\Update-AzLandingZone.ps1',
+            'Private\register-AzResourceProviders.ps1',
+            'Private\setup-Automation.ps1',
+            'Private\setup-Lighthouse.ps1',
+            'Private\setup-LogPipeline.ps1',
+            'Private\setup-Policy.ps1',
+            'Private\setup-Prerequisites.ps1',
+            'Private\setup-Resources.ps1',
+            'Private\setup-RunAs.ps1',
+            'Private\setup-Sentinel.ps1',
+            'Private\setup-Storage.ps1',
+            'Private\setup-Subscription.ps1',
+            'Private\setup-SubscriptionContacts.ps1',
+            'Private\rest-api\Get-LzAccessToken.ps1',
+            'Private\rest-api\Set-LzSentinel.ps1',
+            'Private\rest-api\activeDirectory\Connect-LzActiveDirectory.ps1',
+            'Private\rest-api\activeDirectory\Set-LzActiveDirectoryAlertRule.ps1',
+            'Private\rest-api\activeDirectory\Set-LzActiveDirectoryDiagnosticSettings.ps1',
+            'Private\rest-api\securityCenter\Connect-LzSecurityCenter.ps1',
+            'Private\rest-api\securityCenter\Set-LzSecurityCenterAlertRule.ps1',
+            'Private\rest-api\securityCenter\Set-LzSecurityCenterAutoProvisioningSettings.ps1',
+            'Private\rest-api\securityCenter\Set-LzSecurityCenterContacts.ps1',
+            'Private\rest-api\securityCenter\Set-LzSecurityCenterPricing.ps1',
+            'Private\rest-api\securityCenter\Test-LzSecurityCenterPricing.ps1',
+            'Private\rest-api\subscriptions\Register-LzInsightsProvider.ps1',
+            'Private\rest-api\subscriptions\Register-LzManagedServicesAssignment.ps1',
+            'Private\rest-api\subscriptions\Register-LzManagedServicesDefinition.ps1',
+            'Private\rest-api\subscriptions\Register-LzManagedServicesProvider.ps1',
+            'Private\rest-api\subscriptions\Register-LzPolicyInsightsProvider.ps1',
+            'Private\rest-api\subscriptions\Register-LzSecurityProvider.ps1',
+            'Private\rest-api\subscriptions\Set-LzSubscriptionDiagnosticSettings.ps1'
         )
-    
+        
     # Fonctions à exporter à partir de ce module. Pour de meilleures performances, n’utilisez pas de caractères génériques et ne supprimez pas l’entrée. Utilisez un tableau vide si vous n’avez aucune fonction à exporter.
     FunctionsToExport = @(
-            'New-AzLandingZone',
             'Get-AzLandingZone',
-            'Onboard-AzLandingZone',
-            'Remediate-AzLandingZone',
+            'New-AzLandingZone',
+            'Register-AzLandingZone',
             'Remove-AzLandingZone',
-            'Update-AzLandingZone',
-            'Test-AzLandingZone'
+            'Sync-AzLandingZone',
+            'Test-AzLandingZone',
+            'Update-AzLandingZone'
+            
         )
     
     # Applets de commande à exporter à partir de ce module. Pour de meilleures performances, n’utilisez pas de caractères génériques et ne supprimez pas l’entrée. Utilisez un tableau vide si vous n’avez aucune applet de commande à exporter.

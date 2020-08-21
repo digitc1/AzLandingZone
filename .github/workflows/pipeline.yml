@@ -1,0 +1,62 @@
+# This is a basic workflow to help you get started with Actions
+name: build
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the develop branch
+on:
+  push:
+    branches: [ 'release/**', 'master' ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  pack:
+    # The type of runner that the job will run on
+    runs-on: windows-latest
+    
+    env:
+      major: '1'
+      minor: '0'
+      patch: '0'
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:      
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+      
+    - name: update version in psd file
+      shell: pwsh
+      run: |
+        $manifestPath = Join-Path -Path "$env:GITHUB_WORKSPACE" -ChildPath "AzLandingZone/AzLandingZone.psd1"
+        $manifestContent = Get-Content -Path $manifestPath -Raw
+        $manifestContent = $manifestContent -replace '<ModuleVersion>', '${{ env.buildVersion }}'
+        $manifestContent | Set-Content -Path $manifestPath
+      env:
+        buildVersion: '${{ env.major }}.${{ env.minor }}.${{ env.patch }}'
+    
+    - name: update version in nuspec file
+      shell: pwsh
+      run: |
+        $manifestPath = Join-Path -Path "$env:GITHUB_WORKSPACE" -ChildPath "AzLandingZone/AzLandingZone.nuspec"
+        $manifestContent = Get-Content -Path $manifestPath -Raw
+        $manifestContent = $manifestContent -replace 'VERSIONHERE', '${{ env.buildVersion }}'
+        $manifestContent | Set-Content -Path $manifestPath
+      env:
+        buildVersion: '${{ env.major }}.${{ env.minor }}.${{ env.patch }}'
+
+    - name: setup NuGet
+      uses: nuget/setup-nuget@v1
+      
+    - name: Authenticate development Feed
+      if: ${{ success() && contains(github.ref, 'release') }}
+      run: nuget sources add -source https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/developmentfeed/nuget/v3/index.json -name devops -p ${{ secrets.AUGUSTIN_DEVOPS_TOKEN }} -u devops@acp4eu074hotmail.onmicrosoft.com
+
+    - name: Authenticate public Feed
+      if: ${{ success() && github.ref == 'master' }}
+      run: nuget sources add -source https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/publicfeed/nuget/v3/index.json -name devops -p ${{ secrets.AUGUSTIN_DEVOPS_TOKEN }} -u devops@acp4eu074hotmail.onmicrosoft.com
+            
+    - name: nuget pack
+      run: nuget pack AzLandingZone/AzLandingZone.nuspec
+    
+    - name: Push package to feed
+      run: nuget push **.nupkg -source devops -apikey ${{ secrets.AUGUSTIN_DEVOPS_TOKEN }}
