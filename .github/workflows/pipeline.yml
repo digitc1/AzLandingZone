@@ -15,9 +15,9 @@ jobs:
     runs-on: windows-latest
     
     env:
-      major: '0'
+      major: '1'
       minor: '0'
-      patch: '536'
+      patch: '0'
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:      

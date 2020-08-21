@@ -32,7 +32,7 @@ Function New-AzLandingZone {
         Install the default components of the Landing Zone + event hub namespace with a specific event hub and key. The users "alice@domain.com" and "bob@domain.com" are used for security notifications.
     #>
     Param (
-		[bool]$autoupdate = $true,
+		[bool]$autoupdate = $false,
 		[ValidateSet("DIGIT", "CERTEU", "None")][string]$SOC = "None",
 		[ValidateSet("westeurope", "northeurope", "francecentral", "germanywestcentral")][string]$location = "westeurope",
 		[bool]$enableSentinel = $false,
@@ -53,6 +53,7 @@ Function New-AzLandingZone {
     # Registration can take few minutes
     #
     setup-prerequisites
+    $autoupdate = $false
 
     #
     # variables

@@ -33,6 +33,7 @@ Function Setup-Resources {
     if(!(Get-AzManagementGroup -Erroraction "silentlycontinue "| Where-Object {$_.Name -Like "lz-management-group"})){
         Write-Host "Creating the default management group for the Landing Zone"
         New-AzManagementGroup -GroupName "lz-management-group" -DisplayName "Landing Zone management group" | Out-Null
+        Start-Sleep -s 20
     }
 }
 Export-ModuleMember -Function Setup-Resources
