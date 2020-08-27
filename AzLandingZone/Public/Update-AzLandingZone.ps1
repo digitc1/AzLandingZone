@@ -4,15 +4,20 @@ Function Update-AzLandingZone {
         Update Landing Zone policies and resources to latest configuration
         .DESCRIPTION
         Update Landing Zone policies and resources to latest configuration
+        .PARAMETER managementGroup
+        Enter the name for AzLandingZone management group. If the management group already exist, it is reused for AzLandingZone.
         .EXAMPLE
         Update-AzLandingZone
     #>
+    Param(
+        [string] $managementGroup = "lz-management-group"
+    )
     Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
 
-    if(Test-AzLandingZone){
-        Write-Host "Pre-requisite for Azure LandingZone are not met."
-        Write-Host "Run 'Test-AzLandingZone -verbose' for additional information."
-    }
+    #if(Test-AzLandingZone){
+    #    Write-Host "Pre-requisite for Azure LandingZone are not met."
+    #    Write-Host "Run 'Test-AzLandingZone -verbose' for additional information."
+    #}
 
     #
     # Checking registrations and prerequisites for the Landing Zone
@@ -32,8 +37,8 @@ Function Update-AzLandingZone {
     }
     $location = $GetResourceGroup.Location
 
-    setup-Resources -Name $name -Location $location
+    setup-Resources -Name $name -Location $location -managementGroup $managementGroup
     setup-Storage -Name $name
-    setup-Policy -Name $name
+    setup-Policy -Name $name -managementGroup $managementGroup
 }
 Export-ModuleMember -Function Update-AzLandingZone

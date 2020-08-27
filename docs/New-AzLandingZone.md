@@ -5,7 +5,7 @@ Installs all the components of the Landing Zone
 
 ## SYNTAX
 ```
-New-AzLandingZone [-autoupdate <bool>] [-SOC <string>] [-location <string>] [-enableSentinel <bool>] [-enableEventHub <bool>] [-retentionPeriod <int>] [-securityContacts <string[]>]
+New-AzLandingZone [-autoupdate <bool>] [-SOC <string>] [-location <string>] [-enableSentinel <bool>] [-enableEventHub <bool>] [-managementGroup <string>] [-retentionPeriod <int>] [-securityContacts <string[]>]
 ```
 
 ## DESCRIPTION
@@ -14,9 +14,9 @@ New-AzLandingZone [-autoupdate <bool>] [-SOC <string>] [-location <string>] [-en
 
 ### EXAMPLE 1
 ```
-New-AzLandingZone
+New-AzLandingZone -managementGroup "landingZoneGroup"
 ```
-Install the default components of the Landing Zone with default values.
+Install the default components of the Landing Zone with default values in management group "landingZoneGroup".
 
 ### EXAMPLE 2
 ```
@@ -109,6 +109,21 @@ Aliases:
 Required: False
 Position: Named
 Default value: $false
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -managementGroup
+Enter the name for AzLandingZone management group. If the management group already exist, it is reused for AzLandingZone.
+
+```yaml
+Type: string
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: lz-management-group
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

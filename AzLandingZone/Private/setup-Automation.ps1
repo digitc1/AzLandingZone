@@ -1,6 +1,10 @@
+# TODO:
+# Add support for custom management group by adding a "management group" parameter.
+# This should be stored in automation variable
 Function setup-Automation {
     param(
-        [Parameter(Mandatory=$true)][string]$name
+        [Parameter(Mandatory=$true)][string]$name,
+        [string] $managementGroup = "lz-management-group"
     )
 
     #
@@ -23,13 +27,13 @@ Function setup-Automation {
         Write-Host "Please run setup script before"
         return 1;
     }
-    if(!($GetManagementGroup = Get-AzManagementGroup -GroupName "lz-management-group")){
+    if(!($GetManagementGroup = Get-AzManagementGroup -GroupName $managementGroup)){
         Write-Host "No Management Group for Secure Landing Zone found"
         Write-Host "Please run setup script before"
         return 1;
     }
     $automationAccountName = $name + "Automation"
-    $subscriptionId = (Get-AzSubscription | Where-Object {$_.Name -Like "SECLOG*"}).Id
+    $subscriptionId = (Get-AzContext).Subscription.Id
 
     #
     # Checking Azure automation account for Azure Landing Zone
@@ -67,9 +71,9 @@ Function setup-Automation {
     #
     # Assign contributor at management group level #
     #
-    if(!(Get-AzRoleAssignment -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" | Where-Object {$_.ObjectId -Like $automationServicePrincipal.Id})){
+    if(!(Get-AzRoleAssignment -Scope $GetManagementGroup.Id | Where-Object {$_.ObjectId -Like $automationServicePrincipal.Id})){
         Write-Host "Role for automation is not assigned at management group level"
-        New-AzRoleAssignment -ObjectId $automationServicePrincipal.Id -Scope "/providers/Microsoft.Management/managementGroups/lz-management-group" -RoleDefinitionName "Contributor" | Out-Null
+        New-AzRoleAssignment -ObjectId $automationServicePrincipal.Id -Scope $GetManagementGroup.Id -RoleDefinitionName "Contributor" | Out-Null
     }
 
     #
