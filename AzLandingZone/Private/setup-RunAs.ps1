@@ -7,15 +7,15 @@ Function setup-RunAs {
     $SubscriptionId = (Get-AzContext).Subscription.Id
     if(!($GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*$name*")){
         Write-Host "No Resource Group for Secure Landing Zone found"
-        return 1;
+        return;
     }
     if(!($GetAutomationAccount = Get-AzAutomationAccount | Where-Object {$_.ResourceGroupName -like $GetResourceGroup.ResourceGroupName} )){
         Write-Host "No Automation account for Secure Landing Zone found"
-        return 1;
+        return;
     }
     if(!($GetManagementGroup = Get-AzManagementGroup | Where-Object {$_.Name -Like "lz-management-group"} )){
         Write-Host "No Resource Group for Secure Landing Zone found"
-        return 1;
+        return;
     }
     $Location = $GetResourceGroup.Location
     $scope = $GetManagementGroup.Id
@@ -25,6 +25,7 @@ Function setup-RunAs {
         $rand = Get-Random -Minimum 1000000 -Maximum 9999999999
         $keyVaultName = "lzslzvault" + $rand
         $GetKeyVault = New-AzKeyVault -VaultName $keyVaultName -ResourceGroupName $GetResourceGroup.ResourceGroupName -Location $Location
+        Write-Host "Created Azure LandingZone key vault"
     }
 
     ### grant current user access to key vault
