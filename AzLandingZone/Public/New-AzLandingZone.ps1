@@ -56,7 +56,6 @@ Function New-AzLandingZone {
     # Registration can take few minutes
     #
     setup-prerequisites
-    $autoupdate = $false
 
     #
     # variables
