@@ -1,3 +1,6 @@
+# TODO:
+# Add support for custom management group by adding a "management group" parameter.
+# This should be stored in automation variable
 Function setup-Automation {
     param(
         [string]$name = "lzslz",

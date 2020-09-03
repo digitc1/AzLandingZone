@@ -10,6 +10,8 @@ Function Register-AzLandingZone {
         Enter SOC value for additional features (lighthouse, Sentinel multi-workspace, ...)
         .PARAMETER securityContacts
         Enter comma separated list of email addresses
+        .PARAMETER managementGroup
+        Enter the name for AzLandingZone management group. If the management group already exist, it is reused for AzLandingZone.
         .EXAMPLE
         Register-AzLandingZone -Subscrition "<subscription-name>"
         Register the subscription <subscription-name> in Azure Landing Zone
@@ -20,7 +22,8 @@ Function Register-AzLandingZone {
     Param(
         [Parameter(Mandatory=$true)][string]$subscription,
         [ValidateSet("DIGIT", "CERTEU", "None", "")][string] $SOC = "None",
-        [string] $securityContacts = ""
+        [string] $securityContacts = "",
+        [string] $managementGroup = "lz-management-group"
     )
 
     #
@@ -30,12 +33,11 @@ Function Register-AzLandingZone {
         Write-Host "Provided subscription is invalid. Make sure to provide a valid subscription name."
         return
     }
-    if(!($GetManagementGroup = Get-AzManagementGroup -GroupName "lz-management-group" -Expand)){
+    if(!($GetManagementGroup = Get-AzManagementGroup -GroupName $managementGroup -Expand)){
         Write-Host "No management group found. Make sure the Landing Zone is installed."
     }
-
     if($GetSubscription.Name -notin $GetManagementGroup.Children.DisplayName){
-        New-AzManagementGroupSubscription -GroupName "lz-management-group" -SubscriptionId $GetSubscription.Id | Out-Null
+        New-AzManagementGroupSubscription -GroupName $GetManagementGroup.Name -SubscriptionId $GetSubscription.Id | Out-Null
     }
     
     register-AzResourceProviders -subscriptionId $GetSubscription.Id
