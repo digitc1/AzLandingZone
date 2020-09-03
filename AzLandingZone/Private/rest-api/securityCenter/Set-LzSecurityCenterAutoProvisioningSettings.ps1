@@ -1,6 +1,7 @@
 Function Set-LzSecurityAutoProvisioningSettings {
 	Param (
-		[Parameter(Mandatory=$true)][string]$subscriptionId
+		[Parameter(Mandatory=$true)][string]$subscriptionId,
+		[ValidateSet("On", "Off")][string] $status = "On"
 	)
 
 	if(!(Get-AzSubscription -SubscriptionId $SubscriptionId)){
@@ -10,7 +11,7 @@ Function Set-LzSecurityAutoProvisioningSettings {
 
 	$body = @{
 		'properties' = @{
-			'autoProvision' = 'On'
+			'autoProvision' = $status
 		}
 	}
 	$uri = "https://management.azure.com/subscriptions/" + $subscriptionId + "/providers/Microsoft.Security/autoProvisioningSettings/default?api-version=2019-01-01"

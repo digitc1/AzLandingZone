@@ -73,6 +73,7 @@
             'Public\Remove-AzLandingZone.ps1',
             'Public\Sync-AzLandingZone.ps1',
             'Public\Test-AzLandingZone.ps1',
+            'Public\Unregister-AzLandingZone.ps1',
             'Public\Update-AzLandingZone.ps1',
             'Private\register-AzResourceProviders.ps1',
             'Private\setup-Automation.ps1',
@@ -92,11 +93,14 @@
             'Private\rest-api\activeDirectory\Set-LzActiveDirectoryAlertRule.ps1',
             'Private\rest-api\activeDirectory\Set-LzActiveDirectoryDiagnosticSettings.ps1',
             'Private\rest-api\securityCenter\Connect-LzSecurityCenter.ps1',
+            'Private\rest-api\securityCenter\Disconnect-LzSecurityCenter.ps1',
             'Private\rest-api\securityCenter\Set-LzSecurityCenterAlertRule.ps1',
             'Private\rest-api\securityCenter\Set-LzSecurityCenterAutoProvisioningSettings.ps1',
+            'Private\rest-api\securityCenter\Remove-LzSecurityCenterContacts.ps1',
             'Private\rest-api\securityCenter\Set-LzSecurityCenterContacts.ps1',
             'Private\rest-api\securityCenter\Set-LzSecurityCenterPricing.ps1',
             'Private\rest-api\securityCenter\Test-LzSecurityCenterPricing.ps1',
+            'Private\rest-api\subscriptions\Remove-LzSubscriptionDiagnosticSettings.ps1',
             'Private\rest-api\subscriptions\Register-LzInsightsProvider.ps1',
             'Private\rest-api\subscriptions\Register-LzManagedServicesAssignment.ps1',
             'Private\rest-api\subscriptions\Register-LzManagedServicesDefinition.ps1',
@@ -114,6 +118,7 @@
             'Remove-AzLandingZone',
             'Sync-AzLandingZone',
             'Test-AzLandingZone',
+            'Unregister-AzLandingZone',
             'Update-AzLandingZone'
             
         )
