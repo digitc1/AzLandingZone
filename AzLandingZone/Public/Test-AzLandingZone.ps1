@@ -26,7 +26,7 @@ Function Test-AzLandingZone {
         }
     }
     
-    Write-Verbose -Message "Validation successful"
+    Write-Verbose -Message "Validation completed"
     return 0
 }
 Export-ModuleMember -Function Test-AzLandingZone
