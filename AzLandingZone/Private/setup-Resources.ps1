@@ -1,7 +1,8 @@
 Function Setup-Resources {
     param(
 	    [Parameter(Mandatory=$true)][string]$name,
-        [Parameter(Mandatory=$true)][string]$location
+        [Parameter(Mandatory=$true)][string]$location,
+        [Parameter(Mandatory=$true)][string]$managementGroup
     )
 
     #
@@ -30,9 +31,9 @@ Function Setup-Resources {
     # If not, creates the management group lz-management-group
     #
     Write-Host "Checking Landing Zone management group" -ForegroundColor Yellow
-    if(!(Get-AzManagementGroup -Erroraction "silentlycontinue "| Where-Object {$_.Name -Like "lz-management-group"})){
+    if(!(Get-AzManagementGroup -Erroraction "silentlycontinue "| Where-Object {$_.Name -Like $managementGroup})){
         Write-Host "Creating the default management group for the Landing Zone"
-        New-AzManagementGroup -GroupName "lz-management-group" -DisplayName "Landing Zone management group" | Out-Null
+        New-AzManagementGroup -GroupName $managementGroup -DisplayName "Landing Zone management group" | Out-Null
         Start-Sleep -s 20
     }
 }

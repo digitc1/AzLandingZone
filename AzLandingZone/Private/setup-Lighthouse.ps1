@@ -1,7 +1,7 @@
 Function setup-Lighthouse {
     param(
-            [ValidateSet("DIGIT", "CERTEU", "None", "")]
-            [string] $SOC
+            [ValidateSet("DIGIT", "CERTEU", "None", "")][string] $SOC,
+            [string]$managementGroup = "lz-management-group"
     )
 
     $name = "lzslz"
@@ -33,7 +33,7 @@ Function setup-Lighthouse {
                 Write-Host "Please run setup script before running the policy script"
                 return 1;
         }
-        if(!($GetManagementGroup = Get-AzManagementGroup -GroupName "lz-management-group" -Expand | Where-Object {$_.Name -Like "lz-management-group"})){
+        if(!($GetManagementGroup = Get-AzManagementGroup -GroupName $managementGroup -Expand)){
                 Write-Host "No Management group found for Secure Landing Zone"
                 Write-Host "Please run setup script before running the policy script"
                 return 1;
@@ -45,7 +45,7 @@ Function setup-Lighthouse {
         if(!(Get-AzPolicyAssignment -Scope $scope | where-Object {$_.Name -Like "SLZ-managedServices"})){
             Write-Host "Enabling Azure Lighthouse delegation for DIGIT.S"
             Invoke-WebRequest -Uri $definitionManagedServices -OutFile $HOME/rule.json
-            $policyDefinition = New-AzPolicyDefinition -Name "SLZ-managedServices" -Policy $HOME/rule.json -ManagementGroupName "lz-management-group"
+            $policyDefinition = New-AzPolicyDefinition -Name "SLZ-managedServices" -Policy $HOME/rule.json -ManagementGroupName $GetManagementGroup.Name
             $policyAssignment = New-AzPolicyAssignment -name "SLZ-managedServices" -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location
             Write-Host "Waiting for previous task to complete" -ForegroundColor Yellow
             Start-Sleep -Seconds 15

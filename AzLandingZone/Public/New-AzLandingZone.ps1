@@ -14,6 +14,8 @@ Function New-AzLandingZone {
         Switch to enable installation of Azure Sentinel. If no value is provided then default to $false. This parameter is overwritten to $true if using parameter "-SOC DIGIT".
         .PARAMETER enableEventHub
         Switch to enable installation of event hub namespace. If no value is provided then default to $false. This parameter is overwritten to $true if using parameter "-SOC CERTEU".
+        .PARAMETER managementGroup
+        Enter the name for AzLandingZone management group. If the management group already exist, it is reused for AzLandingZone.
         .PARAMETER retentionPeriod
         Enter the number of days to retain the logs in legal hold. If not value is provided then default to 185 days (6 months). This parameters cannot be less than 185 days.
         .PARAMETER securityContacts
@@ -36,7 +38,8 @@ Function New-AzLandingZone {
 		[ValidateSet("DIGIT", "CERTEU", "None")][string]$SOC = "None",
 		[ValidateSet("westeurope", "northeurope", "francecentral", "germanywestcentral")][string]$location = "westeurope",
 		[bool]$enableSentinel = $false,
-		[bool]$enableEventHub = $false,
+        [bool]$enableEventHub = $false,
+        [string]$managementGroup = "lz-management-group",
 		[int]$retentionPeriod = 185,
         [String[]]$securityContacts
 	)
@@ -62,7 +65,7 @@ Function New-AzLandingZone {
     if(!($context.Subscription.Name -Like "SECLOG*")){
         Write-Host "Context is not set to SecLog subscription. Landing Zone resources will be deployed to the current context."
         Write-Host $context.Subscription.Name
-        [void](Read-Host 'Press Enter to continue or 'ctrl + C' to cancel the installation.')
+        [void](Read-Host 'Press Enter to continue or "ctrl + C" to cancel the installation.')
     }
     $name = "lzslz"
 	if($SOC -eq "DIGIT"){
@@ -78,16 +81,16 @@ Function New-AzLandingZone {
 		$retentionPeriod = 185
 	}
 
-    setup-Resources -Name $name -Location $location
+    setup-Resources -Name $name -Location $location -managementGroup $managementGroup
     setup-Storage -Name $name -retentionPeriod $retentionPeriod
     setup-LogPipeline -Name $name -enableSentinel $enableSentinel -enableEventHub $enableEventHub
     if($autoupdate -eq $true) {
-        setup-Automation -Name $name
+        setup-Automation -Name $name -managementGroup $managementGroup
     }
 
     #setup-SubscriptionContacts -SOC $SOC -securityContacts $securityContacts
-    setup-Policy -Name $name
-    setup-Lighthouse -SOC $SOC
+    setup-Policy -Name $name -managementGroup $managementGroup
+    setup-Lighthouse -SOC $SOC -managementGroup $managementGroup
     if($enableSentinel) {
         setup-Sentinel -Name $name
     }

@@ -1,6 +1,7 @@
 Function setup-Policy {
     param(
-        [Parameter(Mandatory = $true)][string]$name
+        [string]$name = "lzslz",
+        [string]$managementGroup = "lz-management-group"
     )
 
     #
@@ -28,7 +29,7 @@ Function setup-Policy {
         Write-Host "Please run setup script before running the policy script"
         return 1;
     }
-    if (!($GetManagementGroup = Get-AzManagementGroup -GroupName "lz-management-group" -Expand | Where-Object { $_.Name -Like "lz-management-group" })) {
+    if (!($GetManagementGroup = Get-AzManagementGroup -GroupName $managementGroup -Expand)) {
         Write-Host "No Management group found for Secure Landing Zone"
         Write-Host "Please run setup script before running the policy script"
         return 1;
@@ -55,7 +56,7 @@ Function setup-Policy {
     if (!(Get-AzPolicyAssignment -Scope $scope | where-Object { $_.Name -Like "SLZ-SCCoverage" })) {
         Write-Host "Enabling Azure Security Center coverage"
         Invoke-WebRequest -Uri $definitionSecurityCenterCoverage -OutFile $HOME/rule.json
-        $policyDefinition = New-AzPolicyDefinition -Name "SLZ-SCCoverage" -Policy $HOME/rule.json -ManagementGroupName "lz-management-group"
+        $policyDefinition = New-AzPolicyDefinition -Name "SLZ-SCCoverage" -Policy $HOME/rule.json -ManagementGroupName $GetManagementGroup.Name
         New-AzPolicyAssignment -name "SLZ-SCCoverage" -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location | Out-Null
         Remove-Item -Path $HOME/rule.json
     }
@@ -63,16 +64,15 @@ Function setup-Policy {
     if (!(Get-AzPolicyAssignment -Scope $scope | where-Object { $_.Name -Like "SLZ-SCAutoProvisioning" })) {
         Write-Host "Enabling Azure Security Center auto-provisioning"
         Invoke-WebRequest -Uri $definitionSecurityCenterAutoProvisioning -OutFile $HOME/rule.json
-        $policyDefinition = New-AzPolicyDefinition -Name "SLZ-SCAutoProvisioning" -Policy $HOME/rule.json -ManagementGroupName "lz-management-group"
+        $policyDefinition = New-AzPolicyDefinition -Name "SLZ-SCAutoProvisioning" -Policy $HOME/rule.json -ManagementGroupName $GetManagementGroup.Name
         New-AzPolicyAssignment -name "SLZ-SCAutoProvisioning" -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location | Out-Null
         Remove-Item -Path $HOME/rule.json
     }
 
-    #if(!(Get-AzPolicyAssignment | Where-Object {$_.Name -Like "Allowed locations"})){
-    #        # Policy to force deployment in Europe doesn't exist
-    #        $definition2 = Get-AzPolicyDefinition -Id /providers/Microsoft.Authorization/policyDefinitions/e56962a6-4747-49cd-b67b-bf8b01975c4c
-    #        New-AzPolicyAssignment -name "Allowed locations" -PolicyDefinition $definition2 -PolicyParameter '{"listOfAllowedLocations":{"value":["northeurope","westeurope"]}}' -Scope $scope
-    #}
+    if(!(Get-AzPolicyAssignment | Where-Object {$_.Name -Like "Allowed locations"})){
+        $definition = Get-AzPolicyDefinition -Id /providers/Microsoft.Authorization/policyDefinitions/e56962a6-4747-49cd-b67b-bf8b01975c4c
+        New-AzPolicyAssignment -name "Allowed locations" -PolicyDefinition $definition -PolicyParameter '{"listOfAllowedLocations":{"value":["northeurope","westeurope"]}}' -Scope $scope | Out-Null
+    }
 
     # Loop to create all "SLZ-...........DiagnosticToStorageAccount" policies
     Invoke-WebRequest -Uri "$definitionParametersv1URI" -OutFile $HOME/parameters.json
@@ -113,7 +113,7 @@ Function setup-Policy {
         }
         $param = @{ storageAccountId = @{value = $GetStorageAccount.Id }; region = @{value = $GetResourceGroup.Location }; effect = @{value = $effect } }
 
-        $policyDefinition = Get-AzPolicyDefinition -ManagementGroupName "lz-management-group" | Where-Object { $_.Name -Like $policyName }
+        $policyDefinition = Get-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name | Where-Object { $_.Name -Like $policyName }
         if ($policyDefinition) {
             if (!($policyDefinition.Properties.metadata.version -eq $policyVersion)) {
                 Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
@@ -126,17 +126,17 @@ Function setup-Policy {
         else {
             Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
             $metadata = '{"version":"' + $policyVersion + '"}'
-            $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
+            $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName $GetManagementGroup.Name
             Remove-Item -Path $HOME/$policyName.json
             Write-Host "Created policy: $policyName"
         }
         $definitionList += @{policyDefinitionId = $policyDefinition.ResourceId; parameters = $param }
     }
-    if ($policyInitiative = Get-AzPolicySetDefinition -ManagementGroupName "lz-management-group" | where-Object { $_.Name -Like "SLZ-policyGroup1" }) {
-        Set-AzPolicySetDefinition -ManagementGroupName "lz-management-group" -Name $policyInitiative.Name -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5) | Out-Null
+    if ($policyInitiative = Get-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name | where-Object { $_.Name -Like "SLZ-policyGroup1" }) {
+        Set-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name $policyInitiative.Name -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5) | Out-Null
     }
     else {
-        $policySetDefinition = New-AzPolicySetDefinition -ManagementGroupName "lz-management-group" -Name "SLZ-policyGroup1" -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5)
+        $policySetDefinition = New-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-policyGroup1" -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5)
         $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -AssignIdentity -Name $policySetDefinition.Name -location $GetResourceGroup.Location  -Scope $scope
         Start-Sleep -Seconds 15
         New-AzRoleAssignment -ObjectId $policySetAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
@@ -185,7 +185,7 @@ Function setup-Policy {
             $param = @{ workspaceId = @{value = $GetLogAnalyticsWorkspace.ResourceId }; region = @{value = $GetResourceGroup.Location }; effect = @{value = $effect } }
 
 
-            $policyDefinition = Get-AzPolicyDefinition -ManagementGroupName "lz-management-group" | Where-Object { $_.Name -Like $policyName }
+            $policyDefinition = Get-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name | Where-Object { $_.Name -Like $policyName }
             if ($policyDefinition) {
                 if (!($policyDefinition.Properties.metadata.version -eq $policyVersion)) {
                     Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
@@ -198,17 +198,17 @@ Function setup-Policy {
             else {
                 Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
                 $metadata = '{"version":"' + $policyVersion + '"}'
-                $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
+                $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName $GetManagementGroup.Name
                 Remove-Item -Path $HOME/$policyName.json
                 Write-Host "Created : $policyName"
             }
             $definitionList += @{policyDefinitionId = $policyDefinition.ResourceId; parameters = $param }
         }
-        if ($policyInitiative = Get-AzPolicySetDefinition -ManagementGroupName "lz-management-group" | where-Object { $_.Name -Like "SLZ-policyGroup2" }) {
-            Set-AzPolicySetDefinition -ManagementGroupName "lz-management-group" -Name $policyInitiative.Name -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5) | Out-Null
+        if ($policyInitiative = Get-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name | where-Object { $_.Name -Like "SLZ-policyGroup2" }) {
+            Set-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name $policyInitiative.Name -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5) | Out-Null
         }
         else {
-            $policySetDefinition = New-AzPolicySetDefinition -ManagementGroupName "lz-management-group" -Name "SLZ-policyGroup2" -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5)
+            $policySetDefinition = New-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-policyGroup2" -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5)
             $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -AssignIdentity -Name $policySetDefinition.Name -location $GetResourceGroup.Location -Scope $scope
             Start-Sleep -Seconds 15
             New-AzRoleAssignment -ObjectId $policySetAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
@@ -259,7 +259,7 @@ Function setup-Policy {
             $param = @{ eventHubRuleId = @{value = $GetEventHubAuthorizationRuleId.Id }; region = @{value = $GetResourceGroup.Location }; effect = @{value = $effect }; eventHubName = @{value = "insights-operational-logs" } }
 
 
-            $policyDefinition = Get-AzPolicyDefinition -ManagementGroupName "lz-management-group" | Where-Object { $_.Name -Like $policyName }
+            $policyDefinition = Get-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name | Where-Object { $_.Name -Like $policyName }
             if ($policyDefinition) {
                 if (!($policyDefinition.Properties.metadata.version -eq $policyVersion)) {
                     Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
@@ -272,17 +272,17 @@ Function setup-Policy {
             else {
                 Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
                 $metadata = '{"version":"' + $policyVersion + '"}'
-                $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName "lz-management-group"
+                $policyDefinition = New-AzPolicyDefinition -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata -ManagementGroupName $GetManagementGroup.Name
                 Remove-Item -Path $HOME/$policyName.json
                 Write-Host "Created : $policyName"
             }
             $definitionList += @{policyDefinitionId = $policyDefinition.ResourceId; parameters = $param }
         }
-        if ($policyInitiative = Get-AzPolicySetDefinition -ManagementGroupName "lz-management-group" | where-Object { $_.Name -Like "SLZ-policyGroup3" }) {
-            Set-AzPolicySetDefinition -ManagementGroupName "lz-management-group" -Name $policyInitiative.Name -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5) | Out-Null
+        if ($policyInitiative = Get-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name | where-Object { $_.Name -Like "SLZ-policyGroup3" }) {
+            Set-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name $policyInitiative.Name -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5) | Out-Null
         }
         else {
-            $policySetDefinition = New-AzPolicySetDefinition -ManagementGroupName "lz-management-group" -Name "SLZ-policyGroup3" -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5)
+            $policySetDefinition = New-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-policyGroup3" -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5)
             $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -AssignIdentity -Name $policySetDefinition.Name -location $GetResourceGroup.Location -Scope $scope
             Start-Sleep -Seconds 15
             New-AzRoleAssignment -ObjectId $policySetAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
