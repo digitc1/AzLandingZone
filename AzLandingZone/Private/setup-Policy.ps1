@@ -69,11 +69,10 @@ Function setup-Policy {
         Remove-Item -Path $HOME/rule.json
     }
 
-    #if(!(Get-AzPolicyAssignment | Where-Object {$_.Name -Like "Allowed locations"})){
-    #        # Policy to force deployment in Europe doesn't exist
-    #        $definition2 = Get-AzPolicyDefinition -Id /providers/Microsoft.Authorization/policyDefinitions/e56962a6-4747-49cd-b67b-bf8b01975c4c
-    #        New-AzPolicyAssignment -name "Allowed locations" -PolicyDefinition $definition2 -PolicyParameter '{"listOfAllowedLocations":{"value":["northeurope","westeurope"]}}' -Scope $scope
-    #}
+    if(!(Get-AzPolicyAssignment | Where-Object {$_.Name -Like "Allowed locations"})){
+        $definition = Get-AzPolicyDefinition -Id /providers/Microsoft.Authorization/policyDefinitions/e56962a6-4747-49cd-b67b-bf8b01975c4c
+        New-AzPolicyAssignment -name "Allowed locations" -PolicyDefinition $definition -PolicyParameter '{"listOfAllowedLocations":{"value":["northeurope","westeurope"]}}' -Scope $scope | Out-Null
+    }
 
     # Loop to create all "SLZ-...........DiagnosticToStorageAccount" policies
     Invoke-WebRequest -Uri "$definitionParametersv1URI" -OutFile $HOME/parameters.json
