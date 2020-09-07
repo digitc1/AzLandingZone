@@ -26,7 +26,7 @@ Function Unregister-AzLandingZone {
     }
     if($GetManagementGroup = Get-AzManagementGroup -GroupName $managementGroup -Expand){
         if($GetSubscription.Name -In $GetManagementGroup.Children.DisplayName) {
-            Remove-AzManagementGroupSubscription -GroupName $GetManagementGroup.Name -SubscriptionId ($GetSubscription.Id.Split("/"))[2] | Out-Null
+            Remove-AzManagementGroupSubscription -GroupName $GetManagementGroup.Name -SubscriptionId ($GetSubscription.Id) | Out-Null
         }
     }
     #Get-AzResource | 
