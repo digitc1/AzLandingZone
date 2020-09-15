@@ -5,7 +5,7 @@ name: build
 # events but only for the develop branch
 on:
   push:
-    branches: [ 'release/**', 'master' ]
+    branches: [ 'release/**', 'release-**', 'master' ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -17,7 +17,7 @@ jobs:
     env:
       major: '1'
       minor: '2'
-      patch: '2'
+      patch: '3'
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:      
