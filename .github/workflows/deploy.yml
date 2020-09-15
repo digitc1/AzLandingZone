@@ -28,7 +28,7 @@ jobs:
         with:
           azPSVersion: '3.1.0'
           inlineScript: |
-            Register-PSRepository -Name "AzLandingZoneRepo" -SourceLocation "https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/developmentfeed/nuget/v2" -publishLocation "https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/developmentfeed/nuget/v2"
+            Register-PSRepository -Name "AzLandingZoneRepo" -SourceLocation https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/developmentfeed/nuget/v2 -publishLocation https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/developmentfeed/nuget/v2
             Install-Module -Force -Name "AzLandingZone" -Repository "AzLandingZoneRepo"
             Import-Module -Name "AzLandingZone"
             New-AzLandingZone -SOC "DIGIT" -autoupdate $true -location "westeurope" -enableEventHub $true -securityContact "augustin.colle@outlook.com" -retentionPeriod 185
