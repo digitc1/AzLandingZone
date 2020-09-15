@@ -32,4 +32,4 @@ jobs:
             Install-Module -Force -Name "AzLandingZone" -Repository "AzLandingZoneRepo"
             Import-Module -Name "AzLandingZone"
             Write-Host "hello world"
-            New-AzLandingZone -SOC "DIGIT" -autoupdate $false -location "westeurope" -enableEventHub $true -securityContact "augustin.colle@outlook.com" -retentionPeriod 185
+            New-AzLandingZone -SOC "DIGIT" -autoupdate $false -location "westeurope" -enableEventHub $true -securityContacts "augustin.colle@outlook.com" -retentionPeriod 185
