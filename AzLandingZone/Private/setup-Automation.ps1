@@ -55,6 +55,7 @@ Function setup-Automation {
     }
 
     setup-runAs -name $name -managementGroup $GetManagementGroup.Name
+    update-AzAutomationModules
 
     Write-Host "Checking Azure automation schedule" -ForegroundColor Yellow
     if(!($GetAutomationAccountSchedule = Get-AzAutomationSchedule -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $GetAutomationAccount.AutomationAccountName)){
