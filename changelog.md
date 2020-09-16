@@ -1,4 +1,6 @@
 # Changelog
+## release 1.3.0
+Add deployment pipeline
 ## release 1.2.0
 Enable usage of already existing management group
 refactor "Test-AzLandingZone" cmdlet to identify unique user
