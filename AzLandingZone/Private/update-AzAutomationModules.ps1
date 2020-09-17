@@ -1,4 +1,4 @@
-function update-AzAutomationModules {
+function Update-AzAutomationModules {
     <#
     Copyright (c) Microsoft Corporation. All rights reserved.
     Licensed under the MIT License.
@@ -51,7 +51,7 @@ function update-AzAutomationModules {
 
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
     param(
-        [string] $ResourceGroupName = "lzslz",
+        [string] $ResourceGroupName = "lzslz_rg",
 
         [string] $AutomationAccountName = "lzslzAutomation",
 
@@ -68,6 +68,7 @@ function update-AzAutomationModules {
         [string] $PsGalleryApiUrl = 'https://www.powershellgallery.com/api/v2'
     )
 
+    $env:TEMP = "$HOME/automation"
     $ErrorActionPreference = "Continue"
 
     #region Constants
@@ -106,10 +107,10 @@ function update-AzAutomationModules {
     # Use the Run As connection to login to Azure
     function Login-AzureAutomation([bool] $AzModuleOnly) {
         try {
-            $RunAsConnection = Get-AutomationConnection -Name "AzureRunAsConnection"
+            $RunAsConnection = Get-AzAutomationConnection -Name "AzureRunAsConnection" -ResourceGroupName $ResourceGroupName -AutomationAccountName $AutomationAccountName
             Write-Output "Logging in to Azure ($AzureEnvironment)..."
             
-            if (!$RunAsConnection.ApplicationId) {
+            if (!$RunAsConnection.FieldDefinitionValues.ApplicationId) {
                 $ErrorMessage = "Connection 'AzureRunAsConnection' is incompatible type."
                 throw $ErrorMessage            
             }
@@ -117,21 +118,21 @@ function update-AzAutomationModules {
             if ($AzModuleOnly) {
                 Connect-AzAccount `
                     -ServicePrincipal `
-                    -TenantId $RunAsConnection.TenantId `
-                    -ApplicationId $RunAsConnection.ApplicationId `
-                    -CertificateThumbprint $RunAsConnection.CertificateThumbprint `
+                    -TenantId $RunAsConnection.FieldDefinitionValues.TenantId `
+                    -ApplicationId $RunAsConnection.FieldDefinitionValues.ApplicationId `
+                    -CertificateThumbprint $RunAsConnection.FieldDefinitionValues.CertificateThumbprint `
                     -Environment $AzureEnvironment
 
-                Select-AzSubscription -SubscriptionId $RunAsConnection.SubscriptionID  | Write-Verbose
+                Select-AzSubscription -SubscriptionId $RunAsConnection.FieldDefinitionValues.SubscriptionID  | Write-Verbose
             } else {
                 Add-AzureRmAccount `
                     -ServicePrincipal `
-                    -TenantId $RunAsConnection.TenantId `
-                    -ApplicationId $RunAsConnection.ApplicationId `
-                    -CertificateThumbprint $RunAsConnection.CertificateThumbprint `
+                    -TenantId $RunAsConnection.FieldDefinitionValues.TenantId `
+                    -ApplicationId $RunAsConnection.FieldDefinitionValues.ApplicationId `
+                    -CertificateThumbprint $RunAsConnection.FieldDefinitionValues.CertificateThumbprint `
                     -Environment $AzureEnvironment
 
-                Select-AzureRmSubscription -SubscriptionId $RunAsConnection.SubscriptionID  | Write-Verbose
+                Select-AzureRmSubscription -SubscriptionId $RunAsConnection.FieldDefinitionValues.SubscriptionID  | Write-Verbose
             }
         } catch {
             if (!$RunAsConnection) {
@@ -471,8 +472,8 @@ function update-AzAutomationModules {
         Expand-Archive -Path $AutomationPath -DestinationPath $AutomationUnzipPath -Force
 
         # Import modules
-        Import-Module (Join-Path $ProfileUnzipPath ($ProfileModuleName + ".psd1")) -Force -Verbose
-        Import-Module (Join-Path $AutomationUnzipPath ($AutomationModuleName + ".psd1")) -Force -Verbose
+        # Import-Module (Join-Path $ProfileUnzipPath ($ProfileModuleName + ".psd1")) -Force -Verbose
+        # Import-Module (Join-Path $AutomationUnzipPath ($AutomationModuleName + ".psd1")) -Force -Verbose
     }
 
     #endregion
@@ -513,4 +514,4 @@ function update-AzAutomationModules {
 
     #endregion
 }
-Export-ModuleMember -Function update-AzAutomationModules
+Export-ModuleMember -Function Update-AzAutomationModules
