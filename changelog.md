@@ -1,4 +1,7 @@
 # Changelog
+## release 1.4.0
+Build pipeline now uses a custom token to access Azure devops repository
+Update of the auto-update feature, this now includes an update of the Azure automation modules to the latest version
 ## release 1.3.0
 Add deployment pipeline
 ## release 1.2.0
