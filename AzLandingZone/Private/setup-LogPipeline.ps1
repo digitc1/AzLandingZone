@@ -22,6 +22,7 @@ Function setup-LogPipeline {
         }
         if(!((Get-LzSentinel -Name $name) -eq 0)) {
             Set-LzSentinel -Name $name
+            Set-LzOffice365
         }
     }
     if($enableEventHub){

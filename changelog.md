@@ -1,4 +1,7 @@
 # Changelog
+## release 1.5.0
+Add Sentinel connector for Office365
+Update Connector for Azure Security Center (now Azure Defender) and Azure AD (Information Protection)
 ## release 1.4.0
 Build pipeline now uses a custom token to access Azure devops repository
 Update of the auto-update feature, this now includes an update of the Azure automation modules to the latest version

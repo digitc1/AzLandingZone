@@ -21,7 +21,7 @@ Function Connect-LzActiveDirectory{
 		'properties' = @{
 			'tenantId' = $tenantId
 			'dataTypes' = @{
-				'lerts' = @{
+				'alerts' = @{
 					'state' = 'enabled'
 				}
 			}

@@ -44,6 +44,7 @@ Function Register-AzLandingZone {
 
     Set-LzSubscriptionDiagnosticSettings -subscriptionId $GetSubscription.Id
     Set-LzSecurityCenterPricing -subscriptionId $GetSubscription.Id
+    Set-LzSecurityCenterWorkspace -subscriptionId $GetSubscription.Id
     Set-LzSecurityAutoProvisioningSettings -subscriptionId $GetSubscription.Id
 
     Set-LzSecurityCenterContacts -subscriptionId $GetSubscription.Id -securityContact "DIGIT-CLOUD-VIRTUAL-TASK-FORCE@ec.europa.eu"
