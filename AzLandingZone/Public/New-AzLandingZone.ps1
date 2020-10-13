@@ -55,7 +55,7 @@ Function New-AzLandingZone {
     # Checking registrations and prerequisites for the Landing Zone
     # Registration can take few minutes
     #
-    setup-prerequisites
+    register-ResourceProvider
 
     #
     # variables
