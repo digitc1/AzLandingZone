@@ -1,4 +1,7 @@
 # Changelog
+## fix 1.5.1
+Move all private powershell scripts to /private/PowerShell for sake of clarity for contributors
+update auto-update feature to avoid bug creating multiple service principals
 ## release 1.5.0
 Add Sentinel connector for Office365
 Update Connector for Azure Security Center (now Azure Defender) and Azure AD (Information Protection)

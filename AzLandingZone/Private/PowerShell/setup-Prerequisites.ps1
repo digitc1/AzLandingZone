@@ -1,4 +1,4 @@
-Function setup-Prerequisites {
+Function register-ResourceProvider {
     Write-Host "Checking registration for Microsoft Insights" -ForegroundColor Yellow
     if(!((Get-AzResourceProvider -ProviderNamespace 'Microsoft.Insights').RegistrationState[0] -Like "Registered")){
         Write-Host "Registering Microsoft.Insights resource providers. This may take few minutes"
@@ -41,4 +41,4 @@ Function setup-Prerequisites {
         }
     }
 }
-Export-ModuleMember -Function setup-Prerequisites
+Export-ModuleMember -Function register-ResourceProvider
