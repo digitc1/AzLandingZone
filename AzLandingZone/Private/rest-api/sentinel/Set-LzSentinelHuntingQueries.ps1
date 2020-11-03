@@ -29,10 +29,10 @@ Function Set-LzSentinelHuntingQueries {
         }
         $uri = "https://management.azure.com" + $GetWorkspace.ResourceId + "/savedSearches/" + $definitionId + "?api-version=2020-08-01"
         try{
-            Write-Host -ForegroundColor Green "Connecting Active Directory logs to Azure Sentinel"
+            Write-Host -ForegroundColor Green "Creating custom hunting query: "$definitionName
             $auth = Get-LzAccessToken
             $requestResult = Invoke-webrequest -Uri $uri -Method Put -Headers $auth -Body ($body | ConvertTo-Json -Depth 5)
-            Write-Host -ForegroundColor Green "Connected Active Directory logs to Azure Sentinel"
+            Write-Host -ForegroundColor Green "Created custom hunting query: "$definitionName
         }
         catch {
             Switch ($_.Exception.Response.StatusCode.value__)

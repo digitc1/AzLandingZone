@@ -75,7 +75,6 @@
             'Public\Test-AzLandingZone.ps1',
             'Public\Unregister-AzLandingZone.ps1',
             'Public\Update-AzLandingZone.ps1',
-            'Public\Update-AzLandingZoneSentinel.ps1',
             'Private\PowerShell\register-AzResourceProviders.ps1',
             'Private\PowerShell\setup-Automation.ps1',
             'Private\PowerShell\setup-Lighthouse.ps1',
