@@ -46,5 +46,7 @@ Function setup-LogPipeline {
         }
     }
     Set-LzActiveDirectoryDiagnosticSettings
+    Set-LzSentinelAnalyticsRule
+    Set-LzSentinelHuntingQueries
 }
 Export-ModuleMember -Function setup-LogPipeline

@@ -1,4 +1,4 @@
-Function Set-LzActiveDirectoryAlertRule {
+Function Set-LzAzureATPAlertRule {
 	Param (
 		[String] $name = "lzslz"
 	)
@@ -18,27 +18,27 @@ Function Set-LzActiveDirectoryAlertRule {
 		'etag'       = ''
 		'kind'       = 'MicrosoftSecurityIncidentCreation'
 		'properties' = @{
-			'productFilter' = 'Azure Active Directory Identity Protection'
-			'displayName' = 'Create incidents based on Azure Active Directory Identity Protection alerts'
+			'productFilter' = 'Azure Advanced Threat Protection'
+			'displayName' = 'Create incidents based on Azure Advanced Threat Protection alerts'
 			'enabled' = 'true'
-			'description' = 'Create incidents based on all alerts generated in Azure Active Directory Identity Protection'
-			'alertRuleTemplateName' = '532c1811-79ee-4d9f-8d4d-6304c840daa1'
+			'description' = 'Create incidents based on all alerts generated in Azure Advanced Threat Protection'
+			'alertRuleTemplateName' = '40ba9493-4183-4eee-974f-87fe39c8f267'
 		}
 	}
-	$uri = "https://management.azure.com" + $GetResourceGroup.ResourceId + "/providers/Microsoft.OperationalInsights/workspaces/" + $GetLogAnalyticsWorkspace.Name  + "/providers/Microsoft.SecurityInsights/alertRules/azureAdIdentityProtection?api-version=2020-01-01"
+	$uri = "https://management.azure.com" + $GetLogAnalyticsWorkspace.ResourceId  + "/providers/Microsoft.SecurityInsights/alertRules/40ba9493-4183-4eee-974f-87fe39c8f267?api-version=2020-01-01"
 
 	try {
-		Write-Host -ForegroundColor Green "Enabling alerts creation for Azure Active Directory in Sentinel"
+		Write-Host -ForegroundColor Green "Enabling alerts creation for Azure Advanced Threat Protection in Sentinel"
 		$auth = Get-LzAccessToken
 		$requestResult = Invoke-webrequest -Uri $uri -Method Put -Headers $auth -Body ($body | ConvertTo-Json -Depth 5)
-		Write-Host -ForegroundColor Green "Enabled alerts creation for Azure Active Directory in Sentinel"
+		Write-Host -ForegroundColor Green "Enabled alerts creation for Azure Advanced Threat Protection in Sentinel"
 	}
 	catch {
 		Switch ($_.Exception.Response.StatusCode.value__)
 		{
-			409 {Write-Host "Alerts creation for Active Directory in Sentinel already enabled" -ForegroundColor Yellow}
+			409 {Write-Host "Alerts creation for Azure Advanced Threat Protection in Sentinel already enabled" -ForegroundColor Yellow}
 			default {Write-Host "An unexpected error happened. Contact Landing Zone FMB for additional support." -ForegroundColor Red}
 		}
 	}
 }
-Export-ModuleMember -Function Set-LzActiveDirectoryAlertRule
+Export-ModuleMember -Function Set-LzAzureATPAlertRule

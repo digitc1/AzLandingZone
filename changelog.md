@@ -1,4 +1,7 @@
 # Changelog
+## release 1.6.0
+Create folder structure to automate hunting rules creation by SOC team
+Automate the deployment of all analytics rules
 ## fix 1.5.1
 Move all private powershell scripts to /private/PowerShell for sake of clarity for contributors
 update auto-update feature to avoid bug creating multiple service principals
