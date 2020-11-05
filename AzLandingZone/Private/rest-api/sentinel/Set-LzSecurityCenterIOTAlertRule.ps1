@@ -1,6 +1,6 @@
-Function Set-LzSecurityCenterAlertRule {
+Function Set-LzSecurityCenterAlertIotRule {
 	Param (
-		[Parameter(Mandatory=$true)][String] $name
+		[String] $name = "lzslz"
 	)
 
 	if(!($GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*$name*")){
@@ -18,20 +18,20 @@ Function Set-LzSecurityCenterAlertRule {
 		'etag'       = ''
 		'kind'       = 'MicrosoftSecurityIncidentCreation'
 		'properties' = @{
-			'productFilter' = 'Azure Security Center'
-			'displayName' = 'Create incidents based on Azure Security Center alerts'
+			'productFilter' = 'Azure Security Center for IoT'
+			'displayName' = 'Create incidents based on Azure Security Center for IoT alerts'
 			'enabled' = 'true'
-			'description' = 'Create incidents based on all alerts generated in Azure Security Center'
-			'alertRuleTemplateName' = '90586451-7ba8-4c1e-9904-7d1b7c3cc4d6'
+			'description' = 'Create incidents based on all alerts generated in Azure Security Center for IoT'
+			'alertRuleTemplateName' = 'a2e0eb51-1f11-461a-999b-cd0ebe5c7a72'
 		}
 	}
-	$uri = "https://management.azure.com" + $GetResourceGroup.ResourceId + "/providers/Microsoft.OperationalInsights/workspaces/" + $GetLogAnalyticsWorkspace.Name  + "/providers/Microsoft.SecurityInsights/alertRules/securityCenterAlertRule?api-version=2020-01-01"
+	$uri = "https://management.azure.com" + $GetLogAnalyticsWorkspace.ResourceId  + "/providers/Microsoft.SecurityInsights/alertRules/a2e0eb51-1f11-461a-999b-cd0ebe5c7a72?api-version=2020-01-01"
 
 	try {
-		Write-Host -ForegroundColor Green "Enabling alerts creation for Azure Security Center in Sentinel"
+		Write-Host -ForegroundColor Green "Enabling alerts creation for Azure Security Center for IoT in Sentinel"
 		$auth = Get-LzAccessToken
 		$requestResult = Invoke-webrequest -Uri $uri -Method Put -Headers $auth -Body ($body | ConvertTo-Json -Depth 5)
-		Write-Host -ForegroundColor Green "Enabled alerts creation for Azure Security Center in Sentinel"
+		Write-Host -ForegroundColor Green "Enabled alerts creation for Azure Security Center for IoT in Sentinel"
 	}
 	catch {
 		Switch ($_.Exception.Response.StatusCode.value__)
@@ -41,4 +41,4 @@ Function Set-LzSecurityCenterAlertRule {
 		}
 	}
 }
-Export-ModuleMember -Function Set-LzSecurityCenterAlertRule
+Export-ModuleMember -Function Set-LzSecurityCenterIotAlertRule
