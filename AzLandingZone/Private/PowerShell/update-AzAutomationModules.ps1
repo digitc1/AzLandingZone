@@ -225,7 +225,8 @@ function Update-AzAutomationModules {
         $CurrentModule = & $GetAutomationModule `
                             -Name $ModuleName `
                             -ResourceGroupName $ResourceGroupName `
-                            -AutomationAccountName $AutomationAccountName
+                            -AutomationAccountName $AutomationAccountName `
+                            -ErrorAction SilentlyContinue
 
         if ($CurrentModule.Version -eq $LatestModuleVersionOnGallery) {
             Write-Output "Module : $ModuleName is already present with version $LatestModuleVersionOnGallery. Skipping Import"
@@ -321,6 +322,17 @@ function Update-AzAutomationModules {
                 (!$AzModuleOnly -and ($_.Name -eq 'AzureRM' -or $_.Name -like 'AzureRM.*' -or
                 $_.Name -eq 'Azure' -or $_.Name -like 'Azure.*'))
             }
+        
+        $CustomModule = [Microsoft.Azure.Commands.Automation.Model.Module]@{
+            'Name'       = 'AzureRM.OperationalInsights'
+            'Version'   = '1.0.0'    
+        }
+        $CurrentAutomationModuleList += $CustomModule
+        $CustomModule = [Microsoft.Azure.Commands.Automation.Model.Module]@{
+            'Name'       = 'AzureRM.EventHub'
+            'Version'   = '1.0.0'    
+        }
+        $CurrentAutomationModuleList += $CustomModule
 
         # Get the latest version of the AzureRM.Profile OR Az.Accounts module
         $VersionAndDependencies = Get-ModuleDependencyAndLatestVersion $ProfileOrAccountsModuleName
