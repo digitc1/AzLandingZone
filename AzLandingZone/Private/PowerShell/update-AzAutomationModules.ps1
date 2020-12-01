@@ -333,6 +333,11 @@ function Update-AzAutomationModules {
             'Version'   = '1.0.0'    
         }
         $CurrentAutomationModuleList += $CustomModule
+        $CustomModule = [Microsoft.Azure.Commands.Automation.Model.Module]@{
+            'Name'       = 'AzureRM.PolicyInsights'
+            'Version'   = '1.0.0'    
+        }
+        $CurrentAutomationModuleList += $CustomModule
 
         # Get the latest version of the AzureRM.Profile OR Az.Accounts module
         $VersionAndDependencies = Get-ModuleDependencyAndLatestVersion $ProfileOrAccountsModuleName
