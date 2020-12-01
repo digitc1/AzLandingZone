@@ -11,6 +11,7 @@ Function setup-Automation {
     # External resource required
     #
     $repoURI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/runbooks/Update-AzLandingZone.ps1"
+    $remediationRunbookURI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/runbooks/Remediate-AzLandingZone.ps1"
     
     #
     # Checking variables and requirements
@@ -48,10 +49,15 @@ Function setup-Automation {
         Write-Host "Created automation variable 'managementGroupName'"
     }
 
-    if(!( $GetautomationRunbook = Get-AzAutomationRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName | Where-Object {$_.Name -Like "*azLandingZone*"} )){
+    if(!( $GetAutomationRunbook = Get-AzAutomationRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName | Where-Object {$_.Name -Like "Update-AzLandingZone"} )){
         Invoke-WebRequest -Uri $repoURI -OutFile $HOME/runbook.ps1
         $GetAutomationRunbook = Import-AzAutomationRunbook -Path $HOME/runbook.ps1 -AutomationAccountName $automationAccountName -ResourceGroupName $GetResourceGroup.ResourceGroupName -Type "PowerShell" -Name "Update-AzLandingzone" -Published | Out-Null
         Remove-Item -Path $HOME/runbook.ps1
+    }
+    if(!( $GetRemediationRunbook = Get-AzAutomationRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName | Where-Object {$_.Name -Like "Remediate-AzLandingZone"} )){
+        Invoke-WebRequest -Uri $remediationRunbookURI -OutFile $HOME/remediationRunbook.ps1
+        $GetRemediationRunbook = Import-AzAutomationRunbook -Path $HOME/remedationRunbook.ps1 -AutomationAccountName $automationAccountName -ResourceGroupName $GetResourceGroup.ResourceGroupName -Type "PowerShell" -Name "Remediate-AzLandingzone" -Published | Out-Null
+        Remove-Item -Path $HOME/remediationRunbook.ps1
     }
 
     setup-runAs -name $name -managementGroup $GetManagementGroup.Name
@@ -67,6 +73,9 @@ Function setup-Automation {
 
     if(!(Get-AzAutomationScheduledRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName | Where-Object {$_.RunbookName -Like "Update-AzLandingZone" -And $_.ScheduleName -Like "lzschedule"})){
         Register-AzAutomationScheduledRunbook -RunbookName $GetAutomationRunbook.Name -ScheduleName $GetAutomationAccountSchedule.Name -AutomationAccountName $GetAutomationAccount.AutomationAccountName -resourceGroupName $GetResourceGroup.ResourceGroupName | Out-Null
+    }
+    if(!(Get-AzAutomationScheduledRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName | Where-Object {$_.RunbookName -Like "Remediate-AzLandingZone" -And $_.ScheduleName -Like "lzschedule"})){
+        Register-AzAutomationScheduledRunbook -RunbookName $GetRemediationRunbook.Name -ScheduleName $GetAutomationAccountSchedule.Name -AutomationAccountName $GetAutomationAccount.AutomationAccountName -resourceGroupName $GetResourceGroup.ResourceGroupName | Out-Null
     }
 }
 Export-ModuleMember -Function setup-Automation

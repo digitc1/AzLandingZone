@@ -1,4 +1,7 @@
 # Changelog
+## release 1.7.0
+Add missing support for remediation in automation account
+Add missing AzureRM.PolicyInsights module in automation account
 ## release 1.6.0
 Create folder structure to automate hunting rules creation by SOC team
 Automate the deployment of all analytics rules
