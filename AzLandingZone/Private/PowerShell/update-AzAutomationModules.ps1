@@ -130,7 +130,8 @@ function Update-AzAutomationModules {
                     -TenantId $RunAsConnection.FieldDefinitionValues.TenantId `
                     -ApplicationId $RunAsConnection.FieldDefinitionValues.ApplicationId `
                     -CertificateThumbprint $RunAsConnection.FieldDefinitionValues.CertificateThumbprint `
-                    -Environment $AzureEnvironment
+                    -Environment $AzureEnvironment `
+                    -ErrorAction SilentlyContinue
 
                 Select-AzureRmSubscription -SubscriptionId $RunAsConnection.FieldDefinitionValues.SubscriptionID  | Write-Verbose
             }
@@ -232,7 +233,6 @@ function Update-AzAutomationModules {
             Write-Output "Module : $ModuleName is already present with version $LatestModuleVersionOnGallery. Skipping Import"
         } else {
             Write-Output "Importing $ModuleName module of version $LatestModuleVersionOnGallery to Automation"
-            $ModuleContentUrl
 
             & $NewAutomationModule `
                 -ResourceGroupName $ResourceGroupName `

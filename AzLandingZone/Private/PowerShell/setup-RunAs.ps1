@@ -29,6 +29,8 @@ Function setup-RunAs {
     }
 
     ### grant current user access to key vault
+    # Sleep here for a few seconds to allow the service principal application to become active (should only take a couple of seconds normally)
+    Start-Sleep -s 15
     $servicePrincipalId = az ad signed-in-user show --query objectId -o tsv
     Set-AzKeyVaultAccessPolicy -ResourceGroupName $GetKeyVault.ResourceGroupName -VaultName $GetKeyVault.VaultName -ObjectId $servicePrincipalId -PermissionsToCertificates ("list","get","create") -PermissionsToKeys ("list","get","create") -PermissionsToSecrets ("list","get","set") -PermissionsToStorage ("list","get","set")
 
