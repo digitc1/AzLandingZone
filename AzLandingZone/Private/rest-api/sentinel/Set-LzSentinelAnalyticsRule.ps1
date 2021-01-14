@@ -92,6 +92,7 @@ Function Set-LzSentinelAnalyticsRule {
             catch {
                 Switch ($_.Exception.Response.StatusCode.value__)
                 {
+                    404 {Write-Host "analytic rule cannot be activated because one or more missing connector is blocking deployment."}
                     409 {Write-Host "analytic rule already enabled"}
                     default {Write-Host "An unexpected error happened. Contact Landing Zone FMB for additional support." -ForegroundColor Red}
                 }
