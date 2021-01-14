@@ -81,15 +81,15 @@ function Set-LzSentinel {
     if(!($GetResourceGroup = Get-AzResourceGroup | where-Object {$_.ResourceGroupName -like "*$name*"})){
         Write-Host "No Resource Group for Secure Landing Zone found"
         Write-Host "Please run setup script before running this script"
-        return 1;
+        return ;
     }
     if(!($GetLogAnalyticsWorkspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName)){
         Write-Host "No Log analytics workspace for Secure Landing Zone found"
         Write-Host "Please run setup script before running this script"
-        return 1;
+        return ;
     }
     if((Get-LzSentinel -name $name) -eq 0){
-        return 0;
+        return ;
     }
 
     $uri = "https://management.azure.com" + $GetResourceGroup.ResourceId + "/providers/Microsoft.OperationsManagement/solutions/SecurityInsights(" + $GetLogAnalyticsWorkspace.Name + ")?api-version=2015-11-01-preview"
@@ -114,20 +114,20 @@ function Set-LzSentinel {
     }
     else {
         Write-Host "Log analytics provisioningState is not 'Succeeding'. Abording installation"
-        return 1
+        return
     }
 
     try {
         $auth = Get-LzAccessToken
         $requestResult = Invoke-webrequest -Uri $uri -Method Put -Headers $auth -Body ($body | ConvertTo-Json -Depth 5)
-        return 0
+        return
     }
     catch [Microsoft.PowerShell.Commands.HttpResponseException] {
-        return 1
+        return
     }
     catch {
         Write-Host "An unexpected error happened"
-        return 1
+        return
     }
 }
 Export-ModuleMember -Function Get-LzSentinel,Remove-LzSentinel,Set-LzSentinel

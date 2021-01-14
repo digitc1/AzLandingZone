@@ -9,8 +9,7 @@ Function Set-LzSentinelHuntingQueries {
 		return 1;
 	}
 	if(!($GetWorkspace = Get-AzOperationalInsightsWorkspace -resourceGroupName $GetResourceGroup.ResourceGroupName | where-Object {$_.Name -Like "*$name*"})){
-		Write-Host -ForegroundColor Red "Workspace cannot be found"
-		return 1;
+		return;
     }
     
     Invoke-WebRequest -Uri "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/develop/definitions/sentinel/hunting/definitionList.txt" -Method Get -OutFile "$HOME/definitionList.txt"
@@ -29,10 +28,10 @@ Function Set-LzSentinelHuntingQueries {
         }
         $uri = "https://management.azure.com" + $GetWorkspace.ResourceId + "/savedSearches/" + $definitionId + "?api-version=2020-08-01"
         try{
-            Write-Host -ForegroundColor Green "Creating custom hunting query: "$definitionName
+            Write-Host -ForegroundColor Yellow "Creating custom hunting query: "$definitionName
             $auth = Get-LzAccessToken
             $requestResult = Invoke-webrequest -Uri $uri -Method Put -Headers $auth -Body ($body | ConvertTo-Json -Depth 5)
-            Write-Host -ForegroundColor Green "Created custom hunting query: "$definitionName
+            Write-Host "Created custom hunting query: "$definitionName
         }
         catch {
             Switch ($_.Exception.Response.StatusCode.value__)

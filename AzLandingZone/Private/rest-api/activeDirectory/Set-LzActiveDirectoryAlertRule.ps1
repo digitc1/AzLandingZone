@@ -10,8 +10,8 @@ Function Set-LzActiveDirectoryAlertRule {
 	}
 	if(!($GetLogAnalyticsWorkspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName)){
 		Write-Host "No Log analytics workspace for Secure Landing Zone found"
-		Write-Host "Please run setup script before running this script"
-		return 1;
+		Write-Host "Skipping alert rule creation for Log analytics workspace"
+		return;
 	}
 
 	$body = @{
@@ -28,10 +28,10 @@ Function Set-LzActiveDirectoryAlertRule {
 	$uri = "https://management.azure.com" + $GetResourceGroup.ResourceId + "/providers/Microsoft.OperationalInsights/workspaces/" + $GetLogAnalyticsWorkspace.Name  + "/providers/Microsoft.SecurityInsights/alertRules/azureAdIdentityProtection?api-version=2020-01-01"
 
 	try {
-		Write-Host -ForegroundColor Green "Enabling alerts creation for Azure Active Directory in Sentinel"
+		Write-Host -ForegroundColor Yellow "Enabling alerts creation for Azure Active Directory in Sentinel"
 		$auth = Get-LzAccessToken
 		$requestResult = Invoke-webrequest -Uri $uri -Method Put -Headers $auth -Body ($body | ConvertTo-Json -Depth 5)
-		Write-Host -ForegroundColor Green "Enabled alerts creation for Azure Active Directory in Sentinel"
+		Write-Host "Enabled alerts creation for Azure Active Directory in Sentinel"
 	}
 	catch {
 		Switch ($_.Exception.Response.StatusCode.value__)

@@ -9,9 +9,7 @@ Function Set-LzSentinelAnalyticsRule {
 		return 1;
 	}
 	if(!($GetLogAnalyticsWorkspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName)){
-		Write-Host "No Log analytics workspace for Secure Landing Zone found"
-		Write-Host "Please run setup script before running this script"
-		return 1;
+		return;
     }
     
     try{
@@ -84,16 +82,16 @@ Function Set-LzSentinelAnalyticsRule {
                 
                 $uri = "https://management.azure.com" + $GetLogAnalyticsWorkspace.ResourceId  + "/providers/Microsoft.SecurityInsights/alertRules/" + $_.name + "?api-version=2020-01-01"
             
-                Write-Host -ForegroundColor Green "Enabling analytics rule "$_.name
+                Write-Host -ForegroundColor Yellow "Checking analytic rule :"$_.name
                 $auth = Get-LzAccessToken
                 $requestResult = Invoke-webrequest -Uri $uri -Method Put -Headers $auth -Body ($body | ConvertTo-Json -Depth 5)
-                Write-Host -ForegroundColor Green "Enabled analytics rule "$_.name
+                Write-Host "Enabled analytics rule "$_.name
             }
             catch {
                 Switch ($_.Exception.Response.StatusCode.value__)
                 {
-                    409 {Write-Host "Alerts creation for Azure Advanced Threat Protection in Sentinel already enabled" -ForegroundColor Yellow}
-                    default {Write-Host "An unexpected error happened. Contact Landing Zone FMB for additional support." -ForegroundColor Red}
+                    409 {Write-Host "analytic rule already enabled"}
+                    default {Write-Host "analytic rule cannot be activated because one or more missing connector is blocking deployment."                    }
                 }
             }
         }
