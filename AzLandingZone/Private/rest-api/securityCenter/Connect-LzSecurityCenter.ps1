@@ -33,10 +33,10 @@ Function Connect-LzSecurityCenter{
 	$uri = "https://management.azure.com" + $GetWorkspace.ResourceId + "/providers/Microsoft.SecurityInsights/dataConnectors/" + $subscriptionId + "?api-version=2020-01-01"
 
 	try{
-		Write-Host -ForegroundColor Green "Connecting ASC to Azure Sentinel"
+		Write-Host -ForegroundColor Yellow "Connecting ASC to Azure Sentinel"
 		$auth = Get-LzAccessToken
 		Invoke-webrequest -Uri $uri -Method Put -Headers $auth -Body ($body | ConvertTo-Json -Depth 5) | Out-Null
-		Write-Host -ForegroundColor Green "Connected ASC to Azure Sentinel"
+		Write-Host "Connected ASC to Azure Sentinel"
 	}
 	catch {
 		Switch ($_.Exception.Response.StatusCode.value__)
