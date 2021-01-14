@@ -92,13 +92,8 @@ Function Set-LzSentinelAnalyticsRule {
             catch {
                 Switch ($_.Exception.Response.StatusCode.value__)
                 {
-                    404 {Write-Host "analytic rule cannot be activated because one or more missing connector is blocking deployment."}
                     409 {Write-Host "analytic rule already enabled"}
-                    default {
-                        Write-Host "1. An unexpected error happened. Contact Landing Zone FMB for additional support." -ForegroundColor Red
-                        Write-Host  $_.Exception.Response.StatusCode.value__
-                        Write-Host  $_.Exception.Response.Message
-                    }
+                    default {Write-Host "analytic rule cannot be activated because one or more missing connector is blocking deployment."                    }
                 }
             }
         }
@@ -107,11 +102,7 @@ Function Set-LzSentinelAnalyticsRule {
         Switch ($_.Exception.Response.StatusCode.value__)
         {
             409 {Write-Host "Alerts creation for Azure Advanced Threat Protection in Sentinel already enabled" -ForegroundColor Yellow}
-            default {
-                Write-Host "2. An unexpected error happened. Contact Landing Zone FMB for additional support." -ForegroundColor Red
-                Write-Host  $_.Exception.Response.StatusCode.value__
-                Write-Host  $_.Exception.Response.Message
-            }
+            default {Write-Host "An unexpected error happened. Contact Landing Zone FMB for additional support." -ForegroundColor Red}
         }
     }
 }
