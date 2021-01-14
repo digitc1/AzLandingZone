@@ -9,9 +9,7 @@ Function Set-LzSentinelAnalyticsRule {
 		return 1;
 	}
 	if(!($GetLogAnalyticsWorkspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName)){
-		Write-Host "No Log analytics workspace for Secure Landing Zone found"
-		Write-Host "Please run setup script before running this script"
-		return 1;
+		return;
     }
     
     try{

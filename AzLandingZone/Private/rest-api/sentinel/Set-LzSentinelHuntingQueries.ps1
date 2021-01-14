@@ -9,8 +9,7 @@ Function Set-LzSentinelHuntingQueries {
 		return 1;
 	}
 	if(!($GetWorkspace = Get-AzOperationalInsightsWorkspace -resourceGroupName $GetResourceGroup.ResourceGroupName | where-Object {$_.Name -Like "*$name*"})){
-		Write-Host -ForegroundColor Red "Workspace cannot be found"
-		return 1;
+		return;
     }
     
     Invoke-WebRequest -Uri "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/develop/definitions/sentinel/hunting/definitionList.txt" -Method Get -OutFile "$HOME/definitionList.txt"
