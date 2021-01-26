@@ -12,10 +12,10 @@ Function Test-AzLandingZone {
 
     $servicePrincipalId = az ad signed-in-user show --query objectId -o tsv
 
-    if(!($GetSubscription = Get-AzSubscription | Where-Object {$_.Name -Like "SECLOG*"})){
+    if(!($GetSubscription = Get-AzSubscription | Where-Object {$_.Name -Like "*SECLOG*"})){
         Write-Verbose -Message "Cannot find SecLog subscription. Make sure you're owner or contributor of SecLog subscription."
     }
-    if(!((Get-AzContext).Subscription.Name -Like "SECLOG*")){
+    if(!((Get-AzContext).Subscription.Name -Like "*SECLOG*")){
         Write-Verbose -Message "Context is not set to SecLog subscription. Landing Zone resources will be deployed to the current context."
         Write-Verbose -Message Get-AzContext.Subscription.Name
     }
