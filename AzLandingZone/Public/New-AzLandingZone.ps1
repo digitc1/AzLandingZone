@@ -62,7 +62,7 @@ Function New-AzLandingZone {
     #
     Write-Host "Creating variables and launching creation" -ForegroundColor Yellow
     $context = Get-AzContext
-    if(!($context.Subscription.Name -Like "SECLOG*")){
+    if(!($context.Subscription.Name -Like "*SECLOG*")){
         Write-Host "Context is not set to SecLog subscription. Landing Zone resources will be deployed to the current context."
         Write-Host $context.Subscription.Name
         [void](Read-Host 'Press Enter to continue or "ctrl + C" to cancel the installation.')
