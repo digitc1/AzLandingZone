@@ -43,7 +43,7 @@ Function setup-Policy {
     Write-Host "Checking registration for Azure Security Center CIS Benchmark" -ForegroundColor Yellow
     if (!(Get-AzPolicyAssignment -Scope $scope | Where-Object { $_.Name -Like "Azure Security Benchmark" })) {
         Write-Host "Enabling Azure Security Benchmark"
-        $Policy = Get-AzPolicySetDefinition | Where-Object { $_.Properties.displayName -EQ 'Enable Azure Security Center on your subscription' }
+        $Policy = Get-AzPolicyDefinition | Where-Object { $_.Properties.displayName -EQ 'Enable Azure Security Center on your subscription' }
         New-AzPolicyAssignment -Name "ASC_Default" -DisplayName "Azure Security Center - Default" -PolicySetDefinition $Policy -Scope $scope | Out-Null
     }
     Write-Host "Checking registration for extended Azure Security Center CIS Benchmark" -ForegroundColor Yellow
