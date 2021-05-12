@@ -338,6 +338,36 @@ function Update-AzAutomationModules {
             'Version'   = '1.0.0'    
         }
         $CurrentAutomationModuleList += $CustomModule
+        $CustomModule = [Microsoft.Azure.Commands.Automation.Model.Module]@{
+            'Name'       = 'Az.Accounts'
+            'Version'   = '2.2.8'    
+        }
+        $CurrentAutomationModuleList += $CustomModule
+        $CustomModule = [Microsoft.Azure.Commands.Automation.Model.Module]@{
+            'Name'       = 'Az.EventHub'
+            'Version'   = '1.7.2'    
+        }
+        $CurrentAutomationModuleList += $CustomModule
+        $CustomModule = [Microsoft.Azure.Commands.Automation.Model.Module]@{
+            'Name'       = 'Az.OperationalInsights'
+            'Version'   = '2.3.0'    
+        }
+        $CurrentAutomationModuleList += $CustomModule
+        $CustomModule = [Microsoft.Azure.Commands.Automation.Model.Module]@{
+            'Name'       = 'Az.PolicyInsights'
+            'Version'   = '1.4.1'    
+        }
+        $CurrentAutomationModuleList += $CustomModule
+        $CustomModule = [Microsoft.Azure.Commands.Automation.Model.Module]@{
+            'Name'       = 'Az.Resources'
+            'Version'   = '3.5.0'    
+        }
+        $CurrentAutomationModuleList += $CustomModule
+        $CustomModule = [Microsoft.Azure.Commands.Automation.Model.Module]@{
+            'Name'       = 'Az.Storage'
+            'Version'   = '3.6.0'    
+        }
+        $CurrentAutomationModuleList += $CustomModule
 
         # Get the latest version of the AzureRM.Profile OR Az.Accounts module
         $VersionAndDependencies = Get-ModuleDependencyAndLatestVersion $ProfileOrAccountsModuleName
