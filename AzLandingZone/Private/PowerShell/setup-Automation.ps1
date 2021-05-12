@@ -57,10 +57,10 @@ Function setup-Automation {
         Remove-Item -Path $HOME/runbook.ps1
     }
 
-    Write-Host "Due to breaking changes in Azure cmdlets, creation of the run-as account for automation has been temporarily disabled."
-    Write-Host "automation run-as account can be created manually"
-    #setup-runAs -name $name -managementGroup $GetManagementGroup.Name
-    #update-AzAutomationModules
+    #Write-Host "Due to breaking changes in Azure cmdlets, creation of the run-as account for automation has been temporarily disabled."
+    #Write-Host "automation run-as account can be created manually"
+    setup-runAs -name $name -managementGroup $GetManagementGroup.Name
+    update-AzAutomationModules
 
     Write-Host "Checking Azure automation schedule" -ForegroundColor Yellow
     if(!($GetAutomationAccountSchedule = Get-AzAutomationSchedule -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $GetAutomationAccount.AutomationAccountName)){
