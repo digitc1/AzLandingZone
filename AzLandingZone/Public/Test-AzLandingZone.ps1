@@ -1,32 +1,69 @@
+Function get-recursivegroupmembers {
+    param(
+        $groupId
+    )
+    $localNestedGroupMembers = @()
+    $members = Get-AzADGroupMember -ObjectId $groupId
+    foreach ($member in $members) {
+        if ($member.ObjectType -eq "Group" ) {
+            $localNestedGroupMembers += get-recursivegroupmembers -groupId $member.Id
+        }
+        else {
+            $localNestedGroupMembers += $member
+        }
+    }
+    return $localNestedGroupMembers
+}
+
 Function Test-AzLandingZone {
     <#
-        .SYNOPSIS
-        Test if current user has sufficient rights to apply the Landing Zone
-        .DESCRIPTION
-        Test if current user has sufficient rights to apply the Landing Zone
-        .EXAMPLE
-        Test-AzLandingZone
-    #>
+    .SYNOPSIS
+    Test if current user has sufficient rights to apply the Landing Zone
+    .DESCRIPTION
+    Test if current user has sufficient rights to apply the Landing Zone
+    .EXAMPLE
+    Test-AzLandingZone
+#>
     [cmdletbinding()]
     Param()
 
+    # Get current user information
     $servicePrincipalId = az ad signed-in-user show --query objectId -o tsv
+    $currentUser = Get-AzADUser | Where-Object { $_.Id -eq $servicePrincipalId }
+    Write-Verbose "Currently connected as '$($currentUser.DisplayName)'"
 
-    if(!($GetSubscription = Get-AzSubscription | Where-Object {$_.Name -Like "*SECLOG*"})){
-        Write-Verbose -Message "Cannot find SecLog subscription. Make sure you're owner or contributor of SecLog subscription."
-    }
-    if(!((Get-AzContext).Subscription.Name -Like "*SECLOG*")){
-        Write-Verbose -Message "Context is not set to SecLog subscription. Landing Zone resources will be deployed to the current context."
-        Write-Verbose -Message Get-AzContext.Subscription.Name
-    }
-    $GetAzRoleAssignment = Get-AzRoleAssignment -scope ("/subscriptions/"+$GetSubscription.Id) | Where-Object {$_.RoleDefinitionName -Like "Contributor" -Or $_.RoleDefinitionName -Like "Owner"}
-    if(!( $GetAzRoleAssignment | Where-Object {$_.Id -Like $servicePrincipalId} )){
-        if(!( Get-AzAdGroup | Where-Object {$_.Id -In $GetAzRoleAssignment.ObjectId} | Where-Object {(Get-AzADGroupMember -ObjectId $_.Id).Id -Contains "7801d80f-7753-4ad2-bc21-977155a9a76c"} )){
-            Write-Verbose -Message "Cannot find role assignment for current context. Make sure you're owner or contributor of the subscription."
+    # Get current subscription information
+    if (!((Get-AzContext).Subscription.Name -Like "*SECLOG*")) {
+        if (!(Get-AzSubscription | Where-Object { $_.Name -Like "*SECLOG*" })) {
+            Write-Verbose -Message "Cannot find SECLOG subscription. Make sure the SECLOG subscription exists and you're owner of the subscription"
+        }
+        else {
+            Write-Verbose -Message "Context is not set to SECLOG subscription."
+            Write-Verbose -Message "Switch the context to SECLOG subscription using the following command:"
+            Write-Verbose -Message "Get-AzSubscription | Where-Object {$_.Name -like "*SECLOG*"} | Set-AzContext"
         }
     }
-    
-    Write-Verbose -Message "Validation completed"
-    return 0
+
+    # Get role information about role Assignment
+    $scope = "/subscriptions/" + (Get-AzContext).Subscription.Id
+    $GetRoleAssignment = Get-AzRoleAssignment -scope $scope | Where-Object { $_.RoleDefinitionName -eq "Owner" }
+    if ($GetRoleAssignment | Where-Object { $_.objectId -eq $servicePrincipalId }) {
+        Write-Verbose -Message "Owner role assigned to the user"
+    }
+    else {
+        $recursiveGroupMembers = @()
+        $recursiveGroupMembers += (Get-AzADGroup | Where-Object { $_.Id -In $GetRoleAssignment.objectId } | ForEach-Object -Process {
+                $group = Get-AzADGroup -objectId $_.Id
+                Write-Verbose "Checking members for group $($group.DisplayName)"
+                get-recursivegroupmembers -groupId $_.Id
+            })
+        if ($servicePrincipalId -In ($recursiveGroupMembers.Id | Get-Unique)) {
+            Write-Verbose -Message "Owner role assigned via to the group"
+        }
+        else {
+            Write-Verbose -Message "Current user does not have owner right on the current context"
+        }
+    }
+    Write-Verbose -Message "Script executed"
 }
 Export-ModuleMember -Function Test-AzLandingZone

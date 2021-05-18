@@ -1,4 +1,9 @@
 # Changelog
+## release 1.9.0
+Refactor "Get-AzLandingZone" cmdlet and "Test-AzLandingZone" cmdlet to be compliant with the latest version of the landing zone
+## release 1.8.0
+Refactor "auto-update" feature to automatically create the RunAs account associated with the automation account
+Updated auto-update feature to use Az module instead of AzureRM which will be out of support in coming month
 ## release 1.7.0
 Add missing support for remediation in automation account
 Add missing AzureRM.PolicyInsights module in automation account
