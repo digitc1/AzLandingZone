@@ -15,6 +15,10 @@ Function setup-Policy {
     $definitionParametersv3URI = "https://raw.githubusercontent.com/digitc1/AZLandingZonePublic/master/definitions/parameters3.json"
     $definitionSecurityCenterCoverage = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/securityCenter/definition-securityCenterCoverage.json"
     $definitionSecurityCenterAutoProvisioning = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/securityCenter/definition-securityCenterAutoProvisioning.json"
+    $definitionAHUBWindowsServers = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/hybridBenefit/windowsServer.json"
+    $definitionAHUBWindowsClients = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/hybridBenefit/windowsClient.json"
+    $definitionAHUBSQLvm = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/hybridBenefit/sqlVirtualMachine.json"
+    $definitionAHUBSQLdb = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/hybridBenefit/sqlDatabase.json"
 
     #
     # Create variables needed for this script
@@ -67,6 +71,48 @@ Function setup-Policy {
         $policyDefinition = New-AzPolicyDefinition -Name "SLZ-SCAutoProvisioning" -Policy $HOME/rule.json -ManagementGroupName $GetManagementGroup.Name
         New-AzPolicyAssignment -name "SLZ-SCAutoProvisioning" -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location | Out-Null
         Remove-Item -Path $HOME/rule.json
+    }
+
+    # Checking registration for rules about Azure Hybrid Benefit
+    Write-Host "Checking policy assignment for Azure Hybrid Benefit for Windows servers" -ForegroundColor Yellow
+    if (!(Get-AzPolicyAssignment -Scope $scope | where-Object { $_.Name -Like "SLZ-AHUBWindowssrv" })) {
+        Write-Host "Checking policy definition for Azure Hybrid Benefit for Windows servers" -ForegroundColor Yellow
+        if(!($policyDefinition = Get-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name | Where-Object { $_.Name -Like "SLZ-AHUBWindowssrv" })) {
+            Invoke-WebRequest -Uri $definitionAHUBWindowsServers -OutFile $HOME/rule.json
+            $policyDefinition = New-AzPolicyDefinition -Name "SLZ-AHUBWindowssrv" -Policy $HOME/rule.json -ManagementGroupName $GetManagementGroup.Name
+            Remove-Item -Path $HOME/rule.json
+        }
+        New-AzPolicyAssignment -name "SLZ-AHUBWindowssrv" -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location | Out-Null
+    }
+    Write-Host "Checking policy assignment for Azure Hybrid Benefit for Windows clients" -ForegroundColor Yellow
+    if (!(Get-AzPolicyAssignment -Scope $scope | where-Object { $_.Name -Like "SLZ-AHUBWindows" })) {
+        Write-Host "Checking policy definition for Azure Hybrid Benefit for Windows clients" -ForegroundColor Yellow
+        if(!($policyDefinition = Get-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name | Where-Object { $_.Name -Like "SLZ-AHUBWindows" })) {
+            Invoke-WebRequest -Uri $definitionAHUBWindowsClients -OutFile $HOME/rule.json
+            $policyDefinition = New-AzPolicyDefinition -Name "SLZ-AHUBWindows" -Policy $HOME/rule.json -ManagementGroupName $GetManagementGroup.Name
+            Remove-Item -Path $HOME/rule.json
+        }
+        New-AzPolicyAssignment -name "SLZ-AHUBWindows" -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location | Out-Null
+    }
+    Write-Host "Checking policy assignment for Azure Hybrid Benefit for SQL virtual machines" -ForegroundColor Yellow
+    if (!(Get-AzPolicyAssignment -Scope $scope | where-Object { $_.Name -Like "SLZ-AHUBSQLvm" })) {
+        Write-Host "Checking policy definition for Azure Hybrid Benefit for SQL virtual machines" -ForegroundColor Yellow
+        if(!($policyDefinition = Get-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name | Where-Object { $_.Name -Like "SLZ-AHUBSQLvm" })) {
+            Invoke-WebRequest -Uri $definitionAHUBSQLvm -OutFile $HOME/rule.json
+            $policyDefinition = New-AzPolicyDefinition -Name "SLZ-AHUBSQLvm" -Policy $HOME/rule.json -ManagementGroupName $GetManagementGroup.Name
+            Remove-Item -Path $HOME/rule.json
+        }
+        New-AzPolicyAssignment -name "SLZ-AHUBSQLvm" -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location | Out-Null
+    }
+    Write-Host "Checking policy assignment for Azure Hybrid Benefit for SQL databases" -ForegroundColor Yellow
+    if (!(Get-AzPolicyAssignment -Scope $scope | where-Object { $_.Name -Like "SLZ-AHUBSQLdb" })) {
+        Write-Host "Checking policy definition for Azure Hybrid Benefit for SQL databases" -ForegroundColor Yellow
+        if(!($policyDefinition = Get-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name | Where-Object { $_.Name -Like "SLZ-AHUBSQLdb" })) {
+            Invoke-WebRequest -Uri $definitionAHUBSQLdb -OutFile $HOME/rule.json
+            $policyDefinition = New-AzPolicyDefinition -Name "SLZ-AHUBSQLdb" -Policy $HOME/rule.json -ManagementGroupName $GetManagementGroup.Name
+            Remove-Item -Path $HOME/rule.json
+        }
+        New-AzPolicyAssignment -name "SLZ-AHUBSQLdb" -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location | Out-Null
     }
 
     if(!(Get-AzPolicyAssignment | Where-Object {$_.Name -Like "Allowed locations"})){
