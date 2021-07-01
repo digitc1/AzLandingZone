@@ -94,7 +94,7 @@ Function Get-AzLandingZone {
     }
 
     # Check storage account
-    Write-Host "Checking storage account"
+    Write-Host "Checking storage account" -ForegroundColor Yellow
     if ($GetStorageAccount = Get-AzStorageAccount -ResourceGroupName $GetResourceGroup.ResourceGroupName) {
         # Check if the storage account is properly configured
         if ($GetStorageContainer = Get-AzStorageContainer -Context $GetStorageAccount.Context) {
@@ -119,7 +119,7 @@ Function Get-AzLandingZone {
         return
     }
 
-    Write-Host "Checking log analytucs workspace"
+    Write-Host "Checking log analytics workspace" -ForegroundColor Yellow
     if (Get-AzOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName) {
         Write-Host "Optional Azure log analytics and Azure Sentinel are properly configured" -ForegroundColor Green
         
@@ -129,7 +129,7 @@ Function Get-AzLandingZone {
         Write-Host "Optional Azure log analytics and Azure Sentinel are not configured" -ForegroundColor Yellow
     }
 
-    Write-Host "Checking EventHubNamespace"
+    Write-Host "Checking event hub namespace"
     if ($lzEventHubNamespace = Get-AzEventHubNameSpace -ResourceGroupName $GetResourceGroup.ResourceGroupName | Where-Object { $_.Name -Like "$name*" }) {
         if ((Get-AzEventHub  -ResourceGroupName $GetResourceGroup.ResourceGroupName -Namespace $lzEventHubNamespace.Name | Where-Object { $_.Name -Like "insights-operational-logs" }) -And (Get-AzEventHubAuthorizationRule -ResourceGroupName $GetResourceGroup.ResourceGroupName -Namespace $lzEventHubNamespace.Name | Where-Object { $_.Name -like "landingZoneAccessKey" })) {
             Write-Host "Optional Azure event-hub is properly configured" -ForegroundColor Green
