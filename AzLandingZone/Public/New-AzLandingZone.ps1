@@ -90,9 +90,10 @@ Function New-AzLandingZone {
 
     #setup-SubscriptionContacts -SOC $SOC -securityContacts $securityContacts
     setup-Policy -Name $name -managementGroup $managementGroup
+    setup-MonitoringAgent -Name $name -managementGroup $managementGroup
     setup-Lighthouse -SOC $SOC -managementGroup $managementGroup
     if($enableSentinel) {
-        setup-Sentinel -Name $name
+        setup-Sentinel -Name $name 
     }
 }
 Export-ModuleMember -Function New-AzLandingZone
