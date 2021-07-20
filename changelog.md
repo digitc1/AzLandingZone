@@ -1,4 +1,7 @@
 # Changelog
+
+## release 1.10.0
+Add support for Azure Monitoring Agent and Multi-homing for VM logs
 ## release 1.9.0
 Refactor "Get-AzLandingZone" cmdlet and "Test-AzLandingZone" cmdlet to be compliant with the latest version of the landing zone
 ## release 1.8.0

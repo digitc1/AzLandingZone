@@ -79,6 +79,7 @@
             'Private\PowerShell\setup-Automation.ps1',
             'Private\PowerShell\setup-Lighthouse.ps1',
             'Private\PowerShell\setup-LogPipeline.ps1',
+            'Private\PowerShell\setup-MonitoringAgent.ps1',
             'Private\PowerShell\setup-Policy.ps1',
             'Private\PowerShell\setup-Prerequisites.ps1',
             'Private\PowerShell\setup-Resources.ps1',
