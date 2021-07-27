@@ -56,6 +56,7 @@ Function setup-Policy {
         $Policy = Get-AzPolicySetDefinition | Where-Object { $_.Properties.displayName -EQ 'CIS Microsoft Azure Foundations Benchmark 1.1.0' }
         New-AzPolicyAssignment -Name "ASC_CIS" -DisplayName "Azure Security Center - CIS Compliance" -PolicySetDefinition $Policy -Scope $scope -listOfRegionsWhereNetworkWatcherShouldBeEnabled $location | Out-Null
     }
+
     Write-Host "Checking policy for Azure Security Center coverage" -ForegroundColor Yellow
     if (!(Get-AzPolicyAssignment -Scope $scope | where-Object { $_.Name -Like "SLZ-SCCoverage" })) {
         Write-Host "Enabling Azure Security Center coverage"
@@ -79,50 +80,101 @@ Function setup-Policy {
 
     # Checking registration for rules about Azure Hybrid Benefit
     Write-Host "Checking policy assignment for Azure Hybrid Benefit for Windows servers" -ForegroundColor Yellow
-    if (!(Get-AzPolicyAssignment -Scope $scope | where-Object { $_.Name -Like "SLZ-AHUBWindowssrv" })) {
+    if (!($policyAssignment = Get-AzPolicyAssignment -Scope $scope | where-Object { $_.Name -Like "SLZ-AHUBWindowssrv" })) {
         Write-Host "Checking policy definition for Azure Hybrid Benefit for Windows servers" -ForegroundColor Yellow
         if(!($policyDefinition = Get-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name | Where-Object { $_.Name -Like "SLZ-AHUBWindowssrv" })) {
             Invoke-WebRequest -Uri $definitionAHUBWindowsServers -OutFile $HOME/rule.json
             $policyDefinition = New-AzPolicyDefinition -Name "SLZ-AHUBWindowssrv" -Policy $HOME/rule.json -ManagementGroupName $GetManagementGroup.Name
             Remove-Item -Path $HOME/rule.json
         }
-        New-AzPolicyAssignment -name "SLZ-AHUBWindowssrv" -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location | Out-Null
+        $policyAssignment = New-AzPolicyAssignment -name "SLZ-AHUBWindowssrv" -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location
     }
+    Start-Sleep -Seconds 15
+    if(!(Get-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -Scope $scope)){
+        New-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
+    }
+
     Write-Host "Checking policy assignment for Azure Hybrid Benefit for Windows clients" -ForegroundColor Yellow
-    if (!(Get-AzPolicyAssignment -Scope $scope | where-Object { $_.Name -Like "SLZ-AHUBWindows" })) {
+    if (!($policyAssignment = Get-AzPolicyAssignment -Scope $scope | where-Object { $_.Name -Like "SLZ-AHUBWindows" })) {
         Write-Host "Checking policy definition for Azure Hybrid Benefit for Windows clients" -ForegroundColor Yellow
         if(!($policyDefinition = Get-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name | Where-Object { $_.Name -Like "SLZ-AHUBWindows" })) {
             Invoke-WebRequest -Uri $definitionAHUBWindowsClients -OutFile $HOME/rule.json
             $policyDefinition = New-AzPolicyDefinition -Name "SLZ-AHUBWindows" -Policy $HOME/rule.json -ManagementGroupName $GetManagementGroup.Name
             Remove-Item -Path $HOME/rule.json
         }
-        New-AzPolicyAssignment -name "SLZ-AHUBWindows" -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location | Out-Null
+        $policyAssignment = New-AzPolicyAssignment -name "SLZ-AHUBWindows" -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location
     }
+    Start-Sleep -Seconds 15
+    if(!(Get-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -Scope $scope)){
+        New-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
+    }
+
     Write-Host "Checking policy assignment for Azure Hybrid Benefit for SQL virtual machines" -ForegroundColor Yellow
-    if (!(Get-AzPolicyAssignment -Scope $scope | where-Object { $_.Name -Like "SLZ-AHUBSQLvm" })) {
+    if (!($policyAssignment = Get-AzPolicyAssignment -Scope $scope | where-Object { $_.Name -Like "SLZ-AHUBSQLvm" })) {
         Write-Host "Checking policy definition for Azure Hybrid Benefit for SQL virtual machines" -ForegroundColor Yellow
         if(!($policyDefinition = Get-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name | Where-Object { $_.Name -Like "SLZ-AHUBSQLvm" })) {
             Invoke-WebRequest -Uri $definitionAHUBSQLvm -OutFile $HOME/rule.json
             $policyDefinition = New-AzPolicyDefinition -Name "SLZ-AHUBSQLvm" -Policy $HOME/rule.json -ManagementGroupName $GetManagementGroup.Name
             Remove-Item -Path $HOME/rule.json
         }
-        New-AzPolicyAssignment -name "SLZ-AHUBSQLvm" -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location | Out-Null
+        $policyAssignment = New-AzPolicyAssignment -name "SLZ-AHUBSQLvm" -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location
     }
+    Start-Sleep -Seconds 15
+    if(!(Get-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -Scope $scope)){
+        New-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
+    }
+
     Write-Host "Checking policy assignment for Azure Hybrid Benefit for SQL databases" -ForegroundColor Yellow
-    if (!(Get-AzPolicyAssignment -Scope $scope | where-Object { $_.Name -Like "SLZ-AHUBSQLdb" })) {
+    if (!($policyAssignment = Get-AzPolicyAssignment -Scope $scope | where-Object { $_.Name -Like "SLZ-AHUBSQLdb" })) {
         Write-Host "Checking policy definition for Azure Hybrid Benefit for SQL databases" -ForegroundColor Yellow
         if(!($policyDefinition = Get-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name | Where-Object { $_.Name -Like "SLZ-AHUBSQLdb" })) {
             Invoke-WebRequest -Uri $definitionAHUBSQLdb -OutFile $HOME/rule.json
             $policyDefinition = New-AzPolicyDefinition -Name "SLZ-AHUBSQLdb" -Policy $HOME/rule.json -ManagementGroupName $GetManagementGroup.Name
             Remove-Item -Path $HOME/rule.json
         }
-        New-AzPolicyAssignment -name "SLZ-AHUBSQLdb" -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location | Out-Null
+        $policyAssignment = New-AzPolicyAssignment -name "SLZ-AHUBSQLdb" -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location | Out-Null
+    }
+    Start-Sleep -Seconds 15
+    if(!(Get-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -Scope $scope)){
+        New-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
     }
 
     if(!(Get-AzPolicyAssignment | Where-Object {$_.Name -Like "Allowed locations"})){
         $definition = Get-AzPolicyDefinition -Id /providers/Microsoft.Authorization/policyDefinitions/e56962a6-4747-49cd-b67b-bf8b01975c4c
         New-AzPolicyAssignment -name "Allowed locations" -PolicyDefinition $definition -PolicyParameter '{"listOfAllowedLocations":{"value":["northeurope","westeurope"]}}' -Scope $scope | Out-Null
     }
+
+#    # Create multiple policies for Azure security center in a policy initiative
+#    $SecurityCenterdefinitionList = @()
+#    Write-Host "Checking policy for Azure Security Center coverage" -ForegroundColor Yellow
+#    if (!($policyDefinition = Get-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name | where-Object { $_.Name -Like "SLZ-SCCoverage" })) {
+#        Write-Host "Creating definition for Azure Security Center coverage"
+#        Invoke-WebRequest -Uri $definitionSecurityCenterCoverage -OutFile $HOME/rule.json
+#        $policyDefinition = New-AzPolicyDefinition -Name "SLZ-SCCoverage" -Policy $HOME/rule.json -ManagementGroupName $GetManagementGroup.Name
+#        Remove-Item -Path $HOME/rule.json
+#    }
+#    # $param = @{ storageAccountId = @{value = $GetStorageAccount.Id }; region = @{value = $GetResourceGroup.Location }; effect = @{value = $effect } }
+#    $SecurityCenterdefinitionList += @{ policyDefinitionId = $policyDefinition.ResourceId; parameters = $param }
+#
+#    Write-Host "Checking policy for Azure Security Center Auto-provisioning agents" -ForegroundColor Yellow
+#    if (!($policyDefinition = Get-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name | where-Object { $_.Name -Like "SLZ-SCAutoProvisioning" })) {
+#        Write-Host "Creating definition for Azure Security Center auto-provisioning"
+#        Invoke-WebRequest -Uri $definitionSecurityCenterAutoProvisioning -OutFile $HOME/rule.json
+#        $policyDefinition = New-AzPolicyDefinition -Name "SLZ-SCAutoProvisioning" -Policy $HOME/rule.json -ManagementGroupName $GetManagementGroup.Name
+#        Remove-Item -Path $HOME/rule.json
+#    }
+#    # $param = @{ storageAccountId = @{value = $GetStorageAccount.Id }; region = @{value = $GetResourceGroup.Location }; effect = @{value = $effect } }
+#    $SecurityCenterdefinitionList += @{ policyDefinitionId = $policyDefinition.ResourceId; parameters = $param }
+#
+#    Write-Host "Checking policy for Azure Security Center notifications" -ForegroundColor Yellow
+#    if (!($policyDefinition = Get-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name | where-Object { $_.Name -Like "SLZ-SCNotifications" })) {
+#        Write-Host "Creating definition for Azure Security Center notifications"
+#        Invoke-WebRequest -Uri $definitionSecurityCenterAutoProvisioning -OutFile $HOME/rule.json
+#        $policyDefinition = New-AzPolicyDefinition -Name "SLZ-SCNotifications" -Policy $HOME/rule.json -ManagementGroupName $GetManagementGroup.Name
+#        Remove-Item -Path $HOME/rule.json
+#    }
+#    # $param = @{ storageAccountId = @{value = $GetStorageAccount.Id }; region = @{value = $GetResourceGroup.Location }; effect = @{value = $effect } }
+#    $SecurityCenterdefinitionList += @{ policyDefinitionId = $policyDefinition.ResourceId; parameters = $param }
 
     # Loop to create all "SLZ-...........DiagnosticToStorageAccount" policies
     Invoke-WebRequest -Uri "$definitionParametersv1URI" -OutFile $HOME/parameters.json
