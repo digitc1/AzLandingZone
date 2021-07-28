@@ -37,7 +37,7 @@ Function setup-MonitoringAgent {
     }
 
     if(!($policyAssignment = Get-AzPolicyAssignment -Scope $GetManagementGroup.Id | Where-Object {$_.Name -Like "SLZ-Monitor"})){
-        $policyAssignment = New-AzPolicyAssignment -Scope $GetManagementGroup.Id -Name "SLZ-Monitor" -Location "westeurope" -region "westeurope" -workspaceId $GetLogAnalyticsWorkspace.ResourceId -dataCollectionRuleId $dataCollectionRule.Id -PolicyDefinition $GetPolicyDefinition
+        $policyAssignment = New-AzPolicyAssignment -Scope $GetManagementGroup.Id -Name "SLZ-Monitor" -Location "westeurope" -region "westeurope" -workspaceId $GetLogAnalyticsWorkspace.ResourceId -dataCollectionRuleId $dataCollectionRule.Id -PolicyDefinition $GetPolicyDefinition -AssignIdentity
         Start-Sleep -Seconds 20
     }
 
