@@ -1,5 +1,7 @@
 # Changelog
 
+##release 1.11.0
+Add policy to automatically set Azure Hybrid Benefit
 ## release 1.10.0
 Add support for Azure Monitoring Agent and Multi-homing for VM logs
 ## release 1.9.0
