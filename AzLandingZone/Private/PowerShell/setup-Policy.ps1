@@ -47,14 +47,20 @@ Function setup-Policy {
     Write-Host "Checking registration for Azure Security Center CIS Benchmark" -ForegroundColor Yellow
     if (!(Get-AzPolicyAssignment -Scope $scope | Where-Object { $_.Name -Like "Azure Security Benchmark" })) {
         Write-Host "Enabling Azure Security Benchmark"
-        $Policy = Get-AzPolicySetDefinition | Where-Object { $_.Properties.displayName -EQ 'Enable Monitoring in Azure Security Center' }
+        $Policy = Get-AzPolicySetDefinition | Where-Object { $_.Properties.displayName -EQ 'Azure Security Benchmark' }
         New-AzPolicyAssignment -Name "ASC_Default" -DisplayName "Azure Security Center - Default" -PolicySetDefinition $Policy -Scope $scope | Out-Null
     }
-    Write-Host "Checking registration for extended Azure Security Center CIS Benchmark" -ForegroundColor Yellow
+    Write-Host "Checking registration for extended Azure Security Center CIS Benchmark 1.1.0" -ForegroundColor Yellow
     if (!(Get-AzPolicyAssignment -Scope $scope | Where-Object { $_.Name -Like "ASC_CIS" })) {
         Write-Host "Enabling second monitoring in Azure Security Center"
         $Policy = Get-AzPolicySetDefinition | Where-Object { $_.Properties.displayName -EQ 'CIS Microsoft Azure Foundations Benchmark 1.1.0' }
         New-AzPolicyAssignment -Name "ASC_CIS" -DisplayName "Azure Security Center - CIS Compliance" -PolicySetDefinition $Policy -Scope $scope -listOfRegionsWhereNetworkWatcherShouldBeEnabled $location | Out-Null
+    }
+    Write-Host "Checking registration for extended Azure Security Center CIS Benchmark 1.3.0" -ForegroundColor Yellow
+    if (!(Get-AzPolicyAssignment -Scope $scope | Where-Object { $_.Name -Like "ASC_CIS" })) {
+        Write-Host "Enabling second monitoring in Azure Security Center"
+        $Policy = Get-AzPolicySetDefinition | Where-Object { $_.Properties.displayName -EQ 'CIS Microsoft Azure Foundations Benchmark 1.3.0' }
+        New-AzPolicyAssignment -Name "ASC_CIS_v3" -DisplayName "Azure Security Center - CIS Compliance - 1.3.0" -PolicySetDefinition $Policy -Scope $scope -listOfRegionsWhereNetworkWatcherShouldBeEnabled $location | Out-Null
     }
 
     Write-Host "Checking policy for Azure Security Center coverage" -ForegroundColor Yellow
@@ -88,8 +94,8 @@ Function setup-Policy {
             Remove-Item -Path $HOME/rule.json
         }
         $policyAssignment = New-AzPolicyAssignment -name "SLZ-AHUBWindowssrv" -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location
+        Start-Sleep -Seconds 20
     }
-    Start-Sleep -Seconds 15
     if(!(Get-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -Scope $scope)){
         New-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
     }
@@ -103,8 +109,8 @@ Function setup-Policy {
             Remove-Item -Path $HOME/rule.json
         }
         $policyAssignment = New-AzPolicyAssignment -name "SLZ-AHUBWindows" -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location
+        Start-Sleep -Seconds 20
     }
-    Start-Sleep -Seconds 15
     if(!(Get-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -Scope $scope)){
         New-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
     }
@@ -118,8 +124,8 @@ Function setup-Policy {
             Remove-Item -Path $HOME/rule.json
         }
         $policyAssignment = New-AzPolicyAssignment -name "SLZ-AHUBSQLvm" -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location
+        Start-Sleep -Seconds 20
     }
-    Start-Sleep -Seconds 15
     if(!(Get-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -Scope $scope)){
         New-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
     }
@@ -133,8 +139,8 @@ Function setup-Policy {
             Remove-Item -Path $HOME/rule.json
         }
         $policyAssignment = New-AzPolicyAssignment -name "SLZ-AHUBSQLdb" -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location | Out-Null
+        Start-Sleep -Seconds 20
     }
-    Start-Sleep -Seconds 15
     if(!(Get-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -Scope $scope)){
         New-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
     }

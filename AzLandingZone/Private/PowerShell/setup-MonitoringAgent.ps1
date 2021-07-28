@@ -31,13 +31,18 @@ Function setup-MonitoringAgent {
     if(!($GetPolicyDefinition = Get-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name | where-Object { $_.Name -Like "SLZ-Monitor" })){
         Invoke-WebRequest -Uri $dataCollectionAssociationDefinitionURI -OutFile $HOME/policyDefinition.json
         Invoke-WebRequest -Uri $dataCollectionAssociationParametersURI -OutFile $HOME/policyParameters.json
-        $GetPolicyDefinition = New-AzPolicyDefinition -Name "SLZ-Monitor" -Policy $HOME/policyDefinition.json -Parameter $HOME/policyParameters.json -ManagementGroupName $GetManagementGroup.Name -AssignIdentity
+        $GetPolicyDefinition = New-AzPolicyDefinition -Name "SLZ-Monitor" -Policy $HOME/policyDefinition.json -Parameter $HOME/policyParameters.json -ManagementGroupName $GetManagementGroup.Name
         Remove-Item -Path $HOME/policyDefinition.json
         Remove-Item -Path $HOME/policyParameters.json
     }
 
-    if(!(Get-AzPolicyAssignment -Scope $GetManagementGroup.Id | Where-Object {$_.Name -Like "SLZ-Monitor"})){
-        New-AzPolicyAssignment -Scope $GetManagementGroup.Id -Name "SLZ-Monitor" -Location "westeurope" -region "westeurope" -workspaceId $GetLogAnalyticsWorkspace.ResourceId -dataCollectionRuleId $dataCollectionRule.Id -PolicyDefinition $GetPolicyDefinition
+    if(!($policyAssignment = Get-AzPolicyAssignment -Scope $GetManagementGroup.Id | Where-Object {$_.Name -Like "SLZ-Monitor"})){
+        $policyAssignment = New-AzPolicyAssignment -Scope $GetManagementGroup.Id -Name "SLZ-Monitor" -Location "westeurope" -region "westeurope" -workspaceId $GetLogAnalyticsWorkspace.ResourceId -dataCollectionRuleId $dataCollectionRule.Id -PolicyDefinition $GetPolicyDefinition
+        Start-Sleep -Seconds 20
+    }
+
+    if(!(Get-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -Scope ($GetManagementGroup).Id)){
+        New-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope ($GetManagementGroup).Id | Out-Null
     }
 }
 Export-ModuleMember -Function setup-MonitoringAgent
