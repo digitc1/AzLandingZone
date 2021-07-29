@@ -60,7 +60,7 @@ Function setup-Policy {
     if (!(Get-AzPolicyAssignment -Scope $scope | Where-Object { $_.Name -Like "ASC_CIS_V3" })) {
         Write-Host "Enabling second monitoring in Azure Security Center"
         $Policy = Get-AzPolicySetDefinition | Where-Object { $_.Properties.displayName -EQ 'CIS Microsoft Azure Foundations Benchmark v1.3.0' }
-        New-AzPolicyAssignment -Name "ASC_CIS_v3" -DisplayName "Azure Security Center - CIS Compliance - 1.3.0" -PolicySetDefinition $Policy -Scope $scope -listOfRegionsWhereNetworkWatcherShouldBeEnabled $location | Out-Null
+        New-AzPolicyAssignment -Name "ASC_CIS_v3" -DisplayName "Azure Security Center - CIS Compliance - 1.3.0" -PolicySetDefinition $Policy -Scope $scope | Out-Null
     }
 
     Write-Host "Checking policy for Azure Security Center coverage" -ForegroundColor Yellow
