@@ -40,7 +40,7 @@ Function Test-AzLandingZone {
         else {
             Write-Verbose -Message "Context is not set to SECLOG subscription."
             Write-Verbose -Message "Switch the context to SECLOG subscription using the following command:"
-            Write-Verbose -Message "Get-AzSubscription | Where-Object {$_.Name -like "*SECLOG*"} | Set-AzContext"
+            Write-Verbose -Message 'Get-AzSubscription | Where-Object {$_.Name -like "*SECLOG*"} | Set-AzContext'
         }
     }
 
