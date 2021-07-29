@@ -1,5 +1,7 @@
 # Changelog
 
+## fix 1.11.2
+Fix typo in "Test-AzLandingZone" cmdlet
 ## fix 1.11.1
 Fix typo in Azure policy name
 ## release 1.11.0
