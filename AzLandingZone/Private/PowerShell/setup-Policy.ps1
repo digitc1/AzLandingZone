@@ -53,7 +53,7 @@ Function setup-Policy {
     Write-Host "Checking registration for extended Azure Security Center CIS Benchmark 1.1.0" -ForegroundColor Yellow
     if (!(Get-AzPolicyAssignment -Scope $scope | Where-Object { $_.Name -Like "ASC_CIS" })) {
         Write-Host "Enabling second monitoring in Azure Security Center"
-        $Policy = Get-AzPolicySetDefinition | Where-Object { $_.Properties.displayName -EQ 'CIS Microsoft Azure Foundations Benchmark 1.1.0' }
+        $Policy = Get-AzPolicySetDefinition | Where-Object { $_.Properties.displayName -EQ 'CIS Microsoft Azure Foundations Benchmark v1.1.0' }
         New-AzPolicyAssignment -Name "ASC_CIS" -DisplayName "Azure Security Center - CIS Compliance" -PolicySetDefinition $Policy -Scope $scope -listOfRegionsWhereNetworkWatcherShouldBeEnabled $location | Out-Null
     }
     Write-Host "Checking registration for extended Azure Security Center CIS Benchmark 1.3.0" -ForegroundColor Yellow
@@ -147,7 +147,7 @@ Function setup-Policy {
 
     if(!(Get-AzPolicyAssignment | Where-Object {$_.Name -Like "Allowed locations"})){
         $definition = Get-AzPolicyDefinition -Id /providers/Microsoft.Authorization/policyDefinitions/e56962a6-4747-49cd-b67b-bf8b01975c4c
-        New-AzPolicyAssignment -name "Allowed locations" -PolicyDefinition $definition -PolicyParameter '{"listOfAllowedLocations":{"value":["northeurope","westeurope"]}}' -Scope $scope | Out-Null
+        New-AzPolicyAssignment -name "Allowed locations" -PolicyDefinition $definition -PolicyParameter '{"listOfAllowedLocations":{"value":["northeurope","westeurope", "francecentral", "germanywestcentral"]}}' -Scope $scope | Out-Null
     }
 
 #    # Create multiple policies for Azure security center in a policy initiative
