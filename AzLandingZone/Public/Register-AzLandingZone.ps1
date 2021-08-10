@@ -42,10 +42,14 @@ Function Register-AzLandingZone {
     
     register-AzResourceProviders -subscriptionId $GetSubscription.Id
 
-    Set-LzSubscriptionDiagnosticSettings -subscriptionId $GetSubscription.Id
-    Set-LzSecurityCenterPricing -subscriptionId $GetSubscription.Id
-    Set-LzSecurityCenterWorkspace -subscriptionId $GetSubscription.Id
-    Set-LzSecurityAutoProvisioningSettings -subscriptionId $GetSubscription.Id
+    # Removed, now handled by policy for more consistency
+    # Set-LzSubscriptionDiagnosticSettings -subscriptionId $GetSubscription.Id
+    # Removed, now handled by policy for more consistency
+    # Set-LzSecurityCenterPricing -subscriptionId $GetSubscription.Id
+    # Removed, now handled by policy for more consistency
+    # Set-LzSecurityCenterWorkspace -subscriptionId $GetSubscription.Id
+    # Removed, now handled by policy for more consistency
+    # Set-LzSecurityAutoProvisioningSettings -subscriptionId $GetSubscription.Id
 
     Set-LzSecurityCenterContacts -subscriptionId $GetSubscription.Id -securityContact "DIGIT-CLOUD-VIRTUAL-TASK-FORCE@ec.europa.eu"
     if($SOC -eq "DIGIT"){

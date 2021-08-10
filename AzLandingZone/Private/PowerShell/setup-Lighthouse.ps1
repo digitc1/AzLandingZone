@@ -50,7 +50,7 @@ Function setup-Lighthouse {
             Write-Host "Waiting for previous task to complete" -ForegroundColor Yellow
             Start-Sleep -Seconds 15
             New-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
-            Write-Host "Created role assignment for: "$policyAssignment.Name
+            Write-Host "Created role assignment for: $($policyAssignment.Name)"
             Remove-Item -Path $HOME/rule.json
         }
     }
