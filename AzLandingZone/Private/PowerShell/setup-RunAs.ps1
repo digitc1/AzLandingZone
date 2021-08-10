@@ -55,6 +55,7 @@ Function setup-RunAs {
 		Start-Sleep -s 20
 		Write-Host "Updated Azure Landing Zone key vault certificate password for automation account"
 	}
+	Start-Sleep -Seconds 10
 	#$PfxPassword = -join ((48..57) + (65..90) + (97..122) | Get-Random -Count 48 | foreach-object {[char]$_})
 	#$secretPassword = ConvertTo-SecureString -String $PfxPassword -Force -AsPlainText
 	#Set-AzKeyvaultSecret -VaultName $GetKeyVault.vaultName -Name "lzslzCertificate-secret" -SecretValue $secretPassword

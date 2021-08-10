@@ -41,6 +41,22 @@ Function Set-LzActiveDirectoryDiagnosticSettings {
 					'category' = 'ManagedIdentitySignInLogs';
 					'enabled' = 'true'
 				}
+				@{
+					'category' = 'ProvisioningLogs';
+					'enabled' = 'true'
+				}
+				@{
+					'category' = 'ADFSSignInLogs';
+					'enabled' = 'true'
+				}
+				@{
+					'category' = 'RiskyUsers';
+					'enabled' = 'true'
+				}
+				@{
+					'category' = 'UserRiskEvents';
+					'enabled' = 'true'
+				}
 			)
 		}
 	}
