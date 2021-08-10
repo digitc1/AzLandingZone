@@ -1,5 +1,8 @@
 # Changelog
 
+## fix 1.11.4
+Update diagnostic settings for Azure AD
+Fix typo in "setup-policy" script
 ## fix 1.11.2
 Fix typo in "Test-AzLandingZone" cmdlet
 ## fix 1.11.1
