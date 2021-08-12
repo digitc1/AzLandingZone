@@ -13,23 +13,18 @@ Function Sync-AzLandingZone{
         [string] $managementGroup = "lz-management-group"
     )
 
-    if(!($GetManagementGroup = Get-AzManagementGroup -GroupName $managementGroup -Expand)){
+    if(!(Get-AzManagementGroup -GroupName $managementGroup -Expand)){
         Write-Host "No management group found. Make sure the Landing Zone is installed."
     }
 
-    Get-AzPolicyState -ManagementGroupName $GetManagementGroup.Name | 
-        where-Object {$_.PolicyAssignmentName -Like "SLZ-policyGroup*"} | 
-        ForEach-Object {
-            Write-Host "Creating remediation for "$_.PolicyDefinitionName
-            Start-AzPolicyRemediation -Name $_.PolicyDefinitionName -PolicyAssignmentId $_.PolicyAssignmentId -PolicyDefinitionReferenceId $_.PolicyDefinitionReferenceId | Out-Null
-    }
-    Get-AzPolicyState -ManagementGroupName $GetManagementGroup.Name | 
-        where-Object {$_.PolicyAssignmentName -like "SLZ-*"} | 
-        where-Object {$_.PolicyAssignmentName -notlike "SLZ-policyGroup*"} | 
-        where-Object {$_.ComplianceState -Like "NonCompliant"} | 
-        ForEach-Object {
-            Write-Host "Creating remediation for "$_.PolicyAssignmentName
-            Start-AzPolicyRemediation -Name $_.PolicyAssignmentName -PolicyAssignmentId $_.PolicyAssignmentId | Out-Null
+    $assignments = (Get-AzPolicyState | Where-Object {$_.PolicyAssignmentName -Like "SLZ-*" -And $_.ComplianceState -eq "NonCompliant" -And $_.PolicyDefinitionAction -eq "deployifnotexists"}) | Sort-Object -Unique -Property PolicyDefinitionReferenceId,PolicyDefinitionId
+    foreach ($assignment in $assignments){
+        "Running Remediation for $($assignment.PolicyDefinitionName)"
+        if($assignment.policyDefinitionReferenceId){
+            Start-AzPolicyRemediation -Name "myremediation_$($assignment.PolicyDefinitionName)" -PolicyAssignmentId $assignment.PolicyAssignmentId -PolicyDefinitionReferenceId $assignment.policyDefinitionReferenceId | Out-Null
+        } else {
+            Start-AzPolicyRemediation -Name "myremediation_$($assignment.PolicyDefinitionName)" -PolicyAssignmentId $assignment.PolicyAssignmentId | Out-Null
+        }
     }
 }
 Export-ModuleMember -Function Sync-AzLandingZone
