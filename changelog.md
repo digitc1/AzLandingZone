@@ -1,5 +1,7 @@
 # Changelog
 
+## fix 1.12.0
+Refactor 'Sync-AzLandingZone' cmdlet
 ## fix 1.11.4
 Update diagnostic settings for Azure AD
 Fix typo in "setup-policy" script
