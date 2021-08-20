@@ -56,7 +56,7 @@ Function setup-Automation {
     #
     Invoke-WebRequest -Uri $runbookListURI -OutFile $HOME/definitionList.txt
     Get-Content -Path $HOME/definitionList.txt | ForEAch-Object {
-        $runbookName = "SLZ-" + $_.Split(',')[0]
+        $runbookName = $_.Split(',')[0]
         $runbookLink = $_.Split(',')[1]
         Write-Host -ForegroundColor Yellow "Checking automation runbook: $runbookName"
         if(!(Get-AzAutomationRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $GetAutomationAccount.AutomationAccountName | Where-Object {$_.Name -eq $runbookName})){
@@ -99,7 +99,7 @@ Function setup-Automation {
     #
     # Link schedule with runbook
     #
-    $runbooks = Get-AzAutomationRunbook -ResourceGroupName $GetManagementGroup.ResourceGroupName -AutomationAccountName $GetAutomationAccount.AutomationAccountName
+    $runbooks = Get-AzAutomationRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $GetAutomationAccount.AutomationAccountName
     foreach ($runbook in $runbooks) {
         Write-Host -ForegroundColor Yellow "Checking scheduled task for $($runbook.Name)"
         if(!(Get-AzAutomationScheduledRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $GetAutomationAccount.AutomationAccountName | Where-Object {$_.RunbookName -Like $($runbook.Name) -And $_.ScheduleName -Like $GetAutomationAccountSchedule.Name})){
