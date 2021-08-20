@@ -86,7 +86,7 @@ Function Set-PolicyDiagnosticWorkspace {
                 $effect = $tmp.parameters.effect.value
             }
         }
-        $param = @{ workspaceId = @{value = $GetLogAnalyticsWorkspace.ResourceId }; region = @{value = $GetStorageAccount.PrimaryLocation }; effect = @{value = $effect } }
+        $param = @{ workspaceId = @{value = $GetLogAnalyticsWorkspace.ResourceId }; region = @{value = $GetLogAnalyticsWorkspace.Location }; effect = @{value = $effect } }
 
         $localList.Add(@{policyDefinitionId = $policy.ResourceId; parameters = $param })
     }
