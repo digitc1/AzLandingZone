@@ -58,10 +58,12 @@ Function setup-Automation {
     Get-Content -Path $HOME/definitionList.txt | ForEAch-Object {
         $runbookName = "SLZ-" + $_.Split(',')[0]
         $runbookLink = $_.Split(',')[1]
-        
+        Write-Host -ForegroundColor Yellow "Checking automation runbook: $runbookName"
         if(!(Get-AzAutomationRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $GetAutomationAccount.AutomationAccountName | Where-Object {$_.Name -eq $runbookName})){
-            Invoke-WebRequest -Uri $runbookLink -OutFile $HOME/runbook.ps1
+            Invoke-WebRequest -Uri $runbookLink -OutFile $HOME/$runbookName.ps1
             Import-AzAutomationRunbook -Path $HOME/runbook.ps1 -AutomationAccountName $GetAutomationAccount.AutomationAccountName -ResourceGroupName $GetResourceGroup.ResourceGroupName -Type "PowerShell" -Name $runbookName -Published | Out-Null
+            remove-Item -Path $HOME/$runbookName.ps1
+            Write-Host "Created automation runbook: $runbookName"
         }
     }
     Remove-Item -Path $HOME/definitionList.txt
