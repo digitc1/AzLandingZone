@@ -111,21 +111,30 @@ function Set-LzSentinel {
                 'promotionCode' = ''
             }
         }
-    }
-    else {
+    } else {
         Write-Host "Log analytics provisioningState is not 'Succeeding'. Abording installation"
         return
     }
 
     try {
         $auth = Get-LzAccessToken
+        # TODO : Check request result to ensure the Sentinel instance was properly created
         $requestResult = Invoke-webrequest -Uri $uri -Method Put -Headers $auth -Body ($body | ConvertTo-Json -Depth 5)
+        Write-Host "A Sentinel instance has been created for the Landing Zone"
         return
-    }
-    catch [Microsoft.PowerShell.Commands.HttpResponseException] {
+    } catch [Microsoft.PowerShell.Commands.HttpResponseException] {
+        $errorDetails =  $_.ErrorDetails.Message | ConvertFrom-Json -Depth 5
+        switch ($errorDetails.error.code) {
+            'CannotUpdatePlan' {
+                Write-Host "A Sentinel instance is already enabled"
+            }
+            Default {
+                Write-Host "An unexpected Microsoft.PowerShell.Commands.HttpResponseException error happened"
+                Write-Host $errorDetails
+            }
+        }
         return
-    }
-    catch {
+    } catch {
         Write-Host "An unexpected error happened"
         return
     }

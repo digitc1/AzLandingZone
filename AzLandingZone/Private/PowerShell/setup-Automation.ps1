@@ -1,34 +1,34 @@
 Function setup-Automation {
     param(
         [string]$name = "lzslz",
-        [string] $managementGroup = "lz-management-group"
+        [string] $managementGroup = "lz-management-group",
+        [int]$retentionPeriod = 185
     )
 
     #
     # External resource required
     #
-    $updateRepoURI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/runbooks/Update-AzLandingZone.ps1"
-    $syncRepoURI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/runbooks/Remediate-AzLandingZone.ps1"
+    $runbookListURI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/runbooks/definitionList.txt"
     
     #
     # Checking variables and requirements
     #
     if(!($GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*$name*")){
         Write-Host "No Resource Group for Secure Landing Zone found"
-        return 1;
+        return;
     }
     if(!($GetManagementGroup = Get-AzManagementGroup -GroupName $managementGroup)){
         Write-Host "No Management Group for Secure Landing Zone found"
-        return 1;
+        return;
     }
-    $automationAccountName = $name + "Automation"
 
     #
     # Checking Azure automation account for Azure Landing Zone
     # If it doesn't exist, create it
     #
     Write-Host "Checking automation account in the Secure Landing Zone" -ForegroundColor Yellow
-    if(!($GetAutomationAccount = Get-AzAutomationAccount -ResourceGroupName $GetResourceGroup.ResourceGroupName | Where-Object {$_.AutomationAccountName -Like $automationAccountName})){
+    if(!($GetAutomationAccount = Get-AzAutomationAccount -ResourceGroupName $GetResourceGroup.ResourceGroupName | Where-Object {$_.AutomationAccountName -Like "$name*"})){
+        $automationAccountName = $name + "Automation"
         $GetAutomationAccount = New-AzAutomationAccount -Name $automationAccountName -ResourceGroupName $GetResourceGroup.ResourceGroupName -Location $GetResourceGroup.Location
         Write-Host "Created automation account"
     }
@@ -45,23 +45,47 @@ Function setup-Automation {
         New-AzAutomationVariable -Encrypted $false -Name "managementGroupName" -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $GetAutomationAccount.AutomationAccountName -Value $GetManagementGroup.Name | Out-Null
         Write-Host "Created automation variable 'managementGroupName'"
     }
-
-    if(!( $GetUpdateRunbook = Get-AzAutomationRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName | Where-Object {$_.Name -Like "Update-AzLandingZone*"} )){
-        Invoke-WebRequest -Uri $updateRepoURI -OutFile $HOME/runbook.ps1
-        $GetUpdateRunbook = Import-AzAutomationRunbook -Path $HOME/runbook.ps1 -AutomationAccountName $automationAccountName -ResourceGroupName $GetResourceGroup.ResourceGroupName -Type "PowerShell" -Name "Update-AzLandingzone" -Published | Out-Null
-        Remove-Item -Path $HOME/runbook.ps1
-    }
-    if(!( $GetSyncRunbook = Get-AzAutomationRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName | Where-Object {$_.Name -Like "Sync-azLandingZone*"} )){
-        Invoke-WebRequest -Uri $syncRepoURI -OutFile $HOME/runbook.ps1
-        $GetSyncRunbook = Import-AzAutomationRunbook -Path $HOME/runbook.ps1 -AutomationAccountName $automationAccountName -ResourceGroupName $GetResourceGroup.ResourceGroupName -Type "PowerShell" -Name "Sync-AzLandingzone" -Published | Out-Null
-        Remove-Item -Path $HOME/runbook.ps1
+    if(!( Get-AzAutomationVariable -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $GetAutomationAccount.AutomationAccountName | Where-Object {$_.Name -Like "retentionPeriod"} )){
+        New-AzAutomationVariable -Encrypted $false -Name "retentionPeriod" -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $GetAutomationAccount.AutomationAccountName -Value $retentionPeriod | Out-Null
+        Write-Host "Created automation variable 'retentionPeriod'"
     }
 
-    #Write-Host "Due to breaking changes in Azure cmdlets, creation of the run-as account for automation has been temporarily disabled."
-    #Write-Host "automation run-as account can be created manually"
+    #
+    # Checking automation account runbooks for Azure Landing Zone
+    # If it doesn't exist, create it
+    #
+    Invoke-WebRequest -Uri $runbookListURI -OutFile $HOME/definitionList.txt
+    Get-Content -Path $HOME/definitionList.txt | ForEAch-Object {
+        $runbookName = "SLZ-" + $_.Split(',')[0]
+        $runbookLink = $_.Split(',')[1]
+        
+        if(!(Get-AzAutomationRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $GetAutomationAccount.AutomationAccountName | Where-Object {$_.Name -eq $runbookName})){
+            Invoke-WebRequest -Uri $runbookLink -OutFile $HOME/runbook.ps1
+            Import-AzAutomationRunbook -Path $HOME/runbook.ps1 -AutomationAccountName $GetAutomationAccount.AutomationAccountName -ResourceGroupName $GetResourceGroup.ResourceGroupName -Type "PowerShell" -Name $runbookName -Published | Out-Null
+        }
+    }
+    Remove-Item -Path $HOME/definitionList.txt
+
+    #
+    # Checking the Azure AD application for Azure automation account
+    # If it doesn't exist, create it
+    # Moved to external function for sake of clarity
+    #
     setup-runAs -name $name -managementGroup $GetManagementGroup.Name
+
+    #
+    # Checking Azure automation modules for required modules
+    # If modules are not found, import
+    # If module are found, update to the latest version
+    # Moved to external function for sake of clarity
+    #
     update-AzAutomationModules
 
+    #
+    # Checking Azure automation account schedule
+    # If it doesn't exist, create it
+    # Default value is every Sunday
+    #
     Write-Host "Checking Azure automation schedule" -ForegroundColor Yellow
     if(!($GetAutomationAccountSchedule = Get-AzAutomationSchedule -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $GetAutomationAccount.AutomationAccountName)){
         $StartTime = (Get-Date).AddDays(7-((Get-Date).DayOfWeek.value__))
@@ -70,11 +94,22 @@ Function setup-Automation {
         Write-Host "Created automation account schedule"
     }
 
-    if(!(Get-AzAutomationScheduledRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName | Where-Object {$_.RunbookName -Like "Update-AzLandingZone" -And $_.ScheduleName -Like "lzschedule"})){
-        Register-AzAutomationScheduledRunbook -RunbookName $GetUpdateRunbook.Name -ScheduleName $GetAutomationAccountSchedule.Name -AutomationAccountName $GetAutomationAccount.AutomationAccountName -resourceGroupName $GetResourceGroup.ResourceGroupName | Out-Null
+    #
+    # Link schedule with runbook
+    #
+    $runbooks = Get-AzAutomationRunbook -ResourceGroupName $GetManagementGroup.ResourceGroupName -AutomationAccountName $GetAutomationAccount.AutomationAccountName
+    foreach ($runbook in $runbooks) {
+        Write-Host -ForegroundColor Yellow "Checking scheduled task for $($runbook.Name)"
+        if(!(Get-AzAutomationScheduledRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $GetAutomationAccount.AutomationAccountName | Where-Object {$_.RunbookName -Like $($runbook.Name) -And $_.ScheduleName -Like $GetAutomationAccountSchedule.Name})){
+            Register-AzAutomationScheduledRunbook -RunbookName $($runbook.Name) -ScheduleName $GetAutomationAccountSchedule.Name -AutomationAccountName $GetAutomationAccount.AutomationAccountName -resourceGroupName $GetResourceGroup.ResourceGroupName | Out-Null
+            Write-Host "Created scheduled task for $($runbook.Name)"
+        }
     }
-    if(!(Get-AzAutomationScheduledRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName | Where-Object {$_.RunbookName -Like "Update-AzLandingZone" -And $_.ScheduleName -Like "lzschedule"})){
-        Register-AzAutomationScheduledRunbook -RunbookName $GetSyncRunbook.Name -ScheduleName $GetAutomationAccountSchedule.Name -AutomationAccountName $GetAutomationAccount.AutomationAccountName -resourceGroupName $GetResourceGroup.ResourceGroupName | Out-Null
-    }
+#    if(!(Get-AzAutomationScheduledRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName | Where-Object {$_.RunbookName -Like "Update-AzLandingZone" -And $_.ScheduleName -Like "lzschedule"})){
+#        Register-AzAutomationScheduledRunbook -RunbookName $GetUpdateRunbook.Name -ScheduleName $GetAutomationAccountSchedule.Name -AutomationAccountName $GetAutomationAccount.AutomationAccountName -resourceGroupName $GetResourceGroup.ResourceGroupName | Out-Null
+#    }
+#    if(!(Get-AzAutomationScheduledRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName | Where-Object {$_.RunbookName -Like "Update-AzLandingZone" -And $_.ScheduleName -Like "lzschedule"})){
+#        Register-AzAutomationScheduledRunbook -RunbookName $GetSyncRunbook.Name -ScheduleName $GetAutomationAccountSchedule.Name -AutomationAccountName $GetAutomationAccount.AutomationAccountName -resourceGroupName $GetResourceGroup.ResourceGroupName | Out-Null
+#    }
 }
 Export-ModuleMember -Function setup-Automation
