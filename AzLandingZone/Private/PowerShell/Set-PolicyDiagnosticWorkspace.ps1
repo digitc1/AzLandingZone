@@ -29,7 +29,7 @@ Function Set-PolicyDiagnosticWorkspace {
     $definitionList = [System.Collections.Concurrent.ConcurrentBag[psobject]]::new()
     
     Get-Content -Path $HOME/definitionList.txt | ForEach-Object -Parallel{
-        $policyName = "SLZ-" + $_.Split(',')[0] + "1"
+        $policyName = "SLZ-" + $_.Split(',')[0] + "2"
         $policyVersion = $_.Split(',')[1]
         $policyLink = $_.Split(',')[2]
         $scope = $($using:scope)
