@@ -61,7 +61,7 @@ Function setup-Automation {
         Write-Host -ForegroundColor Yellow "Checking automation runbook: $runbookName"
         if(!(Get-AzAutomationRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $GetAutomationAccount.AutomationAccountName | Where-Object {$_.Name -eq $runbookName})){
             Invoke-WebRequest -Uri $runbookLink -OutFile $HOME/$runbookName.ps1
-            Import-AzAutomationRunbook -Path $HOME/runbook.ps1 -AutomationAccountName $GetAutomationAccount.AutomationAccountName -ResourceGroupName $GetResourceGroup.ResourceGroupName -Type "PowerShell" -Name $runbookName -Published | Out-Null
+            Import-AzAutomationRunbook -Path $HOME/$runbookName.ps1 -AutomationAccountName $GetAutomationAccount.AutomationAccountName -ResourceGroupName $GetResourceGroup.ResourceGroupName -Type "PowerShell" -Name $runbookName -Published | Out-Null
             remove-Item -Path $HOME/$runbookName.ps1
             Write-Host "Created automation runbook: $runbookName"
         }
