@@ -103,7 +103,7 @@ Function setup-Automation {
     foreach ($runbook in $runbooks) {
         Write-Host -ForegroundColor Yellow "Checking scheduled task for $($runbook.Name)"
         if(!(Get-AzAutomationScheduledRunbook -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $GetAutomationAccount.AutomationAccountName | Where-Object {$_.RunbookName -Like $($runbook.Name) -And $_.ScheduleName -Like $GetAutomationAccountSchedule.Name})){
-            Register-AzAutomationScheduledRunbook -RunbookName $($runbook.Name) -ScheduleName $GetAutomationAccountSchedule.Name -AutomationAccountName $GetAutomationAccount.AutomationAccountName -resourceGroupName $GetResourceGroup.ResourceGroupName | Out-Null
+            Register-AzAutomationScheduledRunbook -RunbookName $($runbook.Name) -ScheduleName $GetAutomationAccountSchedule.Name -AutomationAccountName $GetAutomationAccount.AutomationAccountName -ResourceGroupName $GetResourceGroup.ResourceGroupName | Out-Null
             Write-Host "Created scheduled task for $($runbook.Name)"
         }
     }
