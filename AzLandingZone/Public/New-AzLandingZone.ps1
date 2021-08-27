@@ -46,15 +46,6 @@ Function New-AzLandingZone {
 
     Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
 
-    #if(Test-AzLandingZone){
-    #    Write-Host "Pre-requisite for Azure LandingZone are not met."
-    #    Write-Host "Run 'Test-AzLandingZone -verbose' for additional information."
-    #}
-
-    #
-    # Checking registrations and prerequisites for the Landing Zone
-    # Registration can take few minutes
-    #
     register-ResourceProvider
 
     #
@@ -85,13 +76,14 @@ Function New-AzLandingZone {
     setup-Storage -Name $name -retentionPeriod $retentionPeriod
     setup-LogPipeline -Name $name -enableSentinel $enableSentinel -enableEventHub $enableEventHub
     if($autoupdate -eq $true) {
-        setup-Automation -Name $name -managementGroup $managementGroup
+        setup-Automation -Name $name -managementGroup $managementGroup -retentionPeriod $retentionPeriod
     }
 
     #setup-SubscriptionContacts -SOC $SOC -securityContacts $securityContacts
+    # TODO : review policy
     setup-Policy -Name $name -managementGroup $managementGroup
     setup-MonitoringAgent -Name $name -managementGroup $managementGroup
-    setup-Lighthouse -SOC $SOC -managementGroup $managementGroup
+    #setup-Lighthouse -SOC $SOC -managementGroup $managementGroup
     if($enableSentinel) {
         setup-Sentinel -Name $name 
     }

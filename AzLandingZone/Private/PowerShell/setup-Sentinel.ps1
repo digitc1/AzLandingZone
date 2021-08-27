@@ -5,5 +5,8 @@ Function setup-Sentinel {
     Set-LzSecurityCenterAlertRule -Name $name
     Connect-LzActiveDirectory -Name $name
     Set-LzActiveDirectoryAlertRule -Name $name
+    Set-LzSentinelAnalyticsRule
+    Set-LzSentinelHuntingQueries
+    Set-LzOffice365
 }
 Export-ModuleMember -Function setup-Sentinel
