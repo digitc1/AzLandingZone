@@ -1,5 +1,7 @@
 # Changelog
 
+## fix 1.13.0
+Complete refactor of the code base
 ## fix 1.12.0
 Refactor 'Sync-AzLandingZone' cmdlet
 ## fix 1.11.4

@@ -15,7 +15,7 @@ Function setup-Storage {
     # If it doesn't exist, create it
     #
     Write-Host "Checking Storage Account for Landing Zone Logs in the Secure Landing Zone"  -ForegroundColor Yellow
-    while(!($GetStorageAccount = Get-AzStorageAccount -ResourceGroupName $GetResourceGroup.ResourceGroupName | Where-Object {$_.StorageAccountName -Like "$name*"})){
+    if(!($GetStorageAccount = Get-AzStorageAccount -ResourceGroupName $GetResourceGroup.ResourceGroupName | Where-Object {$_.StorageAccountName -Like "$name*"})){
         Write-Host "Creating Landing Zone storage account"
         $rand = Get-Random -Minimum 1000000 -Maximum 9999999999
         $storName = $name + $rand + "sa"
@@ -23,23 +23,31 @@ Function setup-Storage {
     }
 
     #
+    # Set the context to current storage account
+    # Required for additional configuration
+    #
+    Write-Host "Setting context to current storage account" -ForegroundColor Yellow
+    $context = New-AzStorageContext -StorageAccountName $GetStorageAccount.StorageAccountName
+
+    #
     # Checking if log container for Landing Zone Logs already exists in the secure Landing Zone resource group
     # If it doesn't exist, create it
     #
     Write-Host "Checking storage container for Landing Zone Logs in the secure Landing Zone" -ForegroundColor Yellow
-    if(!(Get-AzRmStorageContainer -ResourceGroupName $GetResourceGroup.ResourceGroupName -StorageAccountName $GetStorageAccount.StorageAccountName | Where-Object {$_.Name -Like "landingzonelogs"})){
-        New-AzRmStorageContainer -ResourceGroupName $GetResourceGroup.ResourceGroupName -StorageAccountName $GetStorageAccount.StorageAccountName -Name "landingzonelogs" | Out-Null
+    if(!(Get-AzStorageContainer -Context $context | Where-Object {$_.Name -Like "landingzonelogs"})){
+        New-AzStorageContainer -Context $context -Name "landingzonelogs" | Out-Null
         Write-Host "Created 'landingzonelogs' for Landing Zone logs"
     }
 
     #
     # Checking immutability policy for Azure storage account
     # If storage is not immutable, set immutability to 185 days
+    # TODO : Replace AzureRm with Az when feature is available
     #
     Write-Host "Checking immutability policy" -ForegroundColor Yellow
     if(((Get-AzRmStorageContainerImmutabilityPolicy -StorageAccountName $GetStorageAccount.StorageAccountName -ResourceGroupName $GetResourceGroup.ResourceGroupName -ContainerName "landingzonelogs").ImmutabilityPeriodSinceCreationInDays) -eq 0){
         $policy = Set-AzRmStorageContainerImmutabilityPolicy -ResourceGroupName $GetResourceGroup.ResourceGroupName -StorageAccountName $GetStorageAccount.StorageAccountName -ContainerName "landingzonelogs" -ImmutabilityPeriod $retentionPeriod
-        #Lock-AzRmStorageContainerImmutabilityPolicy -ResourceGroupName $GetResourceGroup.ResourceGroupName -StorageAccountName $GetStorageAccount.StorageAccountName -ContainerName "landingzonelogs" -Etag $policy.Etag
+        Lock-AzRmStorageContainerImmutabilityPolicy -ResourceGroupName $GetResourceGroup.ResourceGroupName -StorageAccountName $GetStorageAccount.StorageAccountName -ContainerName "landingzonelogs" -Etag $policy.Etag
         Write-Host "Created immutability policy for $retentionPeriod days"
     }
 }
