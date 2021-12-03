@@ -1,8 +1,10 @@
 # Changelog
 
-## fix 1.13.0
+## fix 1.13.1
+Fix policy to deploy monitoring agents on virtual machines
+## release 1.13.0
 Complete refactor of the code base
-## fix 1.12.0
+## release 1.12.0
 Refactor 'Sync-AzLandingZone' cmdlet
 ## fix 1.11.4
 Update diagnostic settings for Azure AD
