@@ -86,7 +86,7 @@ Function Set-PolicyDiagnosticStorage {
                 $effect = $tmp.parameters.effect.value
             }
         }
-        $param = @{ storageAccountId = @{value = $GetStorageAccount.Id }; region = @{value = $GetStorageAccount.PrimaryLocation }; effect = @{value = $effect } }
+        $param = @{ storageAccountId = @{value = $GetStorageAccount.Id }; effect = @{value = $effect } }
 
         $localList.Add(@{policyDefinitionId = $policy.ResourceId; parameters = $param })
     }
