@@ -88,7 +88,7 @@ Function Set-PolicyDiagnosticEventHub {
                 $effect = $tmp.parameters.effect.value
             }
         }
-        $param = @{ eventHubRuleId = @{value = $GetEventHubAuthorizationRuleId.Id }; region = @{value = $GetEventHubNamespace.Location.replace(' ' , '') }; effect = @{value = $effect }; eventHubName = @{value = "insights-operational-logs" } }
+        $param = @{ eventHubRuleId = @{value = $GetEventHubAuthorizationRuleId.Id }; effect = @{value = $effect }; eventHubName = @{value = "insights-operational-logs" } }
 
         $localList.Add(@{policyDefinitionId = $policy.ResourceId; parameters = $param })
     }

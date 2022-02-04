@@ -1,5 +1,7 @@
 # Changelog
 
+## release 1.14.0
+Add support for multi-region monitoring
 ## fix 1.13.1
 Fix policy to deploy monitoring agents on virtual machines
 ## release 1.13.0
