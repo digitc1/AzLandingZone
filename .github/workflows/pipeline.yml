@@ -49,14 +49,14 @@ jobs:
       
     - name: Authenticate development Feed
       if: ${{ success() && contains(github.ref, 'release') }}
-      run: nuget sources add -source https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/developmentfeed/nuget/v3/index.json -name devops -p ${{ secrets.DEVOPS_TOKEN }} -u github@acp4eu074hotmail.onmicrosoft.com
+      run: nuget sources add -source https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/developmentfeed/nuget/v3/index.json -name devops -p ${{ secrets.DEVOPS_PAT }} -u github@acp4eu074hotmail.onmicrosoft.com
 
     - name: Authenticate public Feed
       if: ${{ success() && contains(github.ref, 'master') }}
-      run: nuget sources add -source https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/publicfeed/nuget/v3/index.json -name devops -p ${{ secrets.DEVOPS_TOKEN }} -u github@acp4eu074hotmail.onmicrosoft.com
+      run: nuget sources add -source https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/publicfeed/nuget/v3/index.json -name devops -p ${{ secrets.DEVOPS_PAT }} -u github@acp4eu074hotmail.onmicrosoft.com
             
     - name: nuget pack
       run: nuget pack AzLandingZone/AzLandingZone.nuspec
     
     - name: Push package to feed
-      run: nuget push **.nupkg -source devops -apikey ${{ secrets.DEVOPS_TOKEN }}
+      run: nuget push **.nupkg -source devops -apikey ${{ secrets.DEVOPS_PAT }}
