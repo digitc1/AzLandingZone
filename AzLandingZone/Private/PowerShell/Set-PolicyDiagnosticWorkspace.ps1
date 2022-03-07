@@ -108,6 +108,10 @@ Function Set-PolicyDiagnosticWorkspace {
         Write-Host "Updated policy set definition for Azure diagnostic settings for log analytics workspace"
     }
     else {
+        if($assignment = (Get-AzPolicyAssignment -Scope $scope | Where-Object {$_.Name -Like "SLZ-policyGroup2"})) {
+            Remove-AzPolicyAssignment -InputObject $assignment
+            Start-Sleep -Seconds 15
+        }
         $policySetDefinition = New-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-policyGroup2" -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5)
         $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -AssignIdentity -Name $policySetDefinition.Name -location $GetResourceGroup.Location -Scope $scope
         Start-Sleep -Seconds 15
