@@ -17,7 +17,7 @@ jobs:
     env:
       major: '1'
       minor: '14'
-      patch: '0'
+      patch: '1'
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:      
