@@ -105,7 +105,7 @@ Function Set-PolicyDiagnosticEventHub {
                 Remove-AzPolicyAssignment -InputObject $assignment
                 Start-Sleep -Seconds 15
             }
-            Remove-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-policyGroup3"
+            Remove-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-policyGroup3" -Force
             $policySetDefinition = New-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-policyGroup3" -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5)
             $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -AssignIdentity -Name $policySetDefinition.Name -location $GetResourceGroup.Location -Scope $scope
             Start-Sleep -Seconds 15

@@ -103,7 +103,7 @@ Function Set-PolicyDiagnosticStorage {
                 Remove-AzPolicyAssignment -InputObject $assignment
                 Start-Sleep -Seconds 15
             }
-            Remove-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-policyGroup1"
+            Remove-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-policyGroup1" -Force
             $policySetDefinition = New-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-policyGroup1" -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5)
             $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -AssignIdentity -Name $policySetDefinition.Name -location $GetResourceGroup.Location -Scope $scope
             Start-Sleep -Seconds 15
