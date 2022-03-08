@@ -17,7 +17,7 @@ Function Sync-AzLandingZone{
         Write-Host "No management group found. Make sure the Landing Zone is installed."
     }
 
-    $assignments = (Get-AzPolicyState | Where-Object {$_.PolicyAssignmentName -Like "SLZ-*" -And $_.ComplianceState -eq "NonCompliant" -And $_.PolicyDefinitionAction -eq "deployifnotexists"}) | Sort-Object -Unique -Property PolicyDefinitionReferenceId,PolicyDefinitionId
+    $assignments = Get-AzPolicyState -ManagementGroupName $managementGroup | where-Object {$_.IsCompliant -eq $False} | Where-Object {$_.PolicyDefinitionAction -eq "deployIfNotExists" -Or $_.PolicyDefinitionAction -eq "modify"} | Select-Object -Property policyAssignmentId,policyDefinitionReferenceId -Unique
     foreach ($assignment in $assignments){
         "Running Remediation for $($assignment.PolicyDefinitionName)"
         if($assignment.policyDefinitionReferenceId){
