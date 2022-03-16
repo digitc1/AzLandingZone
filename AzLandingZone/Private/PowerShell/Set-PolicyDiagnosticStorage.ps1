@@ -63,9 +63,24 @@ Function Set-PolicyDiagnosticStorage {
             if ($policy.Properties.metadata.version -eq $policyVersion) {
                 Write-Host "$policyName is up-to-date"
             } else {
+                Write-Host "Update policy: $policyName"
                 Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
                 $metadata = '{"version":"' + $policyVersion + '"}'
-                $policy = Set-AzPolicyDefinition -Id $policy.ResourceId -Policy $HOME/$policyName.json -Metadata $metadata
+                if($policy.Properties.Parameters.region){
+                    # Policy is still an old version that uses region parameter. To be deleted.
+                    if ($policyInitiative = Get-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name | where-Object { $_.Name -Like "SLZ-policyGroup1" }) {
+                        if($assignment = (Get-AzPolicyAssignment -Scope $scope | Where-Object {$_.Name -Like "SLZ-policyGroup1"})) {
+                            Remove-AzPolicyAssignment -InputObject $assignment
+                            Start-Sleep -Seconds 15
+                        }
+                        Remove-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-policyGroup1" -Force
+                    }
+                    Remove-AzPolicyDefinition -InputObject $policy -Force
+                    Start-Sleep -Seconds 15
+                    $policy = New-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata
+                } else {         
+                    $policy = Set-AzPolicyDefinition -Id $policy.ResourceId -Policy $HOME/$policyName.json -Metadata $metadata
+                }
                 Remove-Item -Path $HOME/$policyName.json
                 Write-Host "Updated policy: $policyName"
             }
