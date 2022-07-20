@@ -1,5 +1,7 @@
 # Changelog
 
+## fix 1.11.5
+Removed optionnal parameter "sku" for log analytics workspace, fallback to default sku "pergb2018"
 ## release 1.14.0
 Add support for multi-region monitoring
 ## fix 1.13.1
