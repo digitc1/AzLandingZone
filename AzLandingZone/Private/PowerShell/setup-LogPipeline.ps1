@@ -16,7 +16,7 @@ Function setup-LogPipeline {
         if(!(Get-AzOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName)){
             $rand = Get-Random -Minimum 1000000 -Maximum 9999999999
             $workspaceName = $name +"-workspace"+$rand
-            New-AzOperationalInsightsWorkspace -Location $GetResourceGroup.Location -Name $workspaceName -Sku Standard -ResourceGroupName $GetResourceGroup.ResourceGroupName | Out-Null
+            New-AzOperationalInsightsWorkspace -Location $GetResourceGroup.Location -Name $workspaceName -ResourceGroupName $GetResourceGroup.ResourceGroupName | Out-Null
             Start-Sleep -s 15
             Write-Host "Created Landing Zone log analytics"
         }
