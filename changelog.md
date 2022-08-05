@@ -1,6 +1,10 @@
 # Changelog
 
-## fix 1.11.5
+## release 1.15.0
+Update Security Center policies to include support for extended resources (containers, AKS, DBaaS, ...).
+Add runbook to grant role to AXIOM app in incident response (see wiki for additional details). The runbook is present but not deployed automatically outside of DIGIT's tenant.
+Update policies for Azure Firewall, Azure batch accounts, Azure domain services, Azure event hubs and Azure service bus.
+## fix 1.14.5
 Removed optionnal parameter "sku" for log analytics workspace, fallback to default sku "pergb2018"
 ## release 1.14.0
 Add support for multi-region monitoring
