@@ -57,6 +57,14 @@ Function setup-Policy {
         $Policy = Get-AzPolicySetDefinition | Where-Object { $_.Properties.displayName -EQ 'CIS Microsoft Azure Foundations Benchmark v1.3.0' }
         New-AzPolicyAssignment -Name "ASC_CIS_v3" -DisplayName "Azure Security Center - CIS Compliance - 1.3.0" -PolicySetDefinition $Policy -Scope $scope | Out-Null
     }
+    Write-Host "Checking registration for Microsoft Defender for Endpoint" -ForegroundColor Yellow
+    if (!(Get-AzPolicyAssignment -Scope $scope | Where-Object { $_.Name -Like "SLZ-MDE" })) {
+        Write-Host "Enabling registration for Microsoft Defender for Endpoint"
+        $Policy = Get-AzPolicySetDefinition | Where-Object { $_.Properties.displayName -EQ '[Preview]: Deploy Microsoft Defender for Endpoint agent' }
+        $policyAssignment = New-AzPolicyAssignment -Name "SLZ-MDE" -DisplayName "[Preview]: Deploy Microsoft Defender for Endpoint agent" -PolicySetDefinition $Policy -Scope $scope -AssignIdentity -Location $location
+        Start-Sleep -Seconds 15
+        New-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
+    }
 
     Write-Host "Checking policy for Azure Security Center coverage" -ForegroundColor Yellow
     if (!(Get-AzPolicyAssignment -Scope $scope | where-Object { $_.Name -Like "SLZ-SCCoverage" })) {
