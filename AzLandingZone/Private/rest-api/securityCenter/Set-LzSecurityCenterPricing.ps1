@@ -18,8 +18,8 @@ Function Set-LzSecurityCenterPricing {
 	try {
 		Write-Host -ForegroundColor Yellow "Registering Azure Security Center $pricingTier tier"
 		$auth = Get-LzAccessToken
-		"virtualMachines", "SqlServers", "AppServices", "StorageAccounts", "SqlServerVirtualMachines", "KubernetesService", "ContainerRegistry", "KeyVaults" | ForEach-Object {
-			$uri = "https://management.azure.com/subscriptions/" + $subscriptionId + "/providers/Microsoft.Security/pricings/" + $_ + "?api-version=2018-06-01"
+		"virtualMachines", "SqlServers", "AppServices", "StorageAccounts", "SqlServerVirtualMachines", "OpenSourceRelationalDatabases", "KubernetesService", "cosmosDbs", "Containers", "KeyVaults", "Dns", "Arm" | ForEach-Object {
+			$uri = "https://management.azure.com/subscriptions/" + $subscriptionId + "/providers/Microsoft.Security/pricings/" + $_ + "?api-version=2022-03-01"
 			$requestResult = Invoke-webrequest -Uri $uri -Method Put -Headers $auth -Body ($body | ConvertTo-Json -Depth 5)
 		}
 		Write-Host "Configured Azure Security Center $pricingTier tier"
