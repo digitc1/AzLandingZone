@@ -1,5 +1,7 @@
 # Changelog
 
+## release 1.16.0
+Add policy to enforce Microsoft Defender for Endpoint
 ## release 1.15.0
 Update Security Center policies to include support for extended resources (containers, AKS, DBaaS, ...).
 Add runbook to grant role to AXIOM app in incident response (see wiki for additional details). The runbook is present but not deployed automatically outside of DIGIT's tenant.
