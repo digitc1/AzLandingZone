@@ -3,11 +3,8 @@ Function setup-MonitoringAgent {
         [Parameter(Mandatory=$true)][string]$name,
         $managementGroup = "lz-management-group"
     )
-    $WindowsRuleFileURI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/monitor/dataCollectionRule_Windows.json"
-    $LinuxRuleFileURI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/monitor/dataCollectionRule_Linux.json"
-    $WindowsDataCollectionAssociationDefinitionURI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/monitor/dataCollection_Windows.json"
-    $LinuxDataCollectionAssociationDefinitionURI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/monitor/dataCollection_Linux.json"
-    $dataCollectionAssociationParametersURI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/monitor/dataCollectionRuleAssociation.parameters.json"
+    $WindowsRuleFileURI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/develop/definitions/monitor/dataCollectionRule_Windows.json"
+    $LinuxRuleFileURI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/develop/definitions/monitor/dataCollectionRule_Linux.json"
 
     if(!($GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*$name*")){
         Write-Host "No Resource Group for Secure Landing Zone found"
@@ -24,53 +21,35 @@ Function setup-MonitoringAgent {
     }
 
     Write-Host -ForegroundColor Yellow "Checking virtual machine data collection rule for Windows"
-    if(!($WindowsDataCollectionRule = Get-AzDataCollectionRule | Where-Object {$_.Name -Like "SLZ-dataCollectionRule-Windows"})){
+    if(!($WindowsDataCollectionRule = Get-AzDataCollectionRule | Where-Object {$_.Name -Like "SLZ_dataCollectionRule_Windows"})){
         Invoke-WebRequest -Uri $WindowsRuleFileURI -OutFile $HOME/ruleFile.json
         ((Get-Content -path $HOME/ruleFile.json -Raw) -replace '<workspaceId>',$GetLogAnalyticsWorkspace.ResourceId) | Set-Content -Path $HOME/ruleFile.json
-        $WindowsDataCollectionRule = New-AzDataCollectionRule -location $GetResourceGroup.location -ResourceGroupName $GetResourceGroup.ResourceGroupName -ruleName "SLZ-dataCollectionRule-Windows" -RuleFile $HOME/ruleFile.json
+        $WindowsDataCollectionRule = New-AzDataCollectionRule -location $GetResourceGroup.location -ResourceGroupName $GetResourceGroup.ResourceGroupName -ruleName "SLZ_dataCollectionRule_Windows" -RuleFile $HOME/ruleFile.json
         Write-Host "Created virtual machine data collection rule for Windows"
         Remove-Item -Path $HOME/ruleFile.json
     }
 
     Write-Host -ForegroundColor Yellow "Checking virtual machine data collection rule for Linux"
-    if(!($LinuxDataCollectionRule = Get-AzDataCollectionRule | Where-Object {$_.Name -Like "SLZ-dataCollectionRule-Linux"})){
+    if(!($LinuxDataCollectionRule = Get-AzDataCollectionRule | Where-Object {$_.Name -Like "SLZ_dataCollectionRule_Linux"})){
         Invoke-WebRequest -Uri $LinuxRuleFileURI -OutFile $HOME/ruleFile.json
         ((Get-Content -path $HOME/ruleFile.json -Raw) -replace '<workspaceId>',$GetLogAnalyticsWorkspace.ResourceId) | Set-Content -Path $HOME/ruleFile.json
-        $LinuxDataCollectionRule = New-AzDataCollectionRule -location $GetResourceGroup.location -ResourceGroupName $GetResourceGroup.ResourceGroupName -ruleName "SLZ-dataCollectionRule-Linux" -RuleFile $HOME/ruleFile.json
+        $LinuxDataCollectionRule = New-AzDataCollectionRule -location $GetResourceGroup.location -ResourceGroupName $GetResourceGroup.ResourceGroupName -ruleName "SLZ_dataCollectionRule_Linux" -RuleFile $HOME/ruleFile.json
         Write-Host "Created virtual machine data collection rule for Linux"
         Remove-Item -Path $HOME/ruleFile.json
     }
 
-    Write-Host -ForegroundColor Yellow "Checking virtual machine data collection policy for Windows"
-    if(!($WindowsPolicyDefinition = Get-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name | where-Object { $_.Name -Like "SLZ-MonitorWin" })){
-        Invoke-WebRequest -Uri $WindowsDataCollectionAssociationDefinitionURI -OutFile $HOME/definition.json
-        Invoke-WebRequest -Uri $dataCollectionAssociationParametersURI -OutFile $HOME/parameters.json
-        $WindowsPolicyDefinition = New-AzPolicyDefinition -Name "SLZ-Monitor" -Policy $HOME/definition.json -Parameter $HOME/parameters.json -ManagementGroupName $GetManagementGroup.Name
-        Write-Host "Created virtual machine data collection policy"
-        Remove-Item -Path $HOME/definition.json
-        Remove-Item -Path $HOME/parameters.json
-    }
-
-    Write-Host -ForegroundColor Yellow "Checking virtual machine data collection policy for Linux"
-    if(!($LinuxPolicyDefinition = Get-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name | where-Object { $_.Name -Like "SLZ-MonitorLinux" })){
-        Invoke-WebRequest -Uri $LinuxDataCollectionAssociationDefinitionURI -OutFile $HOME/definition.json
-        Invoke-WebRequest -Uri $dataCollectionAssociationParametersURI -OutFile $HOME/parameters.json
-        $LinuxPolicyDefinition = New-AzPolicyDefinition -Name "SLZ-MonitorLinux" -Policy $HOME/definition.json -Parameter $HOME/parameters.json -ManagementGroupName $GetManagementGroup.Name
-        Write-Host "Created virtual machine data collection policy"
-        Remove-Item -Path $HOME/definition.json
-        Remove-Item -Path $HOME/parameters.json
-    }
-
     Write-Host -ForegroundColor Yellow "Checking virtual machine data collection policy assignment for Windows"
     if(!($WindowsPolicyAssignment = Get-AzPolicyAssignment -Scope $GetManagementGroup.Id | Where-Object {$_.Name -Like "SLZ-MonitorWin"})){
-        $WindowsPolicyAssignment = New-AzPolicyAssignment -Scope $GetManagementGroup.Id -Name "SLZ-MonitorWin" -Location $GetResourceGroup.Location -region $GetResourceGroup.Location -workspaceId $GetLogAnalyticsWorkspace.ResourceId -dataCollectionRuleId $WindowsDataCollectionRule.Id -PolicyDefinition $WindowsPolicyDefinition -AssignIdentity
+        $definition = Get-AzPolicyDefinition -Id "/providers/Microsoft.Authorization/policyDefinitions/244efd75-0d92-453c-b9a3-7d73ca36ed52"
+        $WindowsPolicyAssignment = New-AzPolicyAssignment -Scope $GetManagementGroup.Id -Name "SLZ-MonitorWin" -Location $GetResourceGroup.Location -dcrResourceId $WindowsDataCollectionRule.Id -PolicyDefinition $definition -IdentityType 'SystemAssigned'
         Write-Host "Created virtual machine data collection policy assignment for Windows"
         Start-Sleep -s 20
     }
 
     Write-Host -ForegroundColor Yellow "Checking virtual machine data collection policy assignment for Linux"
     if(!($LinuxPolicyAssignment = Get-AzPolicyAssignment -Scope $GetManagementGroup.Id | Where-Object {$_.Name -Like "SLZ-MonitorLinux"})){
-        $LinuxPolicyAssignment = New-AzPolicyAssignment -Scope $GetManagementGroup.Id -Name "SLZ-MonitorLinux" -Location $GetResourceGroup.Location -region $GetResourceGroup.Location -workspaceId $GetLogAnalyticsWorkspace.ResourceId -dataCollectionRuleId $LinuxDataCollectionRule.Id -PolicyDefinition $LinuxPolicyDefinition -AssignIdentity
+        $definition = Get-AzPolicyDefinition -Id "/providers/Microsoft.Authorization/policyDefinitions/2ea82cdd-f2e8-4500-af75-67a2e084ca74"
+        $LinuxPolicyAssignment = New-AzPolicyAssignment -Scope $GetManagementGroup.Id -Name "SLZ-MonitorLinux" -Location $GetResourceGroup.Location -dcrResourceId $LinuxDataCollectionRule.Id -PolicyDefinition $definition -IdentityType 'SystemAssigned'
         Write-Host "Created virtual machine data collection policy assignment for Windows"
         Start-Sleep -s 20
     }

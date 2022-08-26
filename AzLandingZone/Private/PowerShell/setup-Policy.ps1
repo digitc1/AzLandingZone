@@ -61,7 +61,7 @@ Function setup-Policy {
     if (!(Get-AzPolicyAssignment -Scope $scope | Where-Object { $_.Name -Like "SLZ-MDE" })) {
         Write-Host "Enabling registration for Microsoft Defender for Endpoint"
         $Policy = Get-AzPolicySetDefinition | Where-Object { $_.Properties.displayName -EQ '[Preview]: Deploy Microsoft Defender for Endpoint agent' }
-        $policyAssignment = New-AzPolicyAssignment -Name "SLZ-MDE" -DisplayName "[Preview]: Deploy Microsoft Defender for Endpoint agent" -PolicySetDefinition $Policy -Scope $scope -AssignIdentity -Location $location
+        $policyAssignment = New-AzPolicyAssignment -Name "SLZ-MDE" -DisplayName "[Preview]: Deploy Microsoft Defender for Endpoint agent" -PolicySetDefinition $Policy -Scope $scope -IdentityType 'SystemAssigned' -Location $location
         Start-Sleep -Seconds 15
         New-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
     }
@@ -71,7 +71,7 @@ Function setup-Policy {
         Write-Host "Enabling Azure Security Center coverage"
         Invoke-WebRequest -Uri $definitionSecurityCenterCoverage -OutFile $HOME/rule.json
         $policyDefinition = New-AzPolicyDefinition -Name "SLZ-SCCoverage" -Policy $HOME/rule.json -ManagementGroupName $GetManagementGroup.Name
-        $policyAssignment = New-AzPolicyAssignment -name "SLZ-SCCoverage" -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location
+        $policyAssignment = New-AzPolicyAssignment -name "SLZ-SCCoverage" -PolicyDefinition $policyDefinition -Scope $scope -IdentityType 'SystemAssigned' -Location $location
         Remove-Item -Path $HOME/rule.json
         Start-Sleep -Seconds 15
         New-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
@@ -81,7 +81,7 @@ Function setup-Policy {
         Write-Host "Enabling Azure Security Center auto-provisioning"
         Invoke-WebRequest -Uri $definitionSecurityCenterAutoProvisioning -OutFile $HOME/rule.json
         $policyDefinition = New-AzPolicyDefinition -Name "SLZ-SCAutoProvisioning" -Policy $HOME/rule.json -ManagementGroupName $GetManagementGroup.Name
-        $policyAssignment = New-AzPolicyAssignment -name "SLZ-SCAutoProvisioning" -PolicyDefinition $policyDefinition -Scope $scope -AssignIdentity -Location $location
+        $policyAssignment = New-AzPolicyAssignment -name "SLZ-SCAutoProvisioning" -PolicyDefinition $policyDefinition -Scope $scope -IdentityType 'SystemAssigned' -Location $location
         Remove-Item -Path $HOME/rule.json
         Start-Sleep -Seconds 15
         New-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null

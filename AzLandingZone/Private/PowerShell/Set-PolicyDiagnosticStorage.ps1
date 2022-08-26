@@ -120,7 +120,7 @@ Function Set-PolicyDiagnosticStorage {
             }
             Remove-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-policyGroup1" -Force
             $policySetDefinition = New-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-policyGroup1" -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5)
-            $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -AssignIdentity -Name $policySetDefinition.Name -location $GetResourceGroup.Location -Scope $scope
+            $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -IdentityType 'SystemAssigned' -Name $policySetDefinition.Name -location $GetResourceGroup.Location -Scope $scope
             Start-Sleep -Seconds 15
             New-AzRoleAssignment -ObjectId $policySetAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
         }
@@ -128,7 +128,7 @@ Function Set-PolicyDiagnosticStorage {
     }
     else {
         $policySetDefinition = New-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-policyGroup1" -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5)
-        $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -AssignIdentity -Name $policySetDefinition.Name -location $GetResourceGroup.Location -Scope $scope
+        $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -IdentityType 'SystemAssigned' -Name $policySetDefinition.Name -location $GetResourceGroup.Location -Scope $scope
         Start-Sleep -Seconds 15
         New-AzRoleAssignment -ObjectId $policySetAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
         Write-Host "Created policy set definition for Azure diagnostic settings for storage accounts"

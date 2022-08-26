@@ -1,5 +1,8 @@
 # Changelog
 
+## fix 1.16.1
+Replace -assignIdentity parameters with -identityType 'SystemAssigned'
+Fix data collection rule for Windows and Linux monitoring
 ## release 1.16.0
 Add policy to enforce Microsoft Defender for Endpoint
 ## release 1.15.0
