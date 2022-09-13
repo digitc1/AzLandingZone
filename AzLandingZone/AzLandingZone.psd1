@@ -67,6 +67,7 @@
     
     # Modules à importer en tant que modules imbriqués du module spécifié dans RootModule/ModuleToProcess
     NestedModules = @(
+            'Public\Set-AzLandingZonePolicies.ps1',
             'Public\Get-AzLandingZone.ps1',
             'Public\New-AzLandingZone.ps1',
             'Public\Register-AzLandingZone.ps1',
@@ -122,6 +123,7 @@
         
     # Fonctions à exporter à partir de ce module. Pour de meilleures performances, n’utilisez pas de caractères génériques et ne supprimez pas l’entrée. Utilisez un tableau vide si vous n’avez aucune fonction à exporter.
     FunctionsToExport = @(
+            'Set-AzLandingZonePolicies',
             'Get-AzLandingZone',
             'New-AzLandingZone',
             'Register-AzLandingZone',
