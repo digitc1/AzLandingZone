@@ -57,6 +57,7 @@ Function Set-AzLandingZonePolicies {
         Write-Host "Unable to locate the target management group, abording the script."
         return
     }
+    $scope = $targetManagementGroup.Id
 
     if(!$policyName){
         Write-Host "PolicyName cannot be empty, abording the script."
