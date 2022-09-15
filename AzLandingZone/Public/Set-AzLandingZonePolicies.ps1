@@ -30,7 +30,9 @@ Function Set-AzLandingZonePolicies {
         [string]$storageAcct,
         [string]$workspace,
         [string]$eventHub,
-        [string]$authorizationKeyName = "RootManageSharedAccessKey"
+        [string]$authorizationKeyName = "RootManageSharedAccessKey",
+        [string]$monitorDCRWindows,
+        [string]$monitorDCRLinux
 	)
 
     Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
@@ -122,6 +124,30 @@ Function Set-AzLandingZonePolicies {
                 New-AzRoleAssignment -ObjectId $policySetAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
             }
         }
+    }
+    
+    if(!$monitorDCRWindows){
+        Write-Host "No Azure Monitor data collection rule provided. Skipping policies for Azure monitor agents."
+    } else {
+        $dcr = Get-AzDataCollectionRule | Where-Object {$_.Name -eq $monitorDCRWindows}
+        $policy = Get-AzPolicyDefinition -Id "/providers/Microsoft.Authorization/policyDefinitions/244efd75-0d92-453c-b9a3-7d73ca36ed52"
+        $parameters = @{'dcrResourceId'=$($dcr.Id)}
+        $assignment = New-AzPolicyAssignment -PolicyDefinition $policy -Scope $targetManagementGroup.Id -IdentityType 'SystemAssigned' -Location 'westeurope' -Name 'MonitorWindows' -PolicyParameterObject $parameters
+        Start-Sleep -Seconds 15
+        New-AzRoleAssignment -ObjectId $assignment.Identity.principalId -RoleDefinitionName "Log Analytics Contributor" -Scope $scope | Out-Null
+        New-AzRoleAssignment -ObjectId $assignment.Identity.principalId -RoleDefinitionName "Monitoring Contributor" -Scope $scope | Out-Null
+    }
+
+    if(!$monitorDCRLinux){
+        Write-Host "No Azure Monitor data collection rule provided. Skipping policies for Azure monitor agents."
+    } else {
+        $dcr = Get-AzDataCollectionRule | Where-Object {$_.Name -eq $monitorDCRLinux}
+        $policy = Get-AzPolicyDefinition -Id "/providers/Microsoft.Authorization/policyDefinitions/58e891b9-ce13-4ac3-86e4-ac3e1f20cb07"
+        $parameters = @{'dcrResourceId'=$($dcr.Id)}
+        $assignment = New-AzPolicyAssignment -PolicyDefinition $policy -Scope $targetManagementGroup.Id -IdentityType 'SystemAssigned' -Location 'westeurope' -Name 'MonitorWindows' -PolicyParameterObject $parameters
+        Start-Sleep -Seconds 15
+        New-AzRoleAssignment -ObjectId $assignment.Identity.principalId -RoleDefinitionName "Log Analytics Contributor" -Scope $scope | Out-Null
+        New-AzRoleAssignment -ObjectId $assignment.Identity.principalId -RoleDefinitionName "Monitoring Contributor" -Scope $scope | Out-Null
     }
 }
 Export-ModuleMember -Function Set-AzLandingZonePolicies
