@@ -23,7 +23,7 @@ Function Set-PolicyDiagnosticEventHub {
         return;
     }
     $scope = ($GetManagementGroup).Id
-    $GetEventHubAuthorizationRuleId = Get-AzEventHubAuthorizationRule -ResourceGroupName $GetResourceGroup.ResourceGroupName -Namespace $GetEventHubNamespace.Name -Name "landingZoneAccessKey"
+    $GetEventHubAuthorizationRule = Get-AzEventHubAuthorizationRule -ResourceGroupName $GetResourceGroup.ResourceGroupName -Namespace $GetEventHubNamespace.Name -Name "landingZoneAccessKey"
 
     Invoke-WebRequest -Uri $definitionListURI -OutFile $HOME/definitionList.txt
     Invoke-WebRequest -Uri $definitionParametersURI -OutFile $HOME/parameters.json
@@ -129,7 +129,7 @@ Function Set-PolicyDiagnosticEventHub {
     }
     else {
         $policySetDefinition = New-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-policyGroup3" -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5) -Parameter '{"policyName": { "type": "string" }, "eventHubRuleId":{"type": "string"}}'
-        $parameters = @{policyName = "setByPolicy"; eventHubRuleId = $GetEventHubAuthorizationRuleId}
+        $parameters = @{policyName = "setByPolicy"; eventHubRuleId = $GetEventHubAuthorizationRule.Id}
         $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -IdentityType 'SystemAssigned' -Name $policySetDefinition.Name -location $GetResourceGroup.Location -Scope $scope -PolicyParameterObject $parameters
         Start-Sleep -Seconds 15
         New-AzRoleAssignment -ObjectId $policySetAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
