@@ -37,7 +37,6 @@ Function Set-PolicyDiagnosticEventHub {
         $GetManagementGroup = $($using:GetManagementGroup)
         $localList = $using:definitionList
         $GetEventHubNamespace = $using:GetEventHubNamespace
-        $GetEventHubAuthorizationRuleId = $using:GetEventHubAuthorizationRuleId
 
         #
         # Check if a previous role assignment exists and remive it
