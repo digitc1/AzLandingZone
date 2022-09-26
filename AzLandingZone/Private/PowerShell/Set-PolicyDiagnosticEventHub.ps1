@@ -23,7 +23,7 @@ Function Set-PolicyDiagnosticEventHub {
         return;
     }
     $scope = ($GetManagementGroup).Id
-    $GetEventHubAuthorizationRuleId = Get-AzEventHubAuthorizationRule -ResourceGroupName $GetResourceGroup.ResourceGroupName -Namespace $GetEventHubNamespace.Name -Name "landingZoneAccessKey"
+    $GetEventHubAuthorizationRule = Get-AzEventHubAuthorizationRule -ResourceGroupName $GetResourceGroup.ResourceGroupName -Namespace $GetEventHubNamespace.Name -Name "landingZoneAccessKey"
 
     Invoke-WebRequest -Uri $definitionListURI -OutFile $HOME/definitionList.txt
     Invoke-WebRequest -Uri $definitionParametersURI -OutFile $HOME/parameters.json
@@ -37,25 +37,24 @@ Function Set-PolicyDiagnosticEventHub {
         $GetManagementGroup = $($using:GetManagementGroup)
         $localList = $using:definitionList
         $GetEventHubNamespace = $using:GetEventHubNamespace
-        $GetEventHubAuthorizationRuleId = $using:GetEventHubAuthorizationRuleId
 
         #
         # Check if a previous role assignment exists and remive it
         #
-        Write-Host -ForegroundColor Yellow "Checking if previous role assignment exist for $policyName"
-        if($assignment = Get-AzRoleAssignment -Scope $scope | Where-Object {$_.DisplayName -eq $policyName}){
-            Remove-AzRoleAssignment -InputObject $assignment | Out-Null
-            Write-Host "Removed previous role assignment exist for $policyName"
-        }
+#        Write-Host -ForegroundColor Yellow "Checking if previous role assignment exist for $policyName"
+#        if($assignment = Get-AzRoleAssignment -Scope $scope | Where-Object {$_.DisplayName -eq $policyName}){
+#            Remove-AzRoleAssignment -InputObject $assignment | Out-Null
+#            Write-Host "Removed previous role assignment exist for $policyName"
+#        }
 
         #
         # Check if a previous policy assignment exists and remive it
         #
-        Write-Host -ForegroundColor Yellow "Checking if previous policy assignment exist for $policyName"
-        if($assignment = Get-AzPolicyAssignment -Scope $scope | Where-Object {$_.Name -eq $policyName}){
-            Remove-AzPolicyAssignment -InputObject $assignment | Out-Null
-            Write-Host "Removed previous policy assignment exist for $policyName"
-        }
+#        Write-Host -ForegroundColor Yellow "Checking if previous policy assignment exist for $policyName"
+#        if($assignment = Get-AzPolicyAssignment -Scope $scope | Where-Object {$_.Name -eq $policyName}){
+#            Remove-AzPolicyAssignment -InputObject $assignment | Out-Null
+#            Write-Host "Removed previous policy assignment exist for $policyName"
+#        }
 
         #
         # Check if the policy definition exists and create it or update it
@@ -68,21 +67,21 @@ Function Set-PolicyDiagnosticEventHub {
                 Write-Host "Update policy: $policyName"
                 Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
                 $metadata = '{"version":"' + $policyVersion + '"}'
-                if($policy.Properties.Parameters.region){
-                    # Policy is still an old version that uses region parameter. To be deleted.
-                    if ($policyInitiative = Get-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name | where-Object { $_.Name -Like "SLZ-policyGroup3" }) {
-                        if($assignment = (Get-AzPolicyAssignment -Scope $scope | Where-Object {$_.Name -Like "SLZ-policyGroup3"})) {
-                            Remove-AzPolicyAssignment -InputObject $assignment
-                            Start-Sleep -Seconds 15
-                        }
-                        Remove-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-policyGroup3" -Force
-                    }
-                    Remove-AzPolicyDefinition -InputObject $policy -Force
-                    Start-Sleep -Seconds 15
-                    $policy = New-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata
-                } else {         
+#                if($policy.Properties.Parameters.region){
+#                    # Policy is still an old version that uses region parameter. To be deleted.
+#                    if ($policyInitiative = Get-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name | where-Object { $_.Name -Like "SLZ-policyGroup3" }) {
+#                        if($assignment = (Get-AzPolicyAssignment -Scope $scope | Where-Object {$_.Name -Like "SLZ-policyGroup3"})) {
+#                            Remove-AzPolicyAssignment -InputObject $assignment
+#                            Start-Sleep -Seconds 15
+#                        }
+#                        Remove-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-policyGroup3" -Force
+#                    }
+#                    Remove-AzPolicyDefinition -InputObject $policy -Force
+#                    Start-Sleep -Seconds 15
+#                    $policy = New-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata
+#                } else {         
                     $policy = Set-AzPolicyDefinition -Id $policy.ResourceId -Policy $HOME/$policyName.json -Metadata $metadata
-                }
+#                }
                 Remove-Item -Path $HOME/$policyName.json
                 Write-Host "Updated policy: $policyName"
             }
@@ -97,14 +96,13 @@ Function Set-PolicyDiagnosticEventHub {
         #
         # Check if the policy is already part of the initiative and get parameters
         #
-        $effect = "DeployIfNotExists"
-        if ($GetPolicyInitiative = Get-AzPolicySetDefinition | where-Object { $_.Name -Like "SLZ-policyGroup3" }) {
-            if ($tmp = $GetPolicyInitiative.Properties.PolicyDefinitions.Where( { $_.PolicyDefinitionId -Like "*$policyName" }, 'SkipUntil', 1)) {
-                $effect = $tmp.parameters.effect.value
-            }
-        }
-        $param = @{ eventHubRuleId = @{value = $GetEventHubAuthorizationRuleId.Id }; effect = @{value = $effect }; eventHubName = @{value = "insights-operational-logs" } }
-
+#        $effect = "DeployIfNotExists"
+#        if ($GetPolicyInitiative = Get-AzPolicySetDefinition | where-Object { $_.Name -Like "SLZ-policyGroup3" }) {
+#            if ($tmp = $GetPolicyInitiative.Properties.PolicyDefinitions.Where( { $_.PolicyDefinitionId -Like "*$policyName" }, 'SkipUntil', 1)) {
+#                $effect = $tmp.parameters.effect.value
+#            }
+#        }
+        $param = @{ eventHubRuleId = @{value = "[parameters('eventHubRuleId')]" }; eventHubName = @{value = "insights-operational-logs" };  policyName = @{value = "[parameters('policyName')]" } }
         $localList.Add(@{policyDefinitionId = $policy.ResourceId; parameters = $param })
     }
 
@@ -113,24 +111,25 @@ Function Set-PolicyDiagnosticEventHub {
     #
     Write-Host -ForegroundColor Yellow "Checking policy set definition for Azure diagnostic settings for event hub"
     if ($policyInitiative = Get-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name | where-Object { $_.Name -Like "SLZ-policyGroup3" }) {
-        if(!$policyInitiative.Properties.PolicyDefinitions.Parameters.region){
-            Set-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name $policyInitiative.Name -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5) | Out-Null
-        } else {
-            if($assignment = (Get-AzPolicyAssignment -Scope $scope | Where-Object {$_.Name -Like "SLZ-policyGroup3"})) {
-                Remove-AzPolicyAssignment -InputObject $assignment
-                Start-Sleep -Seconds 15
-            }
-            Remove-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-policyGroup3" -Force
-            $policySetDefinition = New-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-policyGroup3" -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5)
-            $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -IdentityType 'SystemAssigned' -Name $policySetDefinition.Name -location $GetResourceGroup.Location -Scope $scope
-            Start-Sleep -Seconds 15
-            New-AzRoleAssignment -ObjectId $policySetAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
-        }
+#        if(!$policyInitiative.Properties.PolicyDefinitions.Parameters.region){
+            $policyInitiative | Set-AzPolicySetDefinition -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5) | Out-Null
+#        } else {
+#            if($assignment = (Get-AzPolicyAssignment -Scope $scope | Where-Object {$_.Name -Like "SLZ-policyGroup3"})) {
+#                Remove-AzPolicyAssignment -InputObject $assignment
+#                Start-Sleep -Seconds 15
+#            }
+#            Remove-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-policyGroup3" -Force
+#            $policySetDefinition = New-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-policyGroup3" -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5)
+#            $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -IdentityType 'SystemAssigned' -Name $policySetDefinition.Name -location $GetResourceGroup.Location -Scope $scope
+#            Start-Sleep -Seconds 15
+#            New-AzRoleAssignment -ObjectId $policySetAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
+#        }
         Write-Host "Updated policy set definition for Azure diagnostic settings for event hub"
     }
     else {
-        $policySetDefinition = New-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-policyGroup3" -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5)
-        $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -IdentityType 'SystemAssigned' -Name $policySetDefinition.Name -location $GetResourceGroup.Location -Scope $scope
+        $policySetDefinition = New-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-policyGroup3" -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5) -Parameter '{"policyName": { "type": "string" }, "eventHubRuleId":{"type": "string"}}'
+        $parameters = @{policyName = "setByPolicy"; eventHubRuleId = $GetEventHubAuthorizationRule.Id}
+        $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -IdentityType 'SystemAssigned' -Name $policySetDefinition.Name -location $GetResourceGroup.Location -Scope $scope -PolicyParameterObject $parameters
         Start-Sleep -Seconds 15
         New-AzRoleAssignment -ObjectId $policySetAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
         Write-Host "Created policy set definition for Azure diagnostic settings for event hub"

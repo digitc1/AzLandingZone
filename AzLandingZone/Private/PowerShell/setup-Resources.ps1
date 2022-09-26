@@ -31,7 +31,7 @@ Function Setup-Resources {
     # If not, creates the management group lz-management-group
     #
     Write-Host "Checking Landing Zone management group" -ForegroundColor Yellow
-    if(!(Get-AzManagementGroup -Erroraction "silentlycontinue "| Where-Object {$_.Name -Like $managementGroup})){
+    if(!(Get-AzManagementGroup -ErrorAction silentlyContinue | Where-Object {$_.Name -Like $managementGroup})){
         Write-Host "Creating the default management group for the Landing Zone"
         New-AzManagementGroup -GroupName $managementGroup -DisplayName "Landing Zone management group" | Out-Null
         Start-Sleep -s 20
