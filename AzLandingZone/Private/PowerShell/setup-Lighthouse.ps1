@@ -10,12 +10,15 @@ Function setup-Lighthouse {
     $definitionManagedServices = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/lighthouse/definition-managedServices.json"
 
     #
+    # TODO does this need to be updated for CERT-EU or is it obsolete and can be deleted?
+    #
+
+    #
     # Following values have been hard-coded in the parameters file:
     # Security Reader (read access to the security center) and Log analytics reader (Read access to Azure Log Analytics workspace and all logs) to DIGIT-S1
     # Security Reader (read access to the security center) and Log analytics reader (Read access to Azure Log Analytics workspace and all logs) to DIGIT-S2
     #
     if($SOC -eq "DIGIT"){
-        # TODO delete https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/lighthouse/definition-managedServices.json and templates/delegatedResourceManagement.parameters.json
         #if(!(Get-AzManagedServicesDefinition | Where-Object {$_.Properties.ManagedByTenantId -Like "3a8968a8-fbcf-4414-8b5c-77255f50f37b"})){
         #    Invoke-WebRequest -Uri $delegatedResourceManagementURI -OutFile $HOME/delegatedResourceManagement.json
         #    Invoke-WebRequest -Uri $delegatedResourceManagementparametersURI -OutFile $HOME/delegatedResourceManagement.parameters.json
