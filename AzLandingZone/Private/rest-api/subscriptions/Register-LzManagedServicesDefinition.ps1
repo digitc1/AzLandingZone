@@ -9,6 +9,8 @@ Function Register-LzManagedServicesDefinition {
 			return 1;
 	}
 
+	# TODO this function should have a unit test - consider adding the Pester unit test framework
+
 	function authorizations () {
 		Param([string]$principalId)
 		return @(
