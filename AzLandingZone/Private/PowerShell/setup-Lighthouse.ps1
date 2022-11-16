@@ -10,7 +10,7 @@ Function setup-Lighthouse {
     $definitionManagedServices = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/lighthouse/definition-managedServices.json"
 
     #
-    # TODO does this need to be updated for CERT-EU or is it obsolete and can be deleted?
+    # TODO does this file need to be updated for CERT-EU or is it obsolete and can be deleted? Note the call to this function, from New-AzLandingZone, is commented out.
     #
 
     #
