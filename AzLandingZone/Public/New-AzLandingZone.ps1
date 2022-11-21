@@ -4,7 +4,7 @@ Function New-AzLandingZone {
         Installs all the components of the Landing Zone
         .DESCRIPTION
         Installs all the components of the Landing Zone
-        .PARAMETER autoupdate
+        .PARAMETER autoUpdate
         Switch to enable auto-update. If no value is provided then default to $false.
         .PARAMETER SOC
         Enter the name of the SOC to connect to. If no value is provided then default to none.
@@ -34,7 +34,7 @@ Function New-AzLandingZone {
         Install the default components of the Landing Zone + event hub namespace with a specific event hub and key. The users "alice@domain.com" and "bob@domain.com" are used for security notifications.
     #>
     Param (
-		[bool]$autoupdate = $false,
+		[bool]$autoUpdate = $false,
 		[ValidateSet("DIGIT", "CERTEU", "None")][string]$SOC = "None",
 		[ValidateSet("westeurope", "northeurope", "francecentral", "germanywestcentral")][string]$location = "westeurope",
 		[bool]$enableSentinel = $false,
@@ -43,8 +43,6 @@ Function New-AzLandingZone {
 		[int]$retentionPeriod = 185,
         [String[]]$securityContacts
 	)
-
-    Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
 
     register-ResourceProvider
 
@@ -72,12 +70,10 @@ Function New-AzLandingZone {
 		$retentionPeriod = 185
 	}
 
-    setup-Resources -Name $name -Location $location -managementGroup $managementGroup
+    setup-Resources -Name $name -Location $location -managementGroup $managementGroup -autoUpdate $autoUpdate
     setup-Storage -Name $name -retentionPeriod $retentionPeriod
     setup-LogPipeline -Name $name -enableSentinel $enableSentinel -enableEventHub $enableEventHub
-    if($autoupdate -eq $true) {
-        setup-Automation -Name $name -managementGroup $managementGroup -retentionPeriod $retentionPeriod
-    }
+    Set-LzActiveDirectoryDiagnosticSettings -name $name
 
     #setup-SubscriptionContacts -SOC $SOC -securityContacts $securityContacts
     # TODO : review policy

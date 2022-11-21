@@ -1,17 +1,32 @@
 Function Setup-Resources {
+    [cmdletbinding()]
+
     param(
 	    [Parameter(Mandatory=$true)][string]$name,
         [Parameter(Mandatory=$true)][string]$location,
-        [Parameter(Mandatory=$true)][string]$managementGroup
+        [Parameter(Mandatory=$true)][string]$managementGroup,
+        [Parameter(Mandatory=$true)][bool]$autoUpdate
     )
+
+    Write-Host "Checking Azure Landing Zone Resources" -ForegroundColor Yellow
+    #
+    # Check if the management group for the secure Landing Zone already exist
+    # If not, creates the management group lz-management-group
+    #
+    Write-Verbose "Checking Landing Zone management group"
+    if(!(Get-AzManagementGroup -ErrorAction silentlyContinue | Where-Object {$_.Name -Like $managementGroup})){
+        Write-Verbose "Creating the default management group for the Landing Zone"
+        New-AzManagementGroup -GroupId $managementGroup -DisplayName "Landing Zone management group" | Out-Null
+        #Start-Sleep -s 20
+    }
 
     #
     # Checking if Resource Group for secure Landing Zone already exists
     # If it doesn't exist, create it
     #
-    Write-Host "Checking Resource Group for the Secure Landing Zone" -ForegroundColor Yellow
+    Write-Verbose "Checking Azure Landing Zone resource group"
     if(!($GetResourceGroup = Get-AzResourceGroup -ResourceGroupName $name*)){
-        Write-Host "Creating a new Resource Group for the Secure Landing Zone"
+        Write-Verbose "Creating a new Resource Group for the Secure Landing Zone"
         $resourceGroupName = $name + "_rg"
         $GetResourceGroup = New-AzResourceGroup -Name $resourceGroupName -Location $location
     }
@@ -20,21 +35,18 @@ Function Setup-Resources {
     # Check if resource lock (cannot delete) is correctly set on the resource group
     # If not, apply lock
     #
-    Write-Host "Checking 'CannotDelete' lock on the resource-group" -ForegroundColor Yellow
+    Write-Verbose "Checking 'CannotDelete' lock on the resource-group"
     if(!(Get-AzResourceLock | Where-Object {$_.Name -Like "LandingZoneLock"})){
-        Write-Host "Applying 'CannotDelete' lock"
+        Write-Verbose "Applying 'CannotDelete' lock"
         New-AzResourceLock -LockName "LandingZoneLock" -LockLevel CannotDelete -ResourceGroupName $GetResourceGroup.ResourceGroupName -Force | Out-Null
     }
 
     #
-    # Check if the management group for the secure Landing Zone already exist
-    # If not, creates the management group lz-management-group
+    # Check if the auto-update feature was requested
+    # If so, run the auto-update setup
     #
-    Write-Host "Checking Landing Zone management group" -ForegroundColor Yellow
-    if(!(Get-AzManagementGroup -ErrorAction silentlyContinue | Where-Object {$_.Name -Like $managementGroup})){
-        Write-Host "Creating the default management group for the Landing Zone"
-        New-AzManagementGroup -GroupName $managementGroup -DisplayName "Landing Zone management group" | Out-Null
-        Start-Sleep -s 20
+    if($autoupdate -eq $true) {
+        setup-Automation -Name $name -managementGroup $managementGroup
     }
 }
 Export-ModuleMember -Function Setup-Resources

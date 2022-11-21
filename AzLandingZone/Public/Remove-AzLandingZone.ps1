@@ -31,28 +31,6 @@ Function Remove-AzLandingZone {
         catch {} # Could not find any children, nothing to do
         Remove-AzManagementGroup -GroupName $GetManagementGroup.Name
     }
-
-    # TO DO: Replace this part
-    #if($GetManagedServicesDefinition = Get-AzManagedServicesDefinition | Where-Object {$_.Properties.ManagedByTenantId -Like "3a8968a8-fbcf-4414-8b5c-77255f50f37b"}){
-    #    Write-Host "Removing Landing Zone delegation for SOC access" -ForegroundColor Yellow
-    #    if($GetManagedServicesAssignment = Get-AzManagedServicesAssignment | Where-Object {$_.Properties.RegistrationDefinitionId -Like $GetManagedServicesDefinition.Id}){
-    #        Remove-AzManagedServicesAssignment -InputObject $GetManagedServicesAssignment | Out-Null
-    #    }
-    #    Remove-AzManagedServicesDefinition -InputObject $GetManagedServicesDefinition | Out-Null
-    #}
-
-    # TO DO: Replace this part
-    #Write-Host "Removing Landing Zone security contacts" -ForegroundColor Yellow
-    #$GetSecurityContact = Get-AzSecurityContact | Where-Object {$_.Email -ne "DIGIT-CLOUD-VIRTUAL-TASK-FORCE@ec.europa.eu" -And $_.Email -ne "EC-DIGIT-CSIRC@ec.europa.eu" -And $_.Email -ne "EC-DIGIT-CLOUDSEC@ec.europa.eu"}
-    #while((Get-AzSecurityContact).Count -ne 0){
-    #    $var = ((Get-AzSecurityContact).Count)
-    #    Remove-AzSecurityContact -Name "default$var"
-    #}
-    #$i = 0
-    #while($i -ne $GetSecurityContact.Count){
-    #    Set-AzSecurityContact -Name "default$($i+1)" -Email $GetSecurityContact[$i].Email -AlertAdmin -NotifyOnAlert | Out-Null
-    #    $i=$i+1
-    #}
     
     if($GetResourceGroup = Get-AzResourceGroup | Where-Object {$_.ResourceGroupName -Like "lzslz*"}){
         if($GetResourceLock = Get-AzResourceLock | Where-Object {$_.Name -Like "LandingZoneLock"}){
