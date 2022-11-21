@@ -121,21 +121,21 @@ Function Get-AzLandingZone {
         # Check if all policies linked to the log analytics workspace are configured
         Get-Policies -policySetDefinitionName "SLZ-policyGroup2" -definitionListURI $definitionListv2URI -managementGroupName $GetManagementGroup.Name -version 2
     } else {
-        Write-Verbose "Optional Azure log analytics and Azure Sentinel are not configured" -ForegroundColor Yellow
+        Write-Host "Optional Azure log analytics and Azure Sentinel are not configured"
     }
 
     Write-Host "Checking Azure Landing Zone event hub namespace" -ForegroundColor "Yellow"
     if ($lzEventHubNamespace = Get-AzEventHubNameSpace -ResourceGroupName $GetResourceGroup.ResourceGroupName | Where-Object { $_.Name -Like "$name*" }) {
         if ((Get-AzEventHub  -ResourceGroupName $GetResourceGroup.ResourceGroupName -Namespace $lzEventHubNamespace.Name | Where-Object { $_.Name -Like "insights-operational-logs" }) -And (Get-AzEventHubAuthorizationRule -ResourceGroupName $GetResourceGroup.ResourceGroupName -Namespace $lzEventHubNamespace.Name | Where-Object { $_.Name -like "landingZoneAccessKey" })) {
-            Write-Verbose "Optional Azure event-hub is properly configured" -ForegroundColor Green
+            Write-Verbose "Optional Azure event-hub is properly configured"
         } else {
-            Write-Host "Optional Azure event-hub is installed but not properly configured" -ForegroundColor Red
+            Write-Host "Optional Azure event-hub is installed but not properly configured"
         }
 
         # Check if all policies linked to the event hub are configured
         Get-Policies -policySetDefinitionName "SLZ-policyGroup3" -definitionListURI $definitionListv3URI -managementGroupName $GetManagementGroup.Name -version 3
     } else {
-        Write-Verbose "Optional Azure event-hub is not configured" -ForegroundColor Yellow
+        Write-Host "Optional Azure event-hub is not configured"
     }
 
     if(Get-AzPolicyAssignment -Scope $GetManagementGroup.Id | Where-Object {$_.Name -eq "SLZ-AHUB"}){

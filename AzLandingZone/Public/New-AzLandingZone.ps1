@@ -4,6 +4,8 @@ Function New-AzLandingZone {
         Installs all the components of the Landing Zone
         .DESCRIPTION
         Installs all the components of the Landing Zone
+        .PARAMETER Name
+        String to identify Landing Zone resource group and resources
         .PARAMETER autoUpdate
         Switch to enable auto-update. If no value is provided then default to $false.
         .PARAMETER SOC
@@ -40,6 +42,7 @@ Function New-AzLandingZone {
 		[bool]$enableSentinel = $false,
         [bool]$enableEventHub = $false,
         [string]$managementGroup = "lz-management-group",
+        [string]$name = "lzslz",
 		[int]$retentionPeriod = 185,
         [String[]]$securityContacts
 	)
@@ -56,7 +59,6 @@ Function New-AzLandingZone {
         Write-Host $context.Subscription.Name
         [void](Read-Host 'Press Enter to continue or "ctrl + C" to cancel the installation.')
     }
-    $name = "lzslz"
 	if($SOC -eq "DIGIT"){
 		$enableSentinel = $true
 	}
