@@ -19,14 +19,18 @@ Function Set-PolicyMsDefender {
         return 1;
     }
 
+    $MsDefenderPricingDefinitionListURI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/MSDefender/pricing/definitionList.txt"
+    $MsDefenderDefinitionListURI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/MSDefender/definitionList.txt"
+    $MsDefenderParametersURI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/MSDefender/parameters.json"
+
     #
     # Creating policies for Azure Security Center pricing
     # TODO: change URIs in Invoke-WebRequest cmdlet
     #
     # pricing section
     #
-    Invoke-WebRequest -Uri $definitionListURI -OutFile $HOME/definitionList.txt
-    Invoke-WebRequest -Uri $definitionParametersURI -OutFile $HOME/parameters.json
+    Invoke-WebRequest -Uri $MsDefenderPricingDefinitionListURI -OutFile $HOME/definitionList.txt
+    Invoke-WebRequest -Uri $MsDefenderParametersURI -OutFile $HOME/parameters.json
     $MDC_definition_list = Get-Content -Path $HOME/definitionList.txt
     forEach($line in $MDC_definition_list){
         $policyName = "SLZ-MDCpricing" + $line.Split(',')[0]
@@ -58,8 +62,8 @@ Function Set-PolicyMsDefender {
     #
     # non-pricing section
     #
-    Invoke-WebRequest -Uri $definitionListURI -OutFile $HOME/definitionList.txt
-    Invoke-WebRequest -Uri $definitionParametersURI -OutFile $HOME/parameters.json
+    Invoke-WebRequest -Uri $MsDefenderDefinitionListURI -OutFile $HOME/definitionList.txt
+    Invoke-WebRequest -Uri $MsDefenderParametersURI -OutFile $HOME/parameters.json
     $MDC_definition_list = Get-Content -Path $HOME/definitionList.txt
     forEach($line in $MDC_definition_list){
         $policyName = "SLZ-MDC" + $line.Split(',')[0]
