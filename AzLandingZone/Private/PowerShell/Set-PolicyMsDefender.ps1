@@ -90,7 +90,7 @@ Function Set-PolicyMsDefender {
     Remove-Item -Path $HOME/parameters.json
     
     Write-Verbose "Checking policy set definition for Microsoft Defender for Cloud"
-    $policies = Get-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name | Where-Object {$_.Properties.DisplayName -Like "SLZ-MDC*"}
+    $policies = Get-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name | Where-Object {$_.Name -Like "SLZ-MDC*"}
     if($set = Get-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name | Where-Object {$_.Name -eq "SLZ-MsDefendercloud"}){
         $params = @{ effect = @{value = "[parameters('effect')]" }}
         $pol = $policies | ForEach-Object {@{policyDefinitionId=$_.PolicyDefinitionId; parameters=$params}}

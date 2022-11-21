@@ -11,7 +11,7 @@ Function setup-Policy {
     #
     # External resource required
     #
-    $definitionSecurityCenterCoverage = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/securityCenter/definition-securityCenterCoverage.json"
+    #$definitionSecurityCenterCoverage = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/securityCenter/definition-securityCenterCoverage.json"
     $definitionSecurityCenterAutoProvisioning = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/securityCenter/definition-securityCenterAutoProvisioning.json"
     $policySetDefinitionIds = @("1f3afdf9-d0c9-4c3d-847f-89da613e70a8", "1a5bb27d-173f-493e-9568-eb56638dde4d", "612b5213-9160-4969-8578-1518bd2a000c")
     
@@ -67,16 +67,16 @@ Function setup-Policy {
         New-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
     }
 
-    Write-Host "Checking policy for Azure Security Center coverage" -ForegroundColor Yellow
-    if (!(Get-AzPolicyAssignment -Scope $scope | where-Object { $_.Name -Like "SLZ-SCCoverage" })) {
-        Write-Host "Enabling Azure Security Center coverage"
-        Invoke-WebRequest -Uri $definitionSecurityCenterCoverage -OutFile $HOME/rule.json
-        $policyDefinition = New-AzPolicyDefinition -Name "SLZ-SCCoverage" -Policy $HOME/rule.json -ManagementGroupName $GetManagementGroup.Name
-        $policyAssignment = New-AzPolicyAssignment -name "SLZ-SCCoverage" -PolicyDefinition $policyDefinition -Scope $scope -IdentityType 'SystemAssigned' -Location $location
-        Remove-Item -Path $HOME/rule.json
-        Start-Sleep -Seconds 15
-        New-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
-    }
+    #Write-Host "Checking policy for Azure Security Center coverage" -ForegroundColor Yellow
+    #if (!(Get-AzPolicyAssignment -Scope $scope | where-Object { $_.Name -Like "SLZ-SCCoverage" })) {
+    #    Write-Host "Enabling Azure Security Center coverage"
+    #    Invoke-WebRequest -Uri $definitionSecurityCenterCoverage -OutFile $HOME/rule.json
+    #    $policyDefinition = New-AzPolicyDefinition -Name "SLZ-SCCoverage" -Policy $HOME/rule.json -ManagementGroupName $GetManagementGroup.Name
+    #    $policyAssignment = New-AzPolicyAssignment -name "SLZ-SCCoverage" -PolicyDefinition $policyDefinition -Scope $scope -IdentityType 'SystemAssigned' -Location $location
+    #    Remove-Item -Path $HOME/rule.json
+    #    Start-Sleep -Seconds 15
+    #    New-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
+    #}
     Write-Host "Checking policy for Azure Security Center Auto-provisioning agents" -ForegroundColor Yellow
     if (!(Get-AzPolicyAssignment -Scope $scope | where-Object { $_.Name -Like "SLZ-SCAutoProvisioning" })) {
         Write-Host "Enabling Azure Security Center auto-provisioning"
