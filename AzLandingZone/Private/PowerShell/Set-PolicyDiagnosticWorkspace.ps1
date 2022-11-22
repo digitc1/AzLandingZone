@@ -8,21 +8,23 @@ Function Set-PolicyDiagnosticWorkspace {
     $definitionParametersURI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/parameters2.json"
 
     if (!($GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*$name*")) {
-        Write-Host "No Resource Group for Secure Landing Zone found"
-        Write-Host "Please run setup script before running the policy script"
+        Write-Error "No Resource Group for Secure Landing Zone found"
+        Write-Error "Please run setup script before running the policy script"
         return;
     }
     if (!($GetLogAnalyticsWorkspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName)) {
-        Write-Host "No log analytics workspace found for Secure Landing Zone"
-        Write-Host "Please run setup script before running the policy script"
+        Write-Error "No log analytics workspace found for Secure Landing Zone"
+        Write-Error "Please run setup script before running the policy script"
         return 1;
     }
-    if (!($GetManagementGroup = Get-AzManagementGroup -GroupName $managementGroup -Expand)) {
-        Write-Host "No Management group found for Secure Landing Zone"
-        Write-Host "Please run setup script before running the policy script"
+    if (!($GetManagementGroup = Get-AzManagementGroup -GroupId $managementGroup -Expand)) {
+        Write-Error "No Management group found for Secure Landing Zone"
+        Write-Error "Please run setup script before running the policy script"
         return;
     }
     $scope = ($GetManagementGroup).Id
+
+    Write-Host -ForegroundColor Yellow "Checking policies for Azure Landing log analytics workspace"
 
     Invoke-WebRequest -Uri $definitionListURI -OutFile $HOME/definitionList.txt
     Invoke-WebRequest -Uri $definitionParametersURI -OutFile $HOME/parameters.json
@@ -58,12 +60,11 @@ Function Set-PolicyDiagnosticWorkspace {
         #
         # Check if the policy definition exists and create it or update it
         #
-        Write-Host -ForegroundColor Yellow "Checking if policy definition exist for $policyName"
+        Write-Verbose "Checking if policy definition exist for $policyName"
         if($policy = Get-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name | Where-Object {$_.Name -eq $policyName}){
             if ($policy.Properties.metadata.version -eq $policyVersion) {
-                Write-Host "$policyName is up-to-date"
+                Write-Verbose "$policyName is up-to-date"
             } else {
-                Write-Host "Update policy: $policyName"
                 Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
                 $metadata = '{"version":"' + $policyVersion + '"}'
 #                if($policy.Properties.Parameters.region){
@@ -82,14 +83,14 @@ Function Set-PolicyDiagnosticWorkspace {
                     $policy = Set-AzPolicyDefinition -Id $policy.ResourceId -Policy $HOME/$policyName.json -Metadata $metadata
 #                }
                 Remove-Item -Path $HOME/$policyName.json
-                Write-Host "Updated policy: $policyName"
+                Write-Verbose "Updated policy: $policyName"
             }
         } else {
             Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
             $metadata = '{"version":"' + $policyVersion + '"}'
             $policy = New-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata
             Remove-Item -Path $HOME/$policyName.json
-            Write-Host "Created policy: $policyName"
+            Write-Verbose "Created policy: $policyName"
         }
 
         #
@@ -108,7 +109,7 @@ Function Set-PolicyDiagnosticWorkspace {
     #
     # Checking if the policy set definition for AHUB exist and update it or create it
     #
-    Write-Host -ForegroundColor Yellow "Checking policy set definition for Azure diagnostic settings for log analytics workspace"
+    Write-Verbose "Checking policy set definition for Azure diagnostic settings for log analytics workspace"
     if ($policyInitiative = Get-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name | where-Object { $_.Name -Like "SLZ-policyGroup2" }) {
 #        if(!$policyInitiative.Properties.PolicyDefinitions.Parameters.region){
             $policyInitiative | Set-AzPolicySetDefinition -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5) | Out-Null
@@ -123,7 +124,7 @@ Function Set-PolicyDiagnosticWorkspace {
 #            Start-Sleep -Seconds 15
 #            New-AzRoleAssignment -ObjectId $policySetAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
 #        }
-        Write-Host "Updated policy set definition for Azure diagnostic settings for log analytics workspace"
+        Write-Verbose "Updated policy set definition for Azure diagnostic settings for log analytics workspace"
     }
     else {
 #        if($assignment = (Get-AzPolicyAssignment -Scope $scope | Where-Object {$_.Name -Like "SLZ-policyGroup2"})) {
@@ -135,7 +136,7 @@ Function Set-PolicyDiagnosticWorkspace {
         $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -IdentityType 'SystemAssigned' -Name $policySetDefinition.Name -location $GetResourceGroup.Location -Scope $scope -PolicyParameterObject $parameters
         Start-Sleep -Seconds 15
         New-AzRoleAssignment -ObjectId $policySetAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
-        Write-Host "Created policy set definition for Azure diagnostic settings for log analytics workspace"
+        Write-Verbose "Created policy set definition for Azure diagnostic settings for log analytics workspace"
     }
     Remove-Item -Path $HOME/definitionList.txt
     Remove-Item -Path $HOME/parameters.json

@@ -8,23 +8,25 @@ Function Set-PolicyDiagnosticEventHub {
     $definitionParametersURI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/parameters3.json"
 
     if (!($GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*$name*")) {
-        Write-Host "No Resource Group for Secure Landing Zone found"
-        Write-Host "Please run setup script before running the policy script"
+        Write-Error "No Resource Group for Secure Landing Zone found"
+        Write-Error "Please run setup script before running the policy script"
         return;
     }
     if (!($GetEventHubNamespace = Get-AzEventHubNamespace -ResourceGroupName $GetResourceGroup.ResourceGroupName)) {
-        Write-Host "No Storage Account found for Secure Landing Zone"
-        Write-Host "Please run setup script before running the policy script"
+        Write-Error "No Storage Account found for Secure Landing Zone"
+        Write-Error "Please run setup script before running the policy script"
         return 1;
     }
-    if (!($GetManagementGroup = Get-AzManagementGroup -GroupName $managementGroup -Expand)) {
-        Write-Host "No Event Hub namespace found for Secure Landing Zone"
-        Write-Host "Please run setup script before running the policy script"
+    if (!($GetManagementGroup = Get-AzManagementGroup -GroupId $managementGroup -Expand)) {
+        Write-Error "No Event Hub namespace found for Secure Landing Zone"
+        Write-Error "Please run setup script before running the policy script"
         return;
     }
     $scope = ($GetManagementGroup).Id
     $GetEventHubAuthorizationRule = Get-AzEventHubAuthorizationRule -ResourceGroupName $GetResourceGroup.ResourceGroupName -Namespace $GetEventHubNamespace.Name -Name "landingZoneAccessKey"
 
+    Write-Host -ForegroundColor Yellow "Checking policies for Azure Landing Zone event hub"
+    
     Invoke-WebRequest -Uri $definitionListURI -OutFile $HOME/definitionList.txt
     Invoke-WebRequest -Uri $definitionParametersURI -OutFile $HOME/parameters.json
     $definitionList = [System.Collections.Concurrent.ConcurrentBag[psobject]]::new()
@@ -59,12 +61,11 @@ Function Set-PolicyDiagnosticEventHub {
         #
         # Check if the policy definition exists and create it or update it
         #
-        Write-Host -ForegroundColor Yellow "Checking if policy definition exist for $policyName"
+        Write-Verbose "Checking if policy definition exist for $policyName"
         if($policy = Get-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name | Where-Object {$_.Name -eq $policyName}){
             if ($policy.Properties.metadata.version -eq $policyVersion) {
-                Write-Host "$policyName is up-to-date"
+                Write-Verbose "$policyName is up-to-date"
             } else {
-                Write-Host "Update policy: $policyName"
                 Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
                 $metadata = '{"version":"' + $policyVersion + '"}'
 #                if($policy.Properties.Parameters.region){
@@ -83,14 +84,14 @@ Function Set-PolicyDiagnosticEventHub {
                     $policy = Set-AzPolicyDefinition -Id $policy.ResourceId -Policy $HOME/$policyName.json -Metadata $metadata
 #                }
                 Remove-Item -Path $HOME/$policyName.json
-                Write-Host "Updated policy: $policyName"
+                Write-Verbose "Updated policy: $policyName"
             }
         } else {
             Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
             $metadata = '{"version":"' + $policyVersion + '"}'
             $policy = New-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name -Name $policyName -Policy $HOME/$policyName.json -Parameter $HOME/parameters.json -Metadata $metadata
             Remove-Item -Path $HOME/$policyName.json
-            Write-Host "Created policy: $policyName"
+            Write-Verbose "Created policy: $policyName"
         }
 
         #
@@ -109,7 +110,7 @@ Function Set-PolicyDiagnosticEventHub {
     #
     # Checking if the policy set definition for AHUB exist and update it or create it
     #
-    Write-Host -ForegroundColor Yellow "Checking policy set definition for Azure diagnostic settings for event hub"
+    Write-Verbose "Checking policy set definition for Azure diagnostic settings for event hub"
     if ($policyInitiative = Get-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name | where-Object { $_.Name -Like "SLZ-policyGroup3" }) {
 #        if(!$policyInitiative.Properties.PolicyDefinitions.Parameters.region){
             $policyInitiative | Set-AzPolicySetDefinition -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5) | Out-Null
@@ -124,7 +125,7 @@ Function Set-PolicyDiagnosticEventHub {
 #            Start-Sleep -Seconds 15
 #            New-AzRoleAssignment -ObjectId $policySetAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
 #        }
-        Write-Host "Updated policy set definition for Azure diagnostic settings for event hub"
+        Write-Verbose "Updated policy set definition for Azure diagnostic settings for event hub"
     }
     else {
         $policySetDefinition = New-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-policyGroup3" -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5) -Parameter '{"policyName": { "type": "string" }, "eventHubRuleId":{"type": "string"}}'
@@ -132,7 +133,7 @@ Function Set-PolicyDiagnosticEventHub {
         $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -IdentityType 'SystemAssigned' -Name $policySetDefinition.Name -location $GetResourceGroup.Location -Scope $scope -PolicyParameterObject $parameters
         Start-Sleep -Seconds 15
         New-AzRoleAssignment -ObjectId $policySetAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
-        Write-Host "Created policy set definition for Azure diagnostic settings for event hub"
+        Write-Verbose "Created policy set definition for Azure diagnostic settings for event hub"
     }
     Remove-Item -Path $HOME/definitionList.txt
     Remove-Item -Path $HOME/parameters.json

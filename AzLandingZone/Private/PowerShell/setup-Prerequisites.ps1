@@ -10,9 +10,9 @@ Function register-ResourceProvider {
     $items | ForEach-Object -parallel {
         Write-Host "Checking registration for $_" -ForegroundColor Yellow
         if((Get-AzResourceProvider -ProviderNamespace $_).RegistrationState[0] -Like "Registered"){
-            Write-Host "$_ already registered"
+            Write-Verbose "$_ already registered"
         } else {
-            Write-Host "Registering $_ resource providers. This may take few minutes"
+            Write-Verbose "Registering $_ resource providers. This may take few minutes"
             Register-AzResourceProvider -ProviderNamespace $_ | Out-Null
             do {
                 Start-Sleep -s 10

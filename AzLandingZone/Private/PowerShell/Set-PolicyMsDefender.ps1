@@ -25,7 +25,6 @@ Function Set-PolicyMsDefender {
 
     #
     # Creating policies for Azure Security Center pricing
-    # TODO: change URIs in Invoke-WebRequest cmdlet
     #
     # pricing section
     #
@@ -58,7 +57,6 @@ Function Set-PolicyMsDefender {
 
     #
     # Creating policies for Azure Security Center
-    # TODO: change URIs in Invoke-WebRequest cmdlet
     #
     # non-pricing section
     #
@@ -91,20 +89,47 @@ Function Set-PolicyMsDefender {
     
     Write-Verbose "Checking policy set definition for Microsoft Defender for Cloud"
     $policies = Get-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name | Where-Object {$_.Name -Like "SLZ-MDC*"}
-    if($set = Get-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name | Where-Object {$_.Name -eq "SLZ-MsDefendercloud"}){
+    if($policySetDefinition = Get-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name | Where-Object {$_.Name -eq "SLZ-MsDefendercloud"}){
         $params = @{ effect = @{value = "[parameters('effect')]" }}
         $pol = $policies | ForEach-Object {@{policyDefinitionId=$_.PolicyDefinitionId; parameters=$params}}
-        New-AzPolicySetDefinition -Id $set.ResourceId -PolicyDefinition ($pol | ConvertTo-Json -Depth 5) -Para
+        $policySetDefinition = Set-AzPolicySetDefinition -Id $policySetDefinition.ResourceId -PolicyDefinition ($pol | ConvertTo-Json -Depth 5)
         Write-Verbose "Updated policy set definition for Microsoft Defender for Cloud"
     } else {
         $params = @{ effect = @{value = "[parameters('effect')]" }}
         $pol = $policies | ForEach-Object {@{policyDefinitionId=$_.PolicyDefinitionId; parameters=$params}}
         $policySetDefinition = New-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-MsDefenderCloud" -PolicyDefinition ($pol | ConvertTo-Json -Depth 5) -Parameter '{"effect": { "type": "string" }}'
-        $parameters = @{effect = "DeployIfNotExists"}
-        New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -IdentityType 'SystemAssigned' -Name $policySetDefinition.Name -location $GetResourceGroup.Location -Scope $scope -PolicyParameterObject $parameters | Out-Null
         Write-Verbose "Created policy set definition for Microsoft Defender for Cloud"
     }
 
-    # Add assignment
+    Write-Verbose "Checking policy set assignment for Microsoft Defender for Cloud"
+    if(!($policySetAssignment = Get-AzPolicyAssignment -PolicyDefinitionId $policySetDefinition.ResourceId)){
+        $parameters = @{effect = "DeployIfNotExists"}
+        $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -IdentityType 'SystemAssigned' -Name $policySetDefinition.Name -location $GetResourceGroup.Location -Scope $scope -PolicyParameterObject $parameters
+        Write-Verbose "Created policy set assignment for Microsoft Defender for Cloud"
+    }
+
+    $roles = @("Contributor", "Security Admin")
+    forEach ($role in $roles){
+        Write-Verbose "Checking role assignment '$role' for  Microsoft Defender for Cloud"
+        if(!(Get-AzRoleAssignment -RoleDefinitionName $role -Scope $scope | Where-Object {$_.DisplayName -eq "SLZ-MsDefenderCloud"})){
+            New-AzRoleAssignment -ObjectId $policySetAssignment.Identity.principalId -RoleDefinitionName $role -Scope $scope
+            Write-Verbose "Created role assignment '$role' for  Microsoft Defender for Cloud"
+        }
+    }
+
+
+    #
+    # Policy for Azure container in MS Defender for Cloud
+    #
+    #Write-Host "Checking registration for 'Defender for Containers provisioning Policy extension for Arc-e'" -ForegroundColor Yellow
+    #if (!(Get-AzPolicyAssignment -Scope $scope | Where-Object { $_.Name -Like "SLZ-MDE" })) {
+    #    Write-Host "Enabling registration for Microsoft Defender for Endpoint"
+    #    $Policy = Get-AzPolicySetDefinition | Where-Object { $_.Properties.displayName -EQ '[Preview]: Deploy Microsoft Defender for Endpoint agent' }
+    #    $policyAssignment = New-AzPolicyAssignment -Name "SLZ-MDE" -DisplayName "[Preview]: Deploy Microsoft Defender for Endpoint agent" -PolicySetDefinition $Policy -Scope $scope -IdentityType 'SystemAssigned' -Location $location
+    #    Start-Sleep -Seconds 15
+    #    New-AzRoleAssignment -ObjectId $policyAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
+    #}
+
+    #/providers/Microsoft.Authorization/policyDefinitions/0adc5395-9169-4b9b-8687-af838d69410a
 }
 Export-ModuleMember -Function Set-PolicyMsDefender

@@ -4,12 +4,12 @@ Function Connect-LzActiveDirectory{
 	)
 
 	if(!($GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*$name*")){
-		Write-Host "No Resource Group for Secure Landing Zone found"
-		Write-Host "Please run setup script before running this script"
+		Write-Error "No Resource Group for Secure Landing Zone found"
+		Write-Error "Please run setup script before running this script"
 		return 1;
 	}
 	if(!($GetWorkspace = Get-AzOperationalInsightsWorkspace -resourceGroupName $GetResourceGroup.ResourceGroupName | where-Object {$_.Name -Like "*$name*"})){
-		Write-Host -ForegroundColor Red "Workspace cannot be found"
+		Write-Error "Workspace cannot be found"
 		return 1;
 	}
 	$tenantId = (Get-AzContext).Tenant.Id
@@ -38,8 +38,9 @@ Function Connect-LzActiveDirectory{
 	catch {
 		Switch ($_.Exception.Response.StatusCode.value__)
 		{
-			409 {Write-Host "Connection already exists" -ForegroundColor Yellow}
-			default {Write-Host "An unexpected error happened. Contact Landing Zone FMB for additional support." -ForegroundColor Red}
+			401 {Write-Host "Tenant does not have P2 license and does not support this feature"}
+			409 {Write-Host "Connection already exists"}
+			default {Write-Error "An unexpected error happened. Contact Landing Zone FMB for additional support."}
 		}
 	}
 }
