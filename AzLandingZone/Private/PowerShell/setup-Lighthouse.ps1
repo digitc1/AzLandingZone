@@ -10,6 +10,10 @@ Function setup-Lighthouse {
     $definitionManagedServices = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/lighthouse/definition-managedServices.json"
 
     #
+    # TODO does this file need to be updated for CERT-EU or is it obsolete and can be deleted? Note the call to this function, from New-AzLandingZone, is commented out.
+    #
+
+    #
     # Following values have been hard-coded in the parameters file:
     # Security Reader (read access to the security center) and Log analytics reader (Read access to Azure Log Analytics workspace and all logs) to DIGIT-S1
     # Security Reader (read access to the security center) and Log analytics reader (Read access to Azure Log Analytics workspace and all logs) to DIGIT-S2

@@ -62,7 +62,7 @@ Function Register-AzLandingZone {
     if(Get-AzOperationalInsightsWorkspace -ResourceGroupName "lzslz_rg"){
         Connect-LzSecurityCenter -subscriptionId $GetSubscription.Id
     }
-    Register-LzManagedServicesDefinition -subscriptionId $GetSubscription.Id
+    Register-LzManagedServicesDefinition -subscriptionId $GetSubscription.Id -SOC $SOC
     Register-LzManagedServicesAssignment -subscriptionId $GetSubscription.Id
 }
 Export-ModuleMember -Function Register-AzLandingZone
