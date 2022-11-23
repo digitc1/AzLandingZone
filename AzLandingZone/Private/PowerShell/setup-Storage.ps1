@@ -1,54 +1,52 @@
 Function setup-Storage {
+    [cmdletbinding()]
+
     Param(
-        [Parameter(Mandatory=$true)][string]$name,
+        [string]$name = "lzslz",
         [int]$retentionPeriod = 185
     )
     
     if(!($GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*$name*")){
-            Write-Host "No Resource Group for Secure Landing Zone found" -ForegroundColor Red
-            Write-Host "Run setup script before running this script"
+            Write-Error "No Resource Group for Secure Landing Zone found" -ForegroundColor Red
+            Write-Error "Run setup script before running this script"
             return;
     }
 
+    Write-Host "Checking Storage Account for Landing Zone Logs in the Secure Landing Zone"  -ForegroundColor Yellow
     #
     # Checking if Storage account for Landing Zone Logs exists in the secure Landing Zone resource group
     # If it doesn't exist, create it
     #
-    Write-Host "Checking Storage Account for Landing Zone Logs in the Secure Landing Zone"  -ForegroundColor Yellow
+    Write-Verbose "Checking Azure Landing Zone Storage Account"
     if(!($GetStorageAccount = Get-AzStorageAccount -ResourceGroupName $GetResourceGroup.ResourceGroupName | Where-Object {$_.StorageAccountName -Like "$name*"})){
-        Write-Host "Creating Landing Zone storage account"
+        Write-Verbose "Creating Azure Landing Zone storage account"
         $rand = Get-Random -Minimum 1000000 -Maximum 9999999999
         $storName = $name + $rand + "sa"
         $GetStorageAccount = New-AzStorageAccount -ResourceGroupName $GetResourceGroup.ResourceGroupName -Name $storName -Location $GetResourceGroup.Location -SkuName Standard_LRS -Kind StorageV2
     }
-
-    #
-    # Set the context to current storage account
-    # Required for additional configuration
-    #
-    Write-Host "Setting context to current storage account" -ForegroundColor Yellow
     $context = New-AzStorageContext -StorageAccountName $GetStorageAccount.StorageAccountName
 
     #
     # Checking if log container for Landing Zone Logs already exists in the secure Landing Zone resource group
     # If it doesn't exist, create it
     #
-    Write-Host "Checking storage container for Landing Zone Logs in the secure Landing Zone" -ForegroundColor Yellow
+    Write-Verbose "Checking Azure Landing Zone storage container"
     if(!(Get-AzStorageContainer -Context $context | Where-Object {$_.Name -Like "landingzonelogs"})){
         New-AzStorageContainer -Context $context -Name "landingzonelogs" | Out-Null
-        Write-Host "Created 'landingzonelogs' for Landing Zone logs"
+        Write-Verbose "Created 'landingzonelogs' for Landing Zone logs"
     }
 
     #
     # Checking immutability policy for Azure storage account
     # If storage is not immutable, set immutability to 185 days
-    # TODO : Replace AzureRm with Az when feature is available
+    # Migrate Immutability policy to Az module instead of AzureRM
     #
-    Write-Host "Checking immutability policy" -ForegroundColor Yellow
+    Write-Verbose "Checking Azure Landing Zone Storage account immutability policy"
     if(((Get-AzRmStorageContainerImmutabilityPolicy -StorageAccountName $GetStorageAccount.StorageAccountName -ResourceGroupName $GetResourceGroup.ResourceGroupName -ContainerName "landingzonelogs").ImmutabilityPeriodSinceCreationInDays) -eq 0){
+        #$blob = Set-AzStorageBlobImmutabilityPolicy -Container $container.Name -PolicyMode Unlocked -ExpiresOn (GetDate).AddDays($retentionPeriod)
         $policy = Set-AzRmStorageContainerImmutabilityPolicy -ResourceGroupName $GetResourceGroup.ResourceGroupName -StorageAccountName $GetStorageAccount.StorageAccountName -ContainerName "landingzonelogs" -ImmutabilityPeriod $retentionPeriod
-        Lock-AzRmStorageContainerImmutabilityPolicy -ResourceGroupName $GetResourceGroup.ResourceGroupName -StorageAccountName $GetStorageAccount.StorageAccountName -ContainerName "landingzonelogs" -Etag $policy.Etag
-        Write-Host "Created immutability policy for $retentionPeriod days"
+        Lock-AzRmStorageContainerImmutabilityPolicy -ResourceGroupName $GetResourceGroup.ResourceGroupName -StorageAccountName $GetStorageAccount.StorageAccountName -ContainerName "landingzonelogs" -Etag $policy.Etag -Force
+        Write-Verbose "Created immutability policy for $retentionPeriod days"
     }
 }
 Export-ModuleMember -Function setup-Storage

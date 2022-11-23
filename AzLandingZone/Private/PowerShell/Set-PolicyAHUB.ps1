@@ -1,4 +1,6 @@
 Function Set-PolicyAHUB {
+    [cmdletbinding()]
+
     param(
         [string]$name = "lzslz",
         [string]$managementGroup = "lz-management-group"
@@ -7,13 +9,13 @@ Function Set-PolicyAHUB {
     $definitionListURI = "https://raw.githubusercontent.com/digitc1/AzLandingZonePublic/master/definitions/hybridBenefit/definitionList.txt"
 
     if (!($GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*$name*")) {
-        Write-Host "No Resource Group for Secure Landing Zone found"
-        Write-Host "Please run setup script before running the policy script"
+        Write-Error "No Resource Group for Secure Landing Zone found"
+        Write-Error "Please run setup script before running the policy script"
         return;
     }
-    if (!($GetManagementGroup = Get-AzManagementGroup -GroupName $managementGroup -Expand)) {
-        Write-Host "No Management group found for Secure Landing Zone"
-        Write-Host "Please run setup script before running the policy script"
+    if (!($GetManagementGroup = Get-AzManagementGroup -GroupId $managementGroup -Expand)) {
+        Write-Error "No Management group found for Secure Landing Zone"
+        Write-Error "Please run setup script before running the policy script"
         return;
     }
     $scope = ($GetManagementGroup).Id
@@ -35,7 +37,7 @@ Function Set-PolicyAHUB {
         Write-Host -ForegroundColor Yellow "Checking if previous role assignment exist for $policyName"
         if($assignment = Get-AzRoleAssignment -Scope $scope | Where-Object {$_.DisplayName -eq $policyName}){
             Remove-AzRoleAssignment -InputObject $assignment | Out-Null
-            Write-Host "Removed previous role assignment exist for $policyName"
+            Write-Verbose "Removed previous role assignment exist for $policyName"
         }
 
         #
@@ -44,7 +46,7 @@ Function Set-PolicyAHUB {
         Write-Host -ForegroundColor Yellow "Checking if previous policy assignment exist for $policyName"
         if($assignment = Get-AzPolicyAssignment -Scope $scope | Where-Object {$_.Name -eq $policyName}){
             Remove-AzPolicyAssignment -InputObject $assignment | Out-Null
-            Write-Host "Removed previous policy assignment exist for $policyName"
+            Write-Verbose "Removed previous policy assignment exist for $policyName"
         }
 
         #
@@ -53,20 +55,20 @@ Function Set-PolicyAHUB {
         Write-Host -ForegroundColor Yellow "Checking if policy definition exist for $policyName"
         if($policy = Get-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name | Where-Object {$_.Name -eq $policyName}){
             if ($policy.Properties.metadata.version -eq $policyVersion) {
-                Write-Host "$policyName is up-to-date"
+                Write-Verbose "$policyName is up-to-date"
             } else {
                 Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
                 $metadata = '{"version":"' + $policyVersion + '"}'
                 $policy = Set-AzPolicyDefinition -Id $policy.ResourceId -Policy $HOME/$policyName.json -Metadata $metadata
                 Remove-Item -Path $HOME/$policyName.json
-                Write-Host "Updated policy: $policyName"
+                Write-Verbose "Updated policy: $policyName"
             }
         } else {
             Invoke-WebRequest -Uri $policyLink -OutFile $HOME/$policyName.json
             $metadata = '{"version":"' + $policyVersion + '"}'
             $policy = New-AzPolicyDefinition -ManagementGroupName $GetManagementGroup.Name -Name $policyName -Policy $HOME/$policyName.json -Metadata $metadata
             Remove-Item -Path $HOME/$policyName.json
-            Write-Host "Created policy: $policyName"
+            Write-Verbose "Created policy: $policyName"
         }
         $localList.Add(@{policyDefinitionId = $policy.ResourceId})
     }
@@ -77,14 +79,14 @@ Function Set-PolicyAHUB {
     Write-Host -ForegroundColor Yellow "Checking policy set definition for Azure AHUB"
     if ($policyInitiative = Get-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name | where-Object { $_.Name -Like "SLZ-AHUB" }) {
         Set-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name $policyInitiative.Name -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5) | Out-Null
-        Write-Host "Updated policy set definition for Azure AHUB"
+        Write-Verbose "Updated policy set definition for Azure AHUB"
     }
     else {
         $policySetDefinition = New-AzPolicySetDefinition -ManagementGroupName $GetManagementGroup.Name -Name "SLZ-AHUB" -PolicyDefinition ($definitionList | ConvertTo-Json -Depth 5)
         $policySetAssignment = New-AzPolicyAssignment -PolicySetDefinition $policySetDefinition -AssignIdentity -Name $policySetDefinition.Name -location $GetResourceGroup.Location -Scope $scope
         Start-Sleep -Seconds 15
         New-AzRoleAssignment -ObjectId $policySetAssignment.Identity.principalId -RoleDefinitionName "Contributor" -Scope $scope | Out-Null
-        Write-Host "Created policy set definition for Azure AHUB"
+        Write-Verbose "Created policy set definition for Azure AHUB"
     }
     Remove-Item -Path $HOME/definitionList.txt
 }
