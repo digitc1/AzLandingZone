@@ -1,7 +1,8 @@
 Function Register-LzManagedServicesDefinition {
 	Param(
 		[string]$name = "lzslz",
-		[string]$subscriptionId
+		[string]$subscriptionId,
+		[string]$SOC
 	)
 	if(!($GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*$name*")){
 			Write-Host "No Resource Group for Secure Landing Zone found"
