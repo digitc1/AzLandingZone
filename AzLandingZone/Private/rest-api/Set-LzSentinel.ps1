@@ -6,13 +6,13 @@ function Get-LzSentinel {
     )
 
     if(!($GetResourceGroup = Get-AzResourceGroup | where-Object {$_.ResourceGroupName -like "*$name*"})){
-        Write-Host "No Resource Group for Secure Landing Zone found"
-        Write-Host "Please run setup script before running this script"
+        Write-Error "No Resource Group for Secure Landing Zone found"
+        Write-Error "Please run setup script before running this script"
         return 1;
     }
     if(!($GetLogAnalyticsWorkspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName)){
-        Write-Host "No Log analytics workspace for Secure Landing Zone found"
-        Write-Host "Please run setup script before running this script"
+        Write-Error "No Log analytics workspace for Secure Landing Zone found"
+        Write-Error "Please run setup script before running this script"
         return 1;
     }
 

@@ -81,6 +81,7 @@
             'Private\PowerShell\Set-PolicyDiagnosticStorage.ps1',
             'Private\PowerShell\Set-PolicyDiagnosticWorkspace.ps1',
             'Private\PowerShell\Set-PolicyDiagnosticEventHub.ps1',
+            'Private\PowerShell\Set-PolicyMsDefender.ps1',
             'Private\PowerShell\setup-Automation.ps1',
             'Private\PowerShell\setup-Lighthouse.ps1',
             'Private\PowerShell\setup-LogPipeline.ps1',
@@ -131,7 +132,7 @@
             'Sync-AzLandingZone',
             'Test-AzLandingZone',
             'Unregister-AzLandingZone',
-            'Update-AzLandingZone',
+            #'Update-AzLandingZone',
             'Update-AzLandingZoneSentinel'
         )
     
