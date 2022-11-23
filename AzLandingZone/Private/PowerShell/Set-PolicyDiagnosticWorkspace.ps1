@@ -1,4 +1,6 @@
 Function Set-PolicyDiagnosticWorkspace {
+    [cmdletbinding()]
+    
     param(
         [string]$name = "lzslz",
         [string]$managementGroup = "lz-management-group"

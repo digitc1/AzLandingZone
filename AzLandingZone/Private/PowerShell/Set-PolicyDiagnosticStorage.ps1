@@ -1,4 +1,6 @@
 Function Set-PolicyDiagnosticStorage {
+    [cmdletbinding()]
+    
     param(
         [string]$name = "lzslz",
         [string]$managementGroup = "lz-management-group"
