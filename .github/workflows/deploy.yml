@@ -23,7 +23,7 @@ jobs:
           creds: ${{secrets.AZURE_CREDENTIALS}}
           enable-AzPSSession: true
    
-      - name: Run Azure PowerShell script
+      - name: Run Azure PowerShell script for DIGIT
         uses: azure/powershell@v1
         with:
           azPSVersion: '3.1.0'
@@ -32,3 +32,13 @@ jobs:
             Install-Module -Force -Name "AzLandingZone" -Repository "AzLandingZoneRepo"
             Import-Module -Name "AzLandingZone"
             New-AzLandingZone -SOC "DIGIT" -autoupdate $true -location "westeurope" -enableEventHub $true -securityContacts "augustin.colle@outlook.com" -retentionPeriod 365
+
+      - name: Run Azure PowerShell script for CERTEU
+        uses: azure/powershell@v1
+        with:
+          azPSVersion: '3.1.0'
+          inlineScript: |
+            Register-PSRepository -Name "AzLandingZoneRepo" -SourceLocation "https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/developmentfeed/nuget/v2" -publishLocation "https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/developmentfeed/nuget/v2"
+            Install-Module -Force -Name "AzLandingZone" -Repository "AzLandingZoneRepo"
+            Import-Module -Name "AzLandingZone"
+            New-AzLandingZone -SOC "CERTEU" -autoupdate $true -location "westeurope" -enableEventHub $true -securityContacts "james.barr@cert.europa.eu" -retentionPeriod 365
