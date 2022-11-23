@@ -28,7 +28,7 @@ Function Test-AzLandingZone {
     Param()
 
     # Get current user information
-    $servicePrincipalId = az ad signed-in-user show --query objectId -o tsv
+    $servicePrincipalId = az ad signed-in-user show --query id -o tsv
     $currentUser = Get-AzADUser | Where-Object { $_.Id -eq $servicePrincipalId }
     Write-Verbose "Currently connected as '$($currentUser.DisplayName)'"
 
