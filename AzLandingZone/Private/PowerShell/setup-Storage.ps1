@@ -54,13 +54,3 @@ Function setup-Storage {
     }
 }
 Export-ModuleMember -Function setup-Storage
-
-if($name -Like "*test*"){
-    Write-Verbose "In test mode so do not create an immutability policy for $retentionPeriod days"
-} else {
-    Write-Error "This should not be called"
-
-    #$policy = Set-AzRmStorageContainerImmutabilityPolicy -ResourceGroupName $GetResourceGroup.ResourceGroupName -StorageAccountName $GetStorageAccount.StorageAccountName -ContainerName "landingzonelogs" -ImmutabilityPeriod $retentionPeriod
-    #Lock-AzRmStorageContainerImmutabilityPolicy -ResourceGroupName $GetResourceGroup.ResourceGroupName -StorageAccountName $GetStorageAccount.StorageAccountName -ContainerName "landingzonelogs" -Etag $policy.Etag -Force
-    #Write-Verbose "Created immutability policy for $retentionPeriod days"
-}
