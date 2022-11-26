@@ -41,12 +41,26 @@ Function setup-Storage {
     # If storage is not immutable, set immutability to 185 days
     # Migrate Immutability policy to Az module instead of AzureRM
     #
-    Write-Verbose "Checking Azure Landing Zone Storage account immutability policy"
-    if(((Get-AzRmStorageContainerImmutabilityPolicy -StorageAccountName $GetStorageAccount.StorageAccountName -ResourceGroupName $GetResourceGroup.ResourceGroupName -ContainerName "landingzonelogs").ImmutabilityPeriodSinceCreationInDays) -eq 0){
-        #$blob = Set-AzStorageBlobImmutabilityPolicy -Container $container.Name -PolicyMode Unlocked -ExpiresOn (GetDate).AddDays($retentionPeriod)
-        $policy = Set-AzRmStorageContainerImmutabilityPolicy -ResourceGroupName $GetResourceGroup.ResourceGroupName -StorageAccountName $GetStorageAccount.StorageAccountName -ContainerName "landingzonelogs" -ImmutabilityPeriod $retentionPeriod
-        Lock-AzRmStorageContainerImmutabilityPolicy -ResourceGroupName $GetResourceGroup.ResourceGroupName -StorageAccountName $GetStorageAccount.StorageAccountName -ContainerName "landingzonelogs" -Etag $policy.Etag -Force
-        Write-Verbose "Created immutability policy for $retentionPeriod days"
+    if($name -Like "*test*"){
+        Write-Verbose "In test mode - so do not create an immutability policy for storage account"
+    } else {    
+        Write-Verbose "Checking Azure Landing Zone Storage account immutability policy"
+        if(((Get-AzRmStorageContainerImmutabilityPolicy -StorageAccountName $GetStorageAccount.StorageAccountName -ResourceGroupName $GetResourceGroup.ResourceGroupName -ContainerName "landingzonelogs").ImmutabilityPeriodSinceCreationInDays) -eq 0){
+            #$blob = Set-AzStorageBlobImmutabilityPolicy -Container $container.Name -PolicyMode Unlocked -ExpiresOn (GetDate).AddDays($retentionPeriod)
+            $policy = Set-AzRmStorageContainerImmutabilityPolicy -ResourceGroupName $GetResourceGroup.ResourceGroupName -StorageAccountName $GetStorageAccount.StorageAccountName -ContainerName "landingzonelogs" -ImmutabilityPeriod $retentionPeriod
+            Lock-AzRmStorageContainerImmutabilityPolicy -ResourceGroupName $GetResourceGroup.ResourceGroupName -StorageAccountName $GetStorageAccount.StorageAccountName -ContainerName "landingzonelogs" -Etag $policy.Etag -Force
+            Write-Verbose "Created immutability policy for $retentionPeriod days"
+        }
     }
 }
 Export-ModuleMember -Function setup-Storage
+
+if($name -Like "*test*"){
+    Write-Verbose "In test mode so do not create an immutability policy for $retentionPeriod days"
+} else {
+    Write-Error "This should not be called"
+
+    #$policy = Set-AzRmStorageContainerImmutabilityPolicy -ResourceGroupName $GetResourceGroup.ResourceGroupName -StorageAccountName $GetStorageAccount.StorageAccountName -ContainerName "landingzonelogs" -ImmutabilityPeriod $retentionPeriod
+    #Lock-AzRmStorageContainerImmutabilityPolicy -ResourceGroupName $GetResourceGroup.ResourceGroupName -StorageAccountName $GetStorageAccount.StorageAccountName -ContainerName "landingzonelogs" -Etag $policy.Etag -Force
+    #Write-Verbose "Created immutability policy for $retentionPeriod days"
+}
