@@ -17,7 +17,7 @@ jobs:
     env:
       major: '1'
       minor: '17'
-      patch: '10'
+      patch: '11'
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:      
@@ -49,11 +49,11 @@ jobs:
       
     - name: Authenticate development Feed
       if: ${{ success() && contains(github.ref, 'release') }}
-      run: nuget sources add -source https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/developmentfeed/nuget/v3/index.json -name devops -p ${{ secrets.DEVOPS_PAT }} -u github@acp4eu074hotmail.onmicrosoft.com
+      run: nuget sources add -source https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/developmentfeed/nuget/v3/index.json -name devops -p ${{ secrets.DEVOPS_PAT }} -u augustin.colle@ext.ec.europa.eu
 
     - name: Authenticate public Feed
       if: ${{ success() && contains(github.ref, 'master') }}
-      run: nuget sources add -source https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/publicfeed/nuget/v3/index.json -name devops -p ${{ secrets.DEVOPS_PAT }} -u github@acp4eu074hotmail.onmicrosoft.com
+      run: nuget sources add -source https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/publicfeed/nuget/v3/index.json -name devops -p ${{ secrets.DEVOPS_PAT }} -u augustin.colle@ext.ec.europa.eu
             
     - name: nuget pack
       run: nuget pack AzLandingZone/AzLandingZone.nuspec
