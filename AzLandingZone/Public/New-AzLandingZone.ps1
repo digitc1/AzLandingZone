@@ -79,6 +79,7 @@ Function New-AzLandingZone {
 
     #setup-SubscriptionContacts -SOC $SOC -securityContacts $securityContacts
     # TODO : review policy
+    setup-PolicyGithub -Name $name -managementGroup $managementGroup
     setup-Policy -Name $name -managementGroup $managementGroup
     setup-MonitoringAgent -Name $name -managementGroup $managementGroup
     #setup-Lighthouse -SOC $SOC -managementGroup $managementGroup
