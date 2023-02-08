@@ -77,6 +77,7 @@
             'Public\Unregister-AzLandingZone.ps1',
             'Public\Update-AzLandingZone.ps1',
             'Private\PowerShell\register-AzResourceProviders.ps1',
+            'Private\PowerShell\Set-AzPoliciesGithub.ps1',
             'Private\PowerShell\Set-PolicyAHUB.ps1',
             'Private\PowerShell\Set-PolicyDiagnosticStorage.ps1',
             'Private\PowerShell\Set-PolicyDiagnosticWorkspace.ps1',
