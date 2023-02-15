@@ -5,8 +5,12 @@ name: CI
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the develop branch
 on:
-  workflow_run:
-    workflows: ["build"]
+    workflow_dispatch:
+    inputs:
+      remarks:
+        description: "Reason for triggering the workflow run"
+        required: false
+        default: "Updating Azure Landing Zone"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -22,7 +26,6 @@ jobs:
         with:
           creds: ${{secrets.AZURE_CREDENTIALS}}
           enable-AzPSSession: true
-          subscription-id: ae3ed253-747c-4ec0-a3af-62e10e23238d
    
       - name: Run Azure PowerShell script
         uses: azure/powershell@v1
