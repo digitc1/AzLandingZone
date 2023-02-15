@@ -22,6 +22,7 @@ jobs:
         with:
           creds: ${{secrets.AZURE_CREDENTIALS}}
           enable-AzPSSession: true
+          subscription-id: ae3ed253-747c-4ec0-a3af-62e10e23238d
    
       - name: Run Azure PowerShell script
         uses: azure/powershell@v1
@@ -31,4 +32,4 @@ jobs:
             Register-PSRepository -Name "AzLandingZoneRepo" -SourceLocation "https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/developmentfeed/nuget/v2" -publishLocation "https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/developmentfeed/nuget/v2"
             Install-Module -Force -Name "AzLandingZone" -Repository "AzLandingZoneRepo"
             Import-Module -Name "AzLandingZone"
-            New-AzLandingZone -SOC "DIGIT" -autoupdate $true -location "westeurope" -enableEventHub $true -securityContacts "augustin.colle@outlook.com" -retentionPeriod 365
+            New-AzLandingZone -SOC "DIGIT" -location "westeurope" -enableEventHub $true -retentionPeriod 365 -managementGroup test-lz-mg
