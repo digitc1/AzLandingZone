@@ -42,12 +42,17 @@ Function Update-AzLandingZone {
     setup-Policy -Name $name -managementGroup $managementGroup
 
 
-    #TODO:
-    # understand how to get existing LAW (it is generated with a random number in the name!)
-    #
-    #enable-AutomationAccountChangeTrackinAndInventory `
-    #    -ResourceGroupName $name `
-    #    -AutomationAccountName $setupResourcesResult.automationAccount.Name `
-    #    -lawName $setupLogPipelineResult.law.Name
+    # Assume the log analytics workspace contains the following in the name
+    $lawPrefix = "lzslz"
+    if(!($psWorkspace = Get-AzOperationalInsightsWorkspace -resourceGroupName $GetResourceGroup.ResourceGroupName | where-Object {$_.Name -Like "*$lawPrefix*"})){
+		Write-Host -ForegroundColor Red "Workspace cannot be found"
+		return 1;
+    }
+
+    enable-AutomationAccountChangeTrackinAndInventory `
+        -ResourceGroupName $name `
+        -AutomationAccountName $setupResourcesResult.automationAccount.Name `
+        -lawName $psWorkspace.Name
+        
 }
 Export-ModuleMember -Function Update-AzLandingZone
