@@ -84,6 +84,8 @@
             'Private\PowerShell\Set-PolicyDiagnosticEventHub.ps1',
             'Private\PowerShell\Set-PolicyMsDefender.ps1',
             'Private\PowerShell\setup-Automation.ps1',
+            'Private\PowerShell\set-AutomationAccount.ps1',
+            'Private\PowerShell\enable-AutomationAccountChangeTrackingAndInventory.ps1',
             'Private\PowerShell\setup-Lighthouse.ps1',
             'Private\PowerShell\setup-LogPipeline.ps1',
             'Private\PowerShell\setup-MonitoringAgent.ps1',

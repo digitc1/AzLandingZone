@@ -37,8 +37,17 @@ Function Update-AzLandingZone {
     }
     $location = $GetResourceGroup.Location
 
-    setup-Resources -Name $name -Location $location -managementGroup $managementGroup
+    $setupResourcesResult = setup-Resources -Name $name -Location $location -managementGroup $managementGroup
     setup-Storage -Name $name
     setup-Policy -Name $name -managementGroup $managementGroup
+
+
+    #TODO:
+    # understand how to get existing LAW (it is generated with a random number in the name!)
+    #
+    #enable-AutomationAccountChangeTrackinAndInventory `
+    #    -ResourceGroupName $name `
+    #    -AutomationAccountName $setupResourcesResult.automationAccount.Name `
+    #    -lawName $setupLogPipelineResult.law.Name
 }
 Export-ModuleMember -Function Update-AzLandingZone
