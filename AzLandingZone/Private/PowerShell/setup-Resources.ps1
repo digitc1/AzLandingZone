@@ -41,6 +41,16 @@ Function Setup-Resources {
         New-AzResourceLock -LockName "LandingZoneLock" -LockLevel CannotDelete -ResourceGroupName $GetResourceGroup.ResourceGroupName -Force | Out-Null
     }
 
+
+    #
+    # Create the Automation Account (to link to Log Analytics Workspace)
+    #
+    $psAutomationAccount = set-AutomationAccount -Name $name
+    if($psAutomationAccount -eq $null){
+        Write-Error "Something went wrong while creating Automation Account"
+        return
+    }
+    
     #
     # Check if the auto-update feature was requested
     # If so, run the auto-update setup
@@ -48,5 +58,11 @@ Function Setup-Resources {
     if($autoupdate -eq $true) {
         setup-Automation -Name $name -managementGroup $managementGroup
     }
+
+    $result = [PSCustomObject]@{
+        automationAccount = $psAutomationAccount
+    }
+    
+    return $result
 }
 Export-ModuleMember -Function Setup-Resources
