@@ -1,34 +1,34 @@
 $moduleList = @(
 	@{
 		Name = 'Az.Accounts';
-		Version = '2.10.3'
+		Version = '2.11.2'
 	}
 	@{
 		Name = 'Az.EventHub';
-		Version = '3.1.0'
+		Version = '3.2.1'
 	}
 	@{
 		Name = 'Az.Resources';
-		Version = '6.4.0'
+		Version = '6.5.2'
 	}
 	@{
 		Name = 'Az.Storage';
-		Version = '5.1.0'
+		Version = '5.4.0'
 	}
 )
 
 Write-Host "Initialization of the AzLandingZone module in progress"
 foreach($module in $moduleList){
 	$mod = Get-Module -Name $module.Name
-	if($null -eq $mod){
-		if(Get-Module -ListAvailable -Name $module.Name){
-			Uninstall-Module -Name $module.Name -AllVersions
+    if ($mod -ne $null) {
+		if([System.Version]$module.Version -lt $mod.Version) {
+			Write-Host "The module $($module.Name) was successfully loaded"
+		} else {
+			Write-Warning "This module requires $($module.Name) version $($module.Version). An earlier version of $($module.Name) is imported in the current PowerShell session. Please open a new session before importing this module. This error could indicate that multiple incompatible versions of the Azure PowerShell cmdlets are installed on your system." -ErrorAction Continue
 		}
-	} elseif ($mod.Version -lt [System.Version]$module.Version){
-		Remove-Module -Name $module.Name
-		Uninstall-Module -Name $module.Name -AllVersions
-	}
-	Install-Module $module.Name -requiredVersion $module.Version -Force
-	Import-Module -Name $module.Name -RequiredVersion $module.Version -Force
+	} 
+    elseif ($mod -eq $null) { 
+        Import-Module $module.Name -MinimumVersion $module.Version -Scope Global
+    }
 }
 Write-Host "Initialization of the AzLandingZone module completed"
