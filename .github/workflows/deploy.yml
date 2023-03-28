@@ -35,4 +35,5 @@ jobs:
             Register-PSRepository -Name "AzLandingZoneRepo" -SourceLocation "https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/developmentfeed/nuget/v2" -publishLocation "https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/developmentfeed/nuget/v2"
             Install-Module -Force -Name "AzLandingZone" -Repository "AzLandingZoneRepo"
             Import-Module -Name "AzLandingZone"
+            Connect-AzAccount
             New-AzLandingZone -SOC "DIGIT" -location "westeurope" -enableEventHub $true -retentionPeriod 365 -managementGroup test-lz-mg
