@@ -28,10 +28,7 @@ jobs:
           enable-AzPSSession: true
    
       - name: Run Azure PowerShell script
-        uses: azure/powershell@v1
-        with:
-          azPSVersion: '3.1.0'
-          inlineScript: |
+        run: |
             Register-PSRepository -Name "AzLandingZoneRepo" -SourceLocation "https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/developmentfeed/nuget/v2" -publishLocation "https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/developmentfeed/nuget/v2"
             Install-Module -Force -Name "AzLandingZone" -Repository "AzLandingZoneRepo"
             Import-Module -Name "AzLandingZone"
