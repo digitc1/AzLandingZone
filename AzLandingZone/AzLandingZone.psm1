@@ -28,7 +28,7 @@ foreach($module in $moduleList){
 		}
 	} 
     elseif ($mod -eq $null) { 
-        Import-Module Az.Accounts -MinimumVersion $module.Version -Scope Global
+        Import-Module $module.Name -MinimumVersion $module.Version -Scope Global
     }
 }
 Write-Host "Initialization of the AzLandingZone module completed"
