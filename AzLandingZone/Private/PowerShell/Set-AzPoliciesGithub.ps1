@@ -33,15 +33,7 @@ Function setup-PolicyGithub {
     }
 
     Write-Host "$($Identity.Id)"
-    
-    Write-Verbose "Checking app registration for github deployment"
-    if(!($deploymentIdentity = (az ad sp list --filter "displayname eq 'landingzoneidentity'" | ConvertFrom-Json))){
-        $deploymentIdentity = az ad sp create-for-rbac --display-name 'landingzoneidentity' --sdk-auth
-        Write-Host $deploymentIdentity
-        Start-Sleep -s 10
-        $deploymentIdentity = az ad sp list --filter "displayname eq 'landingzoneidentity'" | ConvertFrom-Json
-        Write-Verbose "Created app registration for github deployment"
-    }
+
     if(!(Get-AzRoleAssignment -RoleDefinitionName "Resource Policy Contributor" -Scope $GetManagementGroup.Id -objectId $deploymentIdentity.Id)){
         New-AzRoleAssignment -RoleDefinitionName "Resource Policy Contributor" -Scope $GetManagementGroup.Id -ObjectId $deploymentIdentity.Id
         Write-Verbose "Created role assignment for github deployment"
