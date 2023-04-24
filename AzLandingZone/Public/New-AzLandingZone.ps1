@@ -77,7 +77,7 @@ Function New-AzLandingZone {
     $setupLogPipelineResult = setup-LogPipeline -Name $name -enableSentinel $enableSentinel -enableEventHub $enableEventHub
 
     enable-AutomationAccountChangeTrackinAndInventory `
-        -ResourceGroupName $name `
+        -Name $name `
         -AutomationAccountName $setupResourcesResult.automationAccount.AutomationAccountName `
         -lawName $setupLogPipelineResult.law.Name
 
