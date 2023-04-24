@@ -39,10 +39,13 @@ Function enable-AutomationAccountChangeTrackinAndInventory {
 
 
     # Link the Log Analytics Workspace with the Automation Account
-    Set-AzOperationalInsightsLinkedService -ResourceGroupName $GetResourceGroup.ResourceGroupName -WorkspaceName $lawName -LinkedServiceName Automation -WriteAccessResourceId "/subscriptions/$subscriptionId/resourceGroups/$($GetResourceGroup.ResourceGroupName)/providers/Microsoft.Automation/automationAccounts/$automationAccountName"
- 
+    if(!(Get-AzOperationalInsightsLinkedService -ResourceGroupName $GetResourceGroup.ResourceGroupName -WorkspaceName $lawName)){
+        Set-AzOperationalInsightsLinkedService -ResourceGroupName $GetResourceGroup.ResourceGroupName -WorkspaceName $lawName -LinkedServiceName Automation -WriteAccessResourceId "/subscriptions/$subscriptionId/resourceGroups/$($GetResourceGroup.ResourceGroupName)/providers/Microsoft.Automation/automationAccounts/$automationAccountName"
+    }
+    
     # Wnable the Change Tracking solution
-    Set-AzOperationalInsightsIntelligencePack -ResourceGroupName $GetResourceGroup.ResourceGroupName -WorkspaceName -WorkspaceName -IntelligencePackName "ChangeTracking" -Enabled $true 
-
+    if(!(Get-AzOperationalInsightsIntelligencePack -ResourceGroupName $GetResourceGroup.ResourceGroupName -WorkspaceName $lawName | where-Object {$_.Name -eq "ChangeTracking"}).Enabled){
+        Set-AzOperationalInsightsIntelligencePack -ResourceGroupName $GetResourceGroup.ResourceGroupName -WorkspaceName -WorkspaceName -IntelligencePackName "ChangeTracking" -Enabled $true 
+    }
 }
 Export-ModuleMember -Function enable-AutomationAccountChangeTrackinAndInventory
