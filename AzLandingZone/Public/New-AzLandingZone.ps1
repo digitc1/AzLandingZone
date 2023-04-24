@@ -78,7 +78,7 @@ Function New-AzLandingZone {
 
     enable-AutomationAccountChangeTrackinAndInventory `
         -ResourceGroupName $name `
-        -AutomationAccountName $setupResourcesResult.automationAccount.Name `
+        -AutomationAccountName $setupResourcesResult.automationAccount.AutomationAccountName `
         -lawName $setupLogPipelineResult.law.Name
 
     Set-LzActiveDirectoryDiagnosticSettings -name $name
