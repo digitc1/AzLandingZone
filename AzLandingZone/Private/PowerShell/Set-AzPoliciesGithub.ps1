@@ -34,9 +34,9 @@ Function setup-PolicyGithub {
 
     Write-Host "$($Identity.Id)"
 
-    if(!(Get-AzRoleAssignment -RoleDefinitionName "Resource Policy Contributor" -Scope $GetManagementGroup.Id -objectId $deploymentIdentity.Id)){
-        New-AzRoleAssignment -RoleDefinitionName "Resource Policy Contributor" -Scope $GetManagementGroup.Id -ObjectId $deploymentIdentity.Id
-        Write-Verbose "Created role assignment for github deployment"
-    }    
+#    if(!(Get-AzRoleAssignment -RoleDefinitionName "Resource Policy Contributor" -Scope $GetManagementGroup.Id -objectId $deploymentIdentity.Id)){
+#        New-AzRoleAssignment -RoleDefinitionName "Resource Policy Contributor" -Scope $GetManagementGroup.Id -ObjectId $deploymentIdentity.Id
+#        Write-Verbose "Created role assignment for github deployment"
+#    }    
 }
 Export-ModuleMember -Function setup-PolicyGithub
