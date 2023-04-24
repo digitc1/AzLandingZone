@@ -60,7 +60,7 @@ Function Setup-Resources {
     }
 
     $result = [PSCustomObject]@{
-        $automationAccount = $psAutomationAccount
+        automationAccount = $psAutomationAccount
     }
     
     return $result
