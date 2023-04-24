@@ -16,9 +16,9 @@ Function setup-LogPipeline {
     }
 
     Write-Host "Checking log analytics workspace and Azure Sentinel in the Secure Landing Zone" -ForegroundColor Yellow
-    if($enableSentinel){
+#    if($enableSentinel){
         Write-Verbose "Checking log analytics workspace and Azure Sentinel in the Secure Landing Zone"
-        if(!(Get-AzOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName)){
+        if(!($psWorkspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName)){
             $rand = Get-Random -Minimum 1000000 -Maximum 9999999999
             $workspaceName = $name +"-workspace"+$rand
             $psWorkspace = New-AzOperationalInsightsWorkspace -Location $GetResourceGroup.Location -Name $workspaceName -ResourceGroupName $GetResourceGroup.ResourceGroupName 
@@ -26,7 +26,7 @@ Function setup-LogPipeline {
             Write-Verbose "Created Landing Zone log analytics"
         }
         Set-LzSentinel -Name $name
-    }
+#    }
 
     Write-Host "Checking event-hub namespace in the Secure Landing Zone" -ForegroundColor Yellow
     if($enableEventHub){
