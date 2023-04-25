@@ -25,7 +25,9 @@ Function setup-LogPipeline {
             Start-Sleep -s 15
             Write-Verbose "Created Landing Zone log analytics"
         }
-        Set-LzSentinel -Name $name
+        if($enableSentinel){
+            Set-LzSentinel -Name $name
+        }
 #    }
 
     Write-Host "Checking event-hub namespace in the Secure Landing Zone" -ForegroundColor Yellow
