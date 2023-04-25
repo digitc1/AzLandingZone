@@ -77,8 +77,8 @@ Function New-AzLandingZone {
     $setupLogPipelineResult = setup-LogPipeline -Name $name -enableSentinel $enableSentinel -enableEventHub $enableEventHub
 
     enable-AutomationAccountChangeTrackinAndInventory `
-        -ResourceGroupName $name `
-        -AutomationAccountName $setupResourcesResult.automationAccount.Name `
+        -Name $name `
+        -AutomationAccountName $setupResourcesResult.automationAccount.AutomationAccountName `
         -lawName $setupLogPipelineResult.law.Name
 
     Set-LzActiveDirectoryDiagnosticSettings -name $name
@@ -86,7 +86,7 @@ Function New-AzLandingZone {
     #setup-SubscriptionContacts -SOC $SOC -securityContacts $securityContacts
     # TODO : review policy
     setup-PolicyGithub -Name $name -managementGroup $managementGroup
-    setup-Policy -Name $name -managementGroup $managementGroup
+    setup-Policy -Name $name -managementGroup $managementGroup -enableSentinel $enableSentinel
     setup-MonitoringAgent -Name $name -managementGroup $managementGroup
     #setup-Lighthouse -SOC $SOC -managementGroup $managementGroup
     if($enableSentinel) {

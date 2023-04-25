@@ -23,10 +23,7 @@ Function set-AutomationAccount {
         Write-Verbose "Creating Azure Landing Zone automation account"
         $automationAccountName = $name + "Automation"
         $automationAccount = New-AzAutomationAccount -Name $automationAccountName -ResourceGroupName $GetResourceGroup.ResourceGroupName -Location $GetResourceGroup.Location
-        
-        return $automationAccount
     }
-
-    return $null
+    return $automationAccount
 }
 Export-ModuleMember -Function set-AutomationAccount
