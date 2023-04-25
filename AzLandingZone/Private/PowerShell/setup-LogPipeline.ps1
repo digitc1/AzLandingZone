@@ -7,6 +7,8 @@ Function setup-LogPipeline {
         [bool]$enableSentinel = $false
     )
 
+    $psWorkspace = $null
+
     if(!($GetResourceGroup = Get-AzResourceGroup -ResourceGroupName "*$name*")){
             Write-Error "No Resource Group for Secure Landing Zone found"
             Write-Error "Please run setup script before running the policy script"
@@ -14,17 +16,19 @@ Function setup-LogPipeline {
     }
 
     Write-Host "Checking log analytics workspace and Azure Sentinel in the Secure Landing Zone" -ForegroundColor Yellow
-    if($enableSentinel){
+#    if($enableSentinel){
         Write-Verbose "Checking log analytics workspace and Azure Sentinel in the Secure Landing Zone"
-        if(!(Get-AzOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName)){
+        if(!($psWorkspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName $GetResourceGroup.ResourceGroupName)){
             $rand = Get-Random -Minimum 1000000 -Maximum 9999999999
             $workspaceName = $name +"-workspace"+$rand
-            New-AzOperationalInsightsWorkspace -Location $GetResourceGroup.Location -Name $workspaceName -ResourceGroupName $GetResourceGroup.ResourceGroupName | Out-Null
+            $psWorkspace = New-AzOperationalInsightsWorkspace -Location $GetResourceGroup.Location -Name $workspaceName -ResourceGroupName $GetResourceGroup.ResourceGroupName 
             Start-Sleep -s 15
             Write-Verbose "Created Landing Zone log analytics"
         }
-        Set-LzSentinel -Name $name
-    }
+        if($enableSentinel){
+            Set-LzSentinel -Name $name
+        }
+#    }
 
     Write-Host "Checking event-hub namespace in the Secure Landing Zone" -ForegroundColor Yellow
     if($enableEventHub){
@@ -48,5 +52,11 @@ Function setup-LogPipeline {
             New-AzEventHubAuthorizationRule -ResourceGroupName $GetResourceGroup.ResourceGroupName -Namespace $GetEventHubNamespace.Name -Name "landingZoneAccessKey" -Rights @("Listen","Send","Manage") | Out-Null
         }
     }
+
+    $result = [PSCustomObject]@{
+        law = $psWorkspace
+    }
+    
+    return $result
 }
 Export-ModuleMember -Function setup-LogPipeline

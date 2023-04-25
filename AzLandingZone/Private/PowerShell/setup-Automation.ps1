@@ -29,9 +29,8 @@ Function setup-Automation {
     #
     Write-Verbose "Checking automation account in the Secure Landing Zone"
     if(!($GetAutomationAccount = Get-AzAutomationAccount -ResourceGroupName $GetResourceGroup.ResourceGroupName | Where-Object {$_.AutomationAccountName -Like "$name*"})){
-        Write-Verbose "Creating Azure Landing Zone automation account"
-        $automationAccountName = $name + "Automation"
-        $GetAutomationAccount = New-AzAutomationAccount -Name $automationAccountName -ResourceGroupName $GetResourceGroup.ResourceGroupName -Location $GetResourceGroup.Location
+        Write-Error "No Automation Account for Secure Landing Zone found"
+        return;
     }
 
     Write-Host "Checking Azure Landing Zone auto-update feature" -ForegroundColor Yellow

@@ -72,15 +72,21 @@ Function New-AzLandingZone {
 		$retentionPeriod = 185
 	}
 
-    setup-Resources -Name $name -Location $location -managementGroup $managementGroup -autoUpdate $autoUpdate
+    $setupResourcesResult  = setup-Resources -Name $name -Location $location -managementGroup $managementGroup -autoUpdate $autoUpdate
     setup-Storage -Name $name -retentionPeriod $retentionPeriod
-    setup-LogPipeline -Name $name -enableSentinel $enableSentinel -enableEventHub $enableEventHub
+    $setupLogPipelineResult = setup-LogPipeline -Name $name -enableSentinel $enableSentinel -enableEventHub $enableEventHub
+
+    enable-AutomationAccountChangeTrackinAndInventory `
+        -Name $name `
+        -AutomationAccountName $setupResourcesResult.automationAccount.AutomationAccountName `
+        -lawName $setupLogPipelineResult.law.Name
+
     Set-LzActiveDirectoryDiagnosticSettings -name $name
 
     #setup-SubscriptionContacts -SOC $SOC -securityContacts $securityContacts
     # TODO : review policy
     setup-PolicyGithub -Name $name -managementGroup $managementGroup
-    setup-Policy -Name $name -managementGroup $managementGroup
+    setup-Policy -Name $name -managementGroup $managementGroup -enableSentinel $enableSentinel
     setup-MonitoringAgent -Name $name -managementGroup $managementGroup
     #setup-Lighthouse -SOC $SOC -managementGroup $managementGroup
     if($enableSentinel) {

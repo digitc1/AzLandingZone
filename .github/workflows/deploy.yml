@@ -22,7 +22,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Login via Az module
-        uses: azure/login@v1.1
+        uses: Azure/login@v1.4.6
         with:
           creds: ${{secrets.AZURE_CREDENTIALS}}
           enable-AzPSSession: true
@@ -30,7 +30,7 @@ jobs:
       - name: Run Azure PowerShell script
         uses: azure/powershell@v1
         with:
-          azPSVersion: '3.1.0'
+          azPSVersion: "latest"
           inlineScript: |
             Register-PSRepository -Name "AzLandingZoneRepo" -SourceLocation "https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/developmentfeed/nuget/v2" -publishLocation "https://pkgs.dev.azure.com/devops0837/LandingZonePublic/_packaging/developmentfeed/nuget/v2"
             Install-Module -Force -Name "AzLandingZone" -Repository "AzLandingZoneRepo"

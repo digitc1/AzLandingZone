@@ -37,8 +37,22 @@ Function Update-AzLandingZone {
     }
     $location = $GetResourceGroup.Location
 
-    setup-Resources -Name $name -Location $location -managementGroup $managementGroup
+    $setupResourcesResult = setup-Resources -Name $name -Location $location -managementGroup $managementGroup
     setup-Storage -Name $name
     setup-Policy -Name $name -managementGroup $managementGroup
+
+
+    # Assume the log analytics workspace contains the following in the name
+    $lawPrefix = "lzslz"
+    if(!($psWorkspace = Get-AzOperationalInsightsWorkspace -resourceGroupName $GetResourceGroup.ResourceGroupName | where-Object {$_.Name -Like "*$lawPrefix*"})){
+		Write-Host -ForegroundColor Red "Workspace cannot be found"
+		return 1;
+    }
+
+    enable-AutomationAccountChangeTrackinAndInventory `
+        -ResourceGroupName $name `
+        -AutomationAccountName $setupResourcesResult.automationAccount.Name `
+        -lawName $psWorkspace.Name
+        
 }
 Export-ModuleMember -Function Update-AzLandingZone
