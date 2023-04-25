@@ -3,7 +3,7 @@ Function setup-Policy {
 
     param(
         [string]$name = "lzslz",
-        [string]$managementGroup = "lz-management-group"
+        [string]$managementGroup = "lz-management-group",
         [bool]$enableSentinel = $false
     )
 
