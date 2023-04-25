@@ -4,6 +4,7 @@ Function setup-Policy {
     param(
         [string]$name = "lzslz",
         [string]$managementGroup = "lz-management-group"
+        [bool]$enableSentinel = $false
     )
 
     Write-Host -ForegroundColor Yellow "Checking Azure Landing Zone policies"
@@ -106,7 +107,9 @@ Function setup-Policy {
     #
     # Create a policy initiative for diagnostic settings to log analytics workspace
     #
-    Set-PolicyDiagnosticWorkspace -name $name -managementGroup $managementGroup
+    if($enableSentinel){
+        Set-PolicyDiagnosticWorkspace -name $name -managementGroup $managementGroup
+    }
 
     #
     # Create a policy initiative for diagnostic settings to event hub
