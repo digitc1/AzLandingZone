@@ -13,7 +13,6 @@ Function set-AutomationAccount {
         Write-Error "No Resource Group for Secure Landing Zone found"
         return;
     }
-    $automationAccountName = $name + "Automation"
 
     #
     # Checking Azure automation account for Azure Landing Zone
@@ -22,13 +21,9 @@ Function set-AutomationAccount {
     Write-Verbose "Checking automation account in the Secure Landing Zone"
     if(!($automationAccount = Get-AzAutomationAccount -ResourceGroupName $GetResourceGroup.ResourceGroupName | Where-Object {$_.AutomationAccountName -Like "$name*"})){
         Write-Verbose "Creating Azure Landing Zone automation account"
+        $automationAccountName = $name + "Automation"
         $automationAccount = New-AzAutomationAccount -Name $automationAccountName -ResourceGroupName $GetResourceGroup.ResourceGroupName -Location $GetResourceGroup.Location
-    }
-    
-    if(!($automation.Identity)){
-        Set-AzAutomationAccount -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $automationAccountName -AssignSystemIdentity
-    }
-    
+    }    
     return $automationAccount
 }
 Export-ModuleMember -Function set-AutomationAccount
