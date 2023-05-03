@@ -52,7 +52,7 @@ Function Set-PolicyMsDefender {
             }
         }
     }
-    Remove-Item -Path definitionList.txt
+    Remove-Item -Path $HOME/definitionList.txt
     Remove-Item -Path $HOME/parameters.json
 
     #
@@ -84,7 +84,7 @@ Function Set-PolicyMsDefender {
             }
         }
     }
-    Remove-Item -Path definitionList.txt
+    Remove-Item -Path $HOME/definitionList.txt
     Remove-Item -Path $HOME/parameters.json
     
     Write-Verbose "Checking policy set definition for Microsoft Defender for Cloud"
