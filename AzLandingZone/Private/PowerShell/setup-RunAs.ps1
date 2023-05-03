@@ -24,8 +24,9 @@ Function setup-RunAs {
 	}
 	
 	if(!($GetAutomationAccount.Identity)){
-        $GetAutomationAccount = Set-AzAutomationAccount -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $GetAutomationAccount.AutomationAccountName -AssignSystemIdentity
-    }
+        	$GetAutomationAccount = Set-AzAutomationAccount -ResourceGroupName $GetResourceGroup.ResourceGroupName -AutomationAccountName $GetAutomationAccount.AutomationAccountName -AssignSystemIdentity
+    		Start-Sleep -Seconds 15
+	}
 	
 	#
 	# Checking role assignment for Azure automation account
