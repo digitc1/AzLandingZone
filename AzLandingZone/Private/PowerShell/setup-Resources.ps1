@@ -46,6 +46,7 @@ Function Setup-Resources {
     # Create the Automation Account (to link to Log Analytics Workspace)
     #
     $psAutomationAccount = set-AutomationAccount -Name $name
+    setup-RunAs -Name $name -managementGroup $managementGroup
     if($psAutomationAccount -eq $null){
         Write-Error "Something went wrong while creating Automation Account"
         return
