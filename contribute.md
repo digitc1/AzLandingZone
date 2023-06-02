@@ -15,7 +15,7 @@ This project follows the default project structure for nuget package. This is co
 - build repository contains all build scripts used in GitHub workflow to build the project.
 - docs repository contains all the documentation related to the project.
 - multiple information files (readme, contribution guide, changelog, ...)
-- <project>/Public and <project>/Private are actual code repository that will be packed and public using NuGet. Code contribution should always happen in this repository.
+- <project>/Public and <project>/Private are actual code repository that will be packed and public using NuGet. Code contribution should always happen in those repositories.
 
 As per convention, the <project> repository is divided in 2 parts, Public and Private. The Public repository contains all the functions that will be publicly exposed (e.g. New-AzLandingZone, Get-AzLandingZone, ...) while private repository contains all the script and functions that are used in the backend to deploy or update the resources. This Private repository structure may vary depending on the project's specific need.
 For sake of clarity, the following structure has been put in place for Azure Landing Zone projects:
