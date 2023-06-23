@@ -38,5 +38,6 @@ Function setup-PolicyGithub {
 #        New-AzRoleAssignment -RoleDefinitionName "Resource Policy Contributor" -Scope $GetManagementGroup.Id -ObjectId $deploymentIdentity.Id
 #        Write-Verbose "Created role assignment for github deployment"
 #    }    
+
 }
 Export-ModuleMember -Function setup-PolicyGithub

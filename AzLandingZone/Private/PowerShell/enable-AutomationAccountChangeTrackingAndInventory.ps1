@@ -45,7 +45,7 @@ Function enable-AutomationAccountChangeTrackinAndInventory {
     
     # Wnable the Change Tracking solution
     if(!(Get-AzOperationalInsightsIntelligencePack -ResourceGroupName $GetResourceGroup.ResourceGroupName -WorkspaceName $lawName | where-Object {$_.Name -eq "ChangeTracking"}).Enabled){
-        Set-AzOperationalInsightsIntelligencePack -ResourceGroupName $GetResourceGroup.ResourceGroupName -WorkspaceName -WorkspaceName -IntelligencePackName "ChangeTracking" -Enabled $true 
+        Set-AzOperationalInsightsIntelligencePack -ResourceGroupName $GetResourceGroup.ResourceGroupName -WorkspaceName $lawName -IntelligencePackName "ChangeTracking" -Enabled $true 
     }
 }
 Export-ModuleMember -Function enable-AutomationAccountChangeTrackinAndInventory

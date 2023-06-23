@@ -38,9 +38,10 @@ Function Connect-LzActiveDirectory{
 	catch {
 		Switch ($_.Exception.Response.StatusCode.value__)
 		{
+			400 {Write-Error "Another connector with the same name already exist."}
 			401 {Write-Host "Tenant does not have P2 license and does not support this feature"}
 			409 {Write-Host "Connection already exists"}
-			default {Write-Error "An unexpected error happened. Contact Landing Zone FMB for additional support."}
+			default {Write-Error "An unexpected error happened. Contact Landing Zone FMB for additional support. $($_.Exception.Message)"}
 		}
 	}
 }
